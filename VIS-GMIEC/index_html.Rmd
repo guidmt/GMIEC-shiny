@@ -1,0 +1,134 @@
+---
+title: "VIS-GMIEC output"
+author: GMIEC
+output: 
+  html_document:
+    theme: journal
+---
+
+
+
+### Welcome! This is the report of your analysis.
+
+Features:
+
+- Visualization of groups of patients by score sad, 
+- Each cell of the heatmaps contains a link, to explore the data of a patient (genes in module, drugs in module etc.)
+
+
+```{r include= FALSE}
+library(heatmaply)
+library(ggplot2)
+library(formattable)
+#input_for_gmiec<-read.delim(file="C:/Users/guida/Desktop/work/GMIEC_shiny/Analysis_GMIEC_main_results.txt")
+##clean the input for analysis
+colToselect<-paste(c("gene","drug","sad","score"),collapse="|")
+idx<-grep(input_for_gmiec[,1],pattern=colToselect)
+input_for_gmiec<-input_for_gmiec[idx,]
+
+#this is for sad score
+idx_sad<-grep(input_for_gmiec[,1],pattern="sad")
+
+matrix_sad<-t(input_for_gmiec[idx_sad,-1])
+matrix_sad[is.na(matrix_sad)]<-0
+
+matrix_sad2<-apply(matrix_sad, 2, as.numeric)
+colnames(matrix_sad2)<-paste("Module",1:ncol(matrix_sad2))
+rownames(matrix_sad2)<-rownames(matrix_sad)
+```
+
+## Heatmap of the combined scores (SAD) 
+
+The following heatmap represent the SAD scores of the modules in each patient. The x-axis are the modules, the y-axis the patients. The values in each cell are the SAD scores. The SAD score is computed by the combination of score alteration module (delta A) and score alteration drugs (delta D). Click on the cell to see major details about the genes/drugs inside and modules.
+
+- blue colors highlight modules with group of genes that share few genomic alterations and targeted by drugs.
+- red colors highlight modules with group of genes that share  genomic alterations and targeted by few drugs.
+
+```{r message=F, echo=FALSE}
+heatmaply(matrix_sad2,col=RdYlBu,Colv=FALSE)
+```
+
+```{r message=F, echo=FALSE}
+#this is for sad score
+idx_sam<-grep(input_for_gmiec[,1],pattern="score_alteration_module")
+
+matrix_sam<-t(input_for_gmiec[idx_sam,-1])
+matrix_sam[is.na(matrix_sam)]<-0
+
+matrix_sam2<-apply(matrix_sam, 2, as.numeric)
+colnames(matrix_sam2)<-paste("Module",1:ncol(matrix_sam2))
+rownames(matrix_sam2)<-rownames(matrix_sam)
+```
+
+## Heatmap of the SAM scores (delta A)
+
+The following heatmap represent the SAM scores of the modules in each patient. The x-axis are the modules, the y-axis the patients. The values in each cell are the SAM scores. Click on the cell to see major details about the genes/drugs inside and modules.
+
+```{r message=F, echo=FALSE}
+heatmaply(matrix_sam2,colors=BrBG,Colv=FALSE)
+```
+
+## Heatmap of the scores SAD (delta D)
+The following heatmap represent the SAD score of the modules in each patient. The x-axis are the modules, the y-axis the patients. The values in each cell are the SAD scores. Click on the cell to see major details about the genes/drugs inside and modules.
+
+```{r message=F, echo=FALSE}
+#this is for sad score
+idx_sadrugs<-grep(input_for_gmiec[,1],pattern="score_alteration_drugs")
+
+matrix_sadrugs<-t(input_for_gmiec[idx_sadrugs,-1])
+matrix_sadrugs[is.na(matrix_sadrugs)]<-0
+
+matrix_sadrugs2<-apply(matrix_sadrugs, 2, as.numeric)
+colnames(matrix_sadrugs2)<-paste("Module",1:ncol(matrix_sadrugs))
+rownames(matrix_sadrugs2)<-rownames(matrix_sadrugs)
+```
+
+```{r message=F, echo=FALSE}
+heatmaply(matrix_sadrugs2,colors=PRGn,Colv=FALSE)
+```
+
+```{r message=F, echo=FALSE}
+### parse to create table with formattable
+
+#rmarkdown::render("index_html.Rmd",output_file="index.html",output_dir="./output_vis/")
+
+number_of_patients<-2:ncol(input_for_gmiec)
+
+#this is for sad score
+# for(i in number_of_patients){
+#   
+#   current_data_patient<-input_for_gmiec[,c(1,i)]
+#   sampleID<-colnames(current_data_patient)[2]
+#   
+#   output_file2<-paste("report",sampleID,"single.patient.html",sep=".")
+# 
+#   rmarkdown::render('./template_single_patient2.Rmd',
+#                   params = list(
+#                      patient=current_data_patient
+#                      ),output_file=output_file2,output_dir="./output_vis/")
+# 
+# 
+# }
+```
+
+```{r message=F, echo=FALSE}
+# number_of_patients<-2:ncol(input_for_gmiec)
+# 
+# for(i in number_of_patients){
+#   
+#   current_data_patient<-input_for_gmiec[,c(1,i)]
+#   sampleID<-colnames(current_data_patient)[2]
+# 
+#   output_file<-paste("report",sampleID,"html",sep=".")
+#   gc()
+#   rmarkdown::render('./template_single_patient.Rmd',
+#                   params = list(
+#                     patient=current_data_patient
+#                     ),output_file=output_file,output_dir="./output_vis/"
+#                   )
+#   rm(current_data_patient)
+#   rm(matrix_sad2)
+#   rm(matrix_sam2)
+#   rm(matrix_sadrugs2)
+# }
+```

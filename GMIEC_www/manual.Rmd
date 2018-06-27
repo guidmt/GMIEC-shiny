@@ -1,0 +1,95 @@
+---
+  title: "Manual of GMIEC"
+---
+
+###**A brief summary**
+
+####**Step1: Details annotation**
+In the first step the ChIP-seq data of a transcriptional factors are annotated using ChIPPeakAnno, considering a distance **(d)** of **(n)** bp. After this step the mean absolute deviation (MAD) of the annotated genes is estimated. Then, to filter the genes a bayesian analysis of change points of MAD is perfomed. This allowed to selected only the genes with high MAD values and without use a pre-determinate user threshold. In IMMAS this step is conducted by bcp function  implemented in bcp R-package. This function implements the Bayesian change point methods develop by Wang and Emerson (2015). Then, after that the selection of genes is perfomed, for each patient start the core of the IMMAS analysis. The main aim of the workflow is the identification of specifics genes that shares the same genomic alterations (e.g. copy number variation, methylation, gene-expression changes, mutation etc.). In our context we will use the term "module" to define groups of genes that share the same genomics alterations and that are regulated by the same transcriptional factors. The identification of modules involves the integration of all omics data available.
+
+####**Step2: Identification alteration at the level of single patient**
+For GMIEC worklflow data from ChIP-seq data, gene-expression, copy-number variation, methylation and mutation are required. However, before to start the identification of the modules it is important codify if the genes of the single patients present or not some characteristics (e.g. presence of mutation or not). For this aim, we used a similar approach used in Ana B. Pavel et al., 2016 based on fuzzy logic. In our context we define different critereas. For all genes **(g)** of a patient  **(p)** we defined using a binary coding the presence **(1)** or not **(0)** of a characteristic. To details about the rules see the reference[...]
+For FD-GMIEC see the description in the dedicated section.
+
+####**Step3: Apriori**
+When the codification of the properties of genes is terminated for each patients, the second most important step of GMIEC is the identification of modules with genes that have the same properties.  In this work we used association rules discovery technique (ARD) to identify similar modules. The ARD mining method has been extensively used in different application to aim to identify association between subsets of items from huge lists of transactions.  This methodologies identify set of elements that frequently co-occur in a dataset and create relationship between them in form of **X->Y**. The advantage of this approach is that not rely on any prestablished assumptions.
+
+####**Step4: Computes the scores**
+After this analysis we identify if a module is preserved or not. In this context the term "preserved module" indicate a group of genes without any genomic alteration. In contrast, an alterated module is a group of genes with different genomic alteration. In parallel to this, we identified also if a module is druggable or not.  A module highly druggable is a module in which many genes are targeted by drugs. Finally we created a unique score to indicate the levels of alterations and druggability of a module. A module consist of **n** rows and **p** columns. The number of rows correspond with the genes targeted by one TF. The number of columns correspond with the number of genomic properties described in the previously section. We define c as the cell of ni row and pi column. For one gene **(g)**, **c** can assume binary value **(0,1)** indicating the presence or not of a property. See the reference for details.
+
+####**Dependencies**
+GMIEC depends on several packages:
+- shiny
+- shinydashboard
+- rmarkdown
+- apriori
+- bcp 
+- ChipPeakAnno
+- heatmaply
+- ggplot2
+- formattable
+
+####**How to run GMIEC in local:**
+1. Go to https://github.com/guidmt/gmiec-shiny
+2. Download the repository
+3. Go in the folder with the application and:
+   + From console **shinyAppDir(appDir="/mydir/GMIEC_shiny")**
+
+####**Manual of GMIEC:**
+
+- **omics dataset**: a tab-delimited file with the header, the first column contains the genes. 
+- **epigenetic data**: a bed file with chromosome, start, end. 
+- **data association drug-gene**: a tab delimited files with two columns. The first one contain the list of genes, the second the associated drugs.
+
+####**How to run  GMIEC:**
+1. Upload all omics dataset 
+2. Upload the data with the association drug-gene
+
+1. **Analysis considering only the annotated genes**
+   + Upload the bed file
+   + Click on "Use only the annotated genes"
+   + Type the name for the output
+   + Click on "Run Analysis"
+   + When the analysis is finished click on "Download"
+   
+2. **Analysis considering only the annotated genes and TF**
+   + Upload the bed file
+   + Type the name of TF
+   + Click on "Use only the annotated genes and explore the TF"
+   + Type the name for the output
+   + Click on "Run Analysis"
+   + When the analysis is finished click on "Download"
+   
+3. **Analysis considering using a gene-list**
+   + Click on "Use a gene-list" (provide a tab-delimited file with one column reporting the genes)
+   + Upload the gene-list
+   + Click on "Run Analysis"
+   + When the analysis is finished click on "Download"   
+  
+4. **Analysis considering using all genes**
+   + Click on "Use all genes"
+   + Click on "Run Analysis"
+   + When the analysis is finished click on "Download"
+   
+- **Parameters for GMIEC**
+   + Click on "Use all genes"
+   + Click on "Run Analysis"
+   + When the analysis is finished click on "Download" 
+   
+####**Description of GMIEC output:**
+   
+   - The output is tab-delimited matrix. For each patients and for each modules the results of analysis are reported. For each module their score, list of genes and associated drugs are reported.  
+
+####**Functionalities of FD-GMIEC:**
+- **omics dataset**: a tab-delimited file with the header, the first column contains the genes. 
+- **epigenetic data**: a bed file with chromosome, start, end. 
+- **data interaction drug-gene**: a tab delimited files with two columns. The first one contain the list of genes, the second the associated drugs.
+
+####**How to run  FD-GMIEC:**
+
+####**Functionalities of VIS-GMIEC:**
+- Exploration of the data at the level of groups of or single patient
+
+####**Description of FD-GMIEC output:**
+   
+   - The output is tab-delimited matrix. For each patients and for each modules the results of analysis are reported. For each module their score, list of genes and associated drugs are reported.  

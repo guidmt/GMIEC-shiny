@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+
+
+<title>Manual of GMIEC</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+</head>
+
+<body>
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+
+<div class="container-fluid main-container">
+
+<!-- tabsets -->
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+
+<!-- code folding -->
+
+
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">GMIEC-website</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="manual.html">Manual</a>
+</li>
+<li>
+  <a href="faq.html">F.A.Q</a>
+</li>
+<li>
+  <a href="contact.html">Contact</a>
+</li>
+<li>
+  <a href="terms_of_use.html">Terms of use</a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Manual of GMIEC</h1>
+
+</div>
+
+
+<div id="a-brief-summary" class="section level3">
+<h3><strong>A brief summary</strong></h3>
+<div id="step1-details-annotation" class="section level4">
+<h4><strong>Step1: Details annotation</strong></h4>
+<p>In the first step the ChIP-seq data of a transcriptional factors are annotated using ChIPPeakAnno, considering a distance <strong>(d)</strong> of <strong>(n)</strong> bp. After this step the mean absolute deviation (MAD) of the annotated genes is estimated. Then, to filter the genes a bayesian analysis of change points of MAD is perfomed. This allowed to selected only the genes with high MAD values and without use a pre-determinate user threshold. In IMMAS this step is conducted by bcp function implemented in bcp R-package. This function implements the Bayesian change point methods develop by Wang and Emerson (2015). Then, after that the selection of genes is perfomed, for each patient start the core of the IMMAS analysis. The main aim of the workflow is the identification of specifics genes that shares the same genomic alterations (e.g. copy number variation, methylation, gene-expression changes, mutation etc.). In our context we will use the term “module” to define groups of genes that share the same genomics alterations and that are regulated by the same transcriptional factors. The identification of modules involves the integration of all omics data available.</p>
+</div>
+<div id="step2-identification-alteration-at-the-level-of-single-patient" class="section level4">
+<h4><strong>Step2: Identification alteration at the level of single patient</strong></h4>
+<p>For GMIEC worklflow data from ChIP-seq data, gene-expression, copy-number variation, methylation and mutation are required. However, before to start the identification of the modules it is important codify if the genes of the single patients present or not some characteristics (e.g. presence of mutation or not). For this aim, we used a similar approach used in Ana B. Pavel et al., 2016 based on fuzzy logic. In our context we define different critereas. For all genes <strong>(g)</strong> of a patient <strong>(p)</strong> we defined using a binary coding the presence <strong>(1)</strong> or not <strong>(0)</strong> of a characteristic. To details about the rules see the reference[…] For FD-GMIEC see the description in the dedicated section.</p>
+</div>
+<div id="step3-apriori" class="section level4">
+<h4><strong>Step3: Apriori</strong></h4>
+<p>When the codification of the properties of genes is terminated for each patients, the second most important step of GMIEC is the identification of modules with genes that have the same properties. In this work we used association rules discovery technique (ARD) to identify similar modules. The ARD mining method has been extensively used in different application to aim to identify association between subsets of items from huge lists of transactions. This methodologies identify set of elements that frequently co-occur in a dataset and create relationship between them in form of <strong>X-&gt;Y</strong>. The advantage of this approach is that not rely on any prestablished assumptions.</p>
+</div>
+<div id="step4-computes-the-scores" class="section level4">
+<h4><strong>Step4: Computes the scores</strong></h4>
+<p>After this analysis we identify if a module is preserved or not. In this context the term “preserved module” indicate a group of genes without any genomic alteration. In contrast, an alterated module is a group of genes with different genomic alteration. In parallel to this, we identified also if a module is druggable or not. A module highly druggable is a module in which many genes are targeted by drugs. Finally we created a unique score to indicate the levels of alterations and druggability of a module. A module consist of <strong>n</strong> rows and <strong>p</strong> columns. The number of rows correspond with the genes targeted by one TF. The number of columns correspond with the number of genomic properties described in the previously section. We define c as the cell of ni row and pi column. For one gene <strong>(g)</strong>, <strong>c</strong> can assume binary value <strong>(0,1)</strong> indicating the presence or not of a property. See the reference for details.</p>
+</div>
+<div id="dependencies" class="section level4">
+<h4><strong>Dependencies</strong></h4>
+<p>GMIEC depends on several packages: - shiny - shinydashboard - rmarkdown - apriori - bcp - ChipPeakAnno</p>
+</div>
+<div id="how-to-run-gmiec-in-local" class="section level4">
+<h4><strong>How to run GMIEC in local:</strong></h4>
+<ol style="list-style-type: decimal">
+<li>Go to <a href="https://github.com/guidmt/gmiec-shiny" class="uri">https://github.com/guidmt/gmiec-shiny</a></li>
+<li>Download the repository</li>
+<li>Go in the folder with the application and:</li>
+</ol>
+<ul>
+<li>From console <strong>shinyAppDir(appDir=“/mydir/GMIEC_shiny”)</strong></li>
+</ul>
+</div>
+<div id="manual-of-gmiec" class="section level4">
+<h4><strong>Manual of GMIEC:</strong></h4>
+<ul>
+<li><strong>omics dataset</strong>: a tab-delimited file with the header, the first column contains the genes.</li>
+<li><strong>epigenetic data</strong>: a bed file with chromosome, start, end.</li>
+<li><strong>data association drug-gene</strong>: a tab delimited files with two columns. The first one contain the list of genes, the second the associated drugs.</li>
+</ul>
+</div>
+<div id="how-to-run-gmiec" class="section level4">
+<h4><strong>How to run GMIEC:</strong></h4>
+<ol style="list-style-type: decimal">
+<li>Upload all omics dataset</li>
+<li><p>Upload the data with the association drug-gene</p></li>
+<li><strong>Analysis considering only the annotated genes</strong></li>
+</ol>
+<ul>
+<li>Upload the bed file</li>
+<li>Click on “Use only the annotated genes”</li>
+<li>Type the name for the output</li>
+<li>Click on “Run Analysis”</li>
+<li>When the analysis is finished click on “Download”</li>
+</ul>
+<ol start="2" style="list-style-type: decimal">
+<li><strong>Analysis considering only the annotated genes and TF</strong></li>
+</ol>
+<ul>
+<li>Upload the bed file</li>
+<li>Type the name of TF</li>
+<li>Click on “Use only the annotated genes and explore the TF”</li>
+<li>Type the name for the output</li>
+<li>Click on “Run Analysis”</li>
+<li>When the analysis is finished click on “Download”</li>
+</ul>
+<ol start="3" style="list-style-type: decimal">
+<li><strong>Analysis considering using a gene-list</strong></li>
+</ol>
+<ul>
+<li>Click on “Use a gene-list” (provide a tab-delimited file with one column reporting the genes)</li>
+<li>Upload the gene-list</li>
+<li>Click on “Run Analysis”</li>
+<li>When the analysis is finished click on “Download”</li>
+</ul>
+<ol start="4" style="list-style-type: decimal">
+<li><strong>Analysis considering using all genes</strong></li>
+</ol>
+<ul>
+<li>Click on “Use all genes”</li>
+<li>Click on “Run Analysis”</li>
+<li><p>When the analysis is finished click on “Download”</p></li>
+<li><strong>Parameters for GMIEC</strong></li>
+<li>Click on “Use all genes”</li>
+<li>Click on “Run Analysis”</li>
+<li><p>When the analysis is finished click on “Download”</p></li>
+</ul>
+</div>
+<div id="description-of-gmiec-output" class="section level4">
+<h4><strong>Description of GMIEC output:</strong></h4>
+<ul>
+<li>The output is tab-delimited matrix. For each patients and for each modules the results of analysis are reported. For each module their score, list of genes and associated drugs are reported.</li>
+</ul>
+</div>
+<div id="functionalities-of-fd-gmiec" class="section level4">
+<h4><strong>Functionalities of FD-GMIEC:</strong></h4>
+<ul>
+<li><strong>omics dataset</strong>: a tab-delimited file with the header, the first column contains the genes.</li>
+<li><strong>epigenetic data</strong>: a bed file with chromosome, start, end.</li>
+<li><strong>data interaction drug-gene</strong>: a tab delimited files with two columns. The first one contain the list of genes, the second the associated drugs.</li>
+</ul>
+</div>
+<div id="how-to-run-fd-gmiec" class="section level4">
+<h4><strong>How to run FD-GMIEC:</strong></h4>
+</div>
+<div id="functionalities-of-vis-gmiec" class="section level4">
+<h4><strong>Functionalities of VIS-GMIEC:</strong></h4>
+<ul>
+<li>Exploration of the data at the level of groups of or single patient</li>
+</ul>
+</div>
+<div id="description-of-fd-gmiec-output" class="section level4">
+<h4><strong>Description of FD-GMIEC output:</strong></h4>
+<ul>
+<li>The output is tab-delimited matrix. For each patients and for each modules the results of analysis are reported. For each module their score, list of genes and associated drugs are reported.</li>
+</ul>
+</div>
+</div>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

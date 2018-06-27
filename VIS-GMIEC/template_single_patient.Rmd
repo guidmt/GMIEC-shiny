@@ -1,0 +1,76 @@
+---
+title: "VIS-GMIEC output"
+author: GMIEC
+output: 
+  html_document:
+    theme: journal
+params:
+  patient: 
+  value: x
+---
+
+```{r include= FALSE}
+library(heatmaply)
+library(ggplot2)
+library(formattable)
+library(kableExtra)
+```
+
+##this will fix the chunk duplicate error
+```{r GlobalOptions, include= FALSE}
+options(knitr.duplicate.label = 'allow')
+```
+### Welcome! This is the report of your analysis.
+
+## Summary of the analysis for the current patient:
+The table reported in this page contains the results for the current patient. The first column is the ID of the modules, second column is the number of drugs in modules, third column is the number of genes in modules.In the 4th, 5th, 6th are reported the scores computed by GMIEC. 
+
+# Details:
+
+- SAD score columns: as before, blue highlight modules with few genomic alteration and target of drugs.Red modules are the opposite.
+- sam: cyan rectangles highlights positive valus of sam score. Lowest values are depicted with orange.
+- score drugs: violet rectangles are modules with low score.
+
+```{r message=F, echo=FALSE}
+tab_patient<-params$patient
+
+idx_number_drugs<-grep(tab_patient[,1],pattern="#drugs")
+idx_number_genes<-grep(tab_patient[,1],pattern="#genes")
+
+idx_number_sad<-grep(tab_patient[,1],pattern="sad")
+idx_number_sam<-grep(tab_patient[,1],pattern="score_alteration_module")
+idx_number_sadrugs<-grep(tab_patient[,1],pattern="score_alteration_drugs")
+
+
+##create the data.frame for the statistics about the number of patient for module
+number_drugs_table<-tab_patient[idx_number_drugs,2]
+number_drugs_table[is.na(number_drugs_table)]<-""
+number_genes_table<-tab_patient[idx_number_genes,2]
+number_genes_table[is.na(number_genes_table)]<-""
+
+tab_ndrugs_ngenes<-data.frame(Module = paste("Module",seq=1:length(number_drugs_table)),
+                                    number_of_drugs=number_drugs_table,
+                                    number_of_genes=number_genes_table,
+                              sad=tab_patient[idx_number_sad,2]
+                              ,sam=tab_patient[idx_number_sam,2]
+                              ,drugs_score=tab_patient[idx_number_sadrugs,2])
+#put NA to 0
+
+tab_ndrugs_ngenes %>%
+  mutate(
+    sad = color_tile("red", "blue")(sad),
+    sam = color_tile("orange4", "cyan4")(sam),
+    drugs_score = color_tile("violet", "green")(drugs_score),
+    number_of_drugs = color_bar("lightgreen")(number_of_drugs),
+    number_of_genes = color_bar("lightblue")(number_of_genes)
+  ) %>%
+  kable(escape = F) %>%
+  kable_styling("hover", full_width = F) %>%
+  column_spec(c(1), width = "3cm") %>%
+  column_spec(c(2,3,4,5,6), width = "3cm") %>%
+  row_spec(1:nrow(tab_ndrugs_ngenes),hline_after=F,align='center',color="black")%>%
+  row_spec(0,color="black",align='center')
+
+rm(tab_ndrugs_ngenes)
+
+```

@@ -1,0 +1,15 @@
+name: "GMIEC"
+output_dir: "."
+navbar:
+  title: "GMIEC-website"
+  right:
+    - text: "Home"
+      href: index.html
+    - text: "Manual"
+      href: manual.html
+    - text: "F.A.Q"
+      href: faq.html
+    - text: "Contact"
+      href: contact.html
+    - text: "Terms of use"
+      href: terms_of_use.html
