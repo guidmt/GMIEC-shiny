@@ -1,3 +1,11 @@
+### NOTE: GMIEC-shiny is again in beta version, some step of analysis are again to improve. In the next days some updates will be available:
+
+05/07/2018
+
+- implementation of k-mode
+- implementation of FD-GMIEC
+- update of the gui interface to upload the data (VIS-GMIEC)
+
 ### GMIEC-shiny
 This is the offical repository of GMIEC-shiny
 Welcome in GMIEC!! GMIEC is a framework, GMIEC, that integrates omics data (gene-expression, copy number variation, mutation, methylation) with data containing genomic coordinates of cis and/or trans epigenetic regulators (e.g. ChIP-seq). Then, at the level of the single patient, GMIEC identify groups of genes (modules) that share common genomic features. Then, using an external database, the genes in each module are associated with their own target drugs. Therefore, GMIEC allows the identification, at the level of the single patient, groups of genes that are regulated by the same epigenetic regulators (e.g. TFs), sharing common genomic features and associated with different number of drugs.
