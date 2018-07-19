@@ -1,8 +1,15 @@
 ### NOTE: GMIEC-shiny is again in beta version, some step of analysis are again to improve. In the next days some updates will be available:
 
+News:
+19/07/2018
+
+- removed apriori analysis and implemented kmodes from klaR 
+- modify engine_all_dataset.R  
+- modify create_output.R 
+- add some comments 
+
 05/07/2018
 
-- implementation of k-mode
 - implementation of FD-GMIEC
 - update of the gui interface to upload the data (VIS-GMIEC)
 
