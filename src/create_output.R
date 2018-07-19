@@ -4,11 +4,10 @@ create_output<-function(res_analysis_each_patient,input_clinical,...){
 
 GPM_TOT<-NULL
 
-print("mytest")
 
 #find the modules in total
 for(bpm in 1:length(res_analysis_each_patient)){
-  gpm<-unique(res_analysis_each_patient[[bpm]][,"Groups_Apriori"])
+  gpm<-unique(res_analysis_each_patient[[bpm]][,"clusters"])
   GPM_TOT<-c(GPM_TOT,gpm)
 }
 
@@ -50,48 +49,48 @@ for(bpm in 1:length(res_analysis_each_patient)){
   total_genes_patients<-length(data_current_patient[,2])
   names(total_genes_patients)<-"total_genes_patients"
   
-  number_modules<-length(unique(data_current_patient[,"Groups_Apriori"]))
+  number_modules<-length(unique(data_current_patient[,"clusters"]))
   names(number_modules)<-"number_modules"
   
   #extract the number of genes for modules and the genes inside each modules
-  number_genes_for_module<-aggregate(genesID ~ Groups_Apriori, data =  data_current_patient[,c("Groups_Apriori","genesID")], length)
+  number_genes_for_module<-aggregate(genesID ~ clusters, data =  data_current_patient[,c("clusters","genesID")], length)
   
   number_genes_for_module_size<-number_genes_for_module[,2]
   names(number_genes_for_module_size)<-paste("#genes_module",number_genes_for_module[,1],sep="")
   
-  genes_in_each_module<-aggregate(genesID ~ Groups_Apriori, data =  data_current_patient[,c("Groups_Apriori","genesID")], paste,collapse=",")
+  genes_in_each_module<-aggregate(genesID ~ clusters, data =  data_current_patient[,c("clusters","genesID")], paste,collapse=",")
   genes_in_each_module<-genes_in_each_module[,2]
   names(genes_in_each_module)<-paste("genes_in_",paste("module",number_genes_for_module[,1],sep=""),sep="")
   
   #extract the number of drugs for modules and the genes inside each modules
-  number_drugs_for_module<-aggregate(drug_primary_name ~ Groups_Apriori, data =  data_current_patient[,c("Groups_Apriori","drug_primary_name")], paste,collapse=",")
+  number_drugs_for_module<-aggregate(drug_primary_name ~ clusters, data =  data_current_patient[,c("clusters","drug_primary_name")], paste,collapse=",")
   number_drugs_for_module[,2]<-apply(number_drugs_for_module,1,FUN=function(x){length(unlist(strsplit(x[2],split="#")))})
   
   number_drugs_for_module_size<-number_drugs_for_module[,2]
   names(number_drugs_for_module_size)<-paste("#drugs_module",number_drugs_for_module[,1],sep="")
   
-  drugs_in_each_module<-aggregate(drug_primary_name ~ Groups_Apriori, data =  data_current_patient[,c("Groups_Apriori","drug_primary_name")], paste,collapse="@") #use this character to merge drugs because it is important in the next step.
+  drugs_in_each_module<-aggregate(drug_primary_name ~ clusters, data =  data_current_patient[,c("clusters","drug_primary_name")], paste,collapse="@") #use this character to merge drugs because it is important in the next step.
   drugs_in_each_module<-drugs_in_each_module[,2]
   names(drugs_in_each_module)<-paste("drugs_in_",paste("module",number_drugs_for_module[,1],sep=""),sep="")
   
   #extract the alteration scores for each module
-  scores_module<-aggregate(scorescorestatusmodule ~ Groups_Apriori, data =  data_current_patient[,c("Groups_Apriori","scorescorestatusmodule")], unique)
+  scores_module<-aggregate(scorescorestatusmodule ~ clusters, data =  data_current_patient[,c("clusters","scorescorestatusmodule")], unique)
   scores_module_unique<-scores_module[,2]
   names(scores_module_unique)<-paste("score_alteration_module(deltaa)",scores_module[,1],sep="")
   
   #extract the drugs scores for each module
-  scores_module_drugs<-aggregate(TOTAL_score_module_drugs ~ Groups_Apriori, data =  data_current_patient[,c("Groups_Apriori","TOTAL_score_module_drugs")], unique)
+  scores_module_drugs<-aggregate(TOTAL_score_module_drugs ~ clusters, data =  data_current_patient[,c("clusters","TOTAL_score_module_drugs")], unique)
   scores_module_drugs_unique<-scores_module_drugs[,2]
   names(scores_module_drugs_unique)<-paste("score_alteration_drugs(deltad)",scores_module_drugs[,1],sep="")
   
   #extract the sad scores for each module
-  scores_module_sad<-aggregate(combinedscore ~ Groups_Apriori, data =  data_current_patient[,c("Groups_Apriori","combinedscore")], unique)
+  scores_module_sad<-aggregate(combinedscore ~ clusters, data =  data_current_patient[,c("clusters","combinedscore")], unique)
   scores_module_sad_unique<-scores_module_sad[,2]
   names(scores_module_sad_unique)<-paste("score_sad",scores_module_sad[,1],sep="")
   
   #extract rule for each module 
-  rule_in_each_module<-aggregate(Groups_Apriori ~ rule, data =  data_current_patient[,c("Groups_Apriori","rule")], unique)
-  rule_save<-rule_in_each_module[,1]
+  rule_in_each_module<-aggregate(clusters ~ rule, data =  data_current_patient[,c("clusters","rule")], unique)
+  rule_save<-as.character(rule_in_each_module[,1])
   names(rule_save)<-paste(paste("rule_module",rule_in_each_module[,2],sep=""))
   
   row_for_each_patient<-c(patient_id,
