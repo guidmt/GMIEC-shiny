@@ -11,10 +11,10 @@
 # To do list:
 
 - 01/09/2018
-- update manual page, removing the description of apriori, insert k-modes
+- update introduction, manual page, removing the description of apriori, insert k-modes
 - implement VIS-GMIEC (code ready, only to implement in gui-shiny)
 - implement FD-GMIEC (handle multiple datasets)
-- refine rules
+- 
 
 05/07/2018
 
