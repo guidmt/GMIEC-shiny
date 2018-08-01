@@ -410,6 +410,23 @@ function(input,output,session) {
     }
   }#end function obeserve event
  ) #end observed event1
+  
+  #########################################
+  # VIS-GMIEC
+  #########################################
+  
+  
+  input_for_report<-reactive({
+    infile_for_report<- input$vis_gmiec2
+    read.table(file=infile_for_report$datapath,sep="\t",stringsAsFactors=FALSE,header=T,quote=NULL,fill=F) #read empty values with 0 
+  })
+  
+  output_report<-reactive({run_create_output(
+    
+    input_for_report2=input_for_report()
+    
+  )})  
+  
 }#end function
 
 

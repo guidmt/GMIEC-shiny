@@ -1,11 +1,7 @@
-setwd("C:/Users/guida/Desktop/stratification_tcga/output_dir")
+run_create_output<-function(input_for_report){
 
-tab_input<-read.delim(file="C:/Users/guida/Desktop/stratification_tcga/output_dir")
-
-create_report<-function(tab_input){
-  
-  
-  
-  
+  rmarkdown::render_site("../VIS-GMIEC/index_html.Rmd")
+  rmarkdown::render_site("../VIS-GMIEC/template_single_patient.Rmd")
+  rmarkdown::render_site("../VIS-GMIEC/template_single_patient2.Rmd")
   
 }
