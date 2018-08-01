@@ -1,10 +1,10 @@
 
-engine_all_dataset<-function(input_for_klar2,dfPatientForAnalysis_GAC){
+engine_all_dataset<-function(input_for_klar2,dfPatientForAnalysis_GAC,clusters){
   
   print("Step 6: Run klaR")
   
 
-   resKLAR = kmodes(input_for_klar2[,-1], 5)
+   resKLAR = kmodes(input_for_klar2[,-1], clusters)
    
    ifkl<-cbind(clusters=resKLAR$cluster,input_for_klar2)  
    

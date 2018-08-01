@@ -55,7 +55,15 @@ function(input,output,session) {
     read.table(file=infile6$datapath,sep="\t",stringsAsFactors=F,quote=NULL,header=T,fill=T)
   })
   
-  print(paste("Load clinical data",dim(input_clinical())))
+    print(paste("Load clinical data",dim(input_clinical())))
+
+  ##7
+  input_clusters<-reactive({
+    infile7<-input$clusters
+  })
+  
+  print(paste("Number Clusters",input_clusters()))
+  
   
   ###
   ### Input annotation
@@ -188,6 +196,7 @@ function(input,output,session) {
       tabDrugs=drugs_for_analysis2,
       input_clinical=input_clinical2,
       parameter_discr=c("1.5;1;0.5"),
+        clusters=input_clusters(),
       genes_annotated_TF_fv=FALSE
       
     )})
@@ -258,6 +267,7 @@ function(input,output,session) {
           input_CNV_tf=input_CNV_tf,
           input_MUTATION_tf=input_MUTATION_tf,
           input_METH_tf=input_METH_tf,
+            clusters=input_clusters(),
           genes_annotated_TF_fv=TRUE
       
     )})
@@ -316,6 +326,7 @@ function(input,output,session) {
       tabDrugs=drugs_for_analysis2,
       input_clinical=input_clinical2,
       parameter_discr=c("1.5;1;0.5"),
+        clusters=input_clusters(),
       genes_annotated_TF_fv=FALSE
       
     )})
@@ -371,6 +382,7 @@ function(input,output,session) {
       tabDrugs=drugs_for_analysis2,
       input_clinical=input_clinical2,
       parameter_discr=c("1.5;1;0.5"),
+        clusters=input_clusters(),
       genes_annotated_TF_fv=FALSE
       
     )})

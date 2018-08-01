@@ -1,4 +1,4 @@
-run_GMIEC<-function(check_ge_for_patients,input_CNV_selected,input_METH_selected,input_MUTATION_selected,tabDrugs,input_clinical,parameter_discr,genes_annotated_TF_fv,input_GE_tf=NA,input_CNV_tf=NA,input_MUTATION_tf=NA,input_METH_tf=NA){
+run_GMIEC<-function(check_ge_for_patients,input_CNV_selected,input_METH_selected,input_MUTATION_selected,tabDrugs,input_clinical,parameter_discr,genes_annotated_TF_fv,input_GE_tf=NA,input_CNV_tf=NA,input_MUTATION_tf=NA,input_METH_tf=NA,clusters){
 
   withProgress(message="Start analysis!",min=0,max=1,{
   
@@ -188,9 +188,12 @@ print("Step5: Find rules for patient")
   } else {
     
     results_for_tf2<-rules_notfor_tf(dfPatientForAnalysis=dfPatientForAnalysis,se_patient_selection=se_patient_selection,ge_d=ge_d,cnv_d=cnv_d,meth_d=meth_d,MUT_current_patient=MUT_current_patient)
-    dfPatientForAnalysis_GAC<-results_for_tf2[[1]]
-    col_relTF<-results_for_tf2[[2]]
-    
+    dfPatientForAnalysis_GAC<-results_for_tf2[[1]] #this a data.frame with the values of omics experiments and binary rules
+    col_relTF<-results_for_tf2[[2]] 
+    #col_relTF
+    #[1] "genesID"                   "FC_GE_TF"                  "Genes_overexpressed"      
+    #[4] "Genes_underexpressed"      "CNV_EC_gain"               "CNV_EC_depletion"         
+    #[7] "CNV_gain"      
   }
   
   dfPatientForAnalysis_GAC_rel_TF<-dfPatientForAnalysis_GAC[,col_relTF]
@@ -200,8 +203,8 @@ print("Step5: Find rules for patient")
   resSumControl<-apply(dfPatientForAnalysis_GAC_rel_TF[,2:ncol(dfPatientForAnalysis_GAC_rel_TF)],2,sum)
   names.good.properties<-names(resSumControl[which(resSumControl!=0)])
   
-  input_for_apriori<-cbind(genesID=dfPatientForAnalysis_GAC_rel_TF[,1],dfPatientForAnalysis_GAC_rel_TF[,names.good.properties])
-  input_for_apriori2 <- data.frame(sapply(input_for_apriori,as.factor))
+  input_for_klar<-cbind(genesID=dfPatientForAnalysis_GAC_rel_TF[,1],dfPatientForAnalysis_GAC_rel_TF[,names.good.properties])
+  input_for_klar2 <- data.frame(sapply(input_for_klar,as.factor))
   
   ###
   ### run the engine for the analysis 
@@ -210,9 +213,9 @@ print("Step5: Find rules for patient")
   print("Step6: Analysis")
   incProgress(0.15, detail = "Step5: Run the engine")
   
-  mergeGAC_COM_res_K_2<-engine_all_dataset(input_for_apriori2,dfPatientForAnalysis_GAC=dfPatientForAnalysis_GAC)
+  mergeGAC_COM_res_K_2<-engine_all_dataset(input_for_klar2,dfPatientForAnalysis_GAC=dfPatientForAnalysis_GAC,clusters)
   
-  
+  print(colnames(mergeGAC_COM_res_K_2))
   #search in which rows are present the genes in the table of drugs-genes interactions
   #two columns in the tables of database must be present: genes and drug_primary_name
   indexSubDrug<-which(tabDrugs$genes%in%mergeGAC_COM_res_K_2[,1])
@@ -223,7 +226,7 @@ print("Step5: Find rules for patient")
   collapseDrugTable<-aggregate(drug_primary_name ~ genes, data = subtabDrugs, paste,collapse = "#")
   
   mergeGAC_COM_res_K_2_drugs<-merge(mergeGAC_COM_res_K_2,collapseDrugTable,by.x="genesID",by.y="genes",all.x=T)
-  
+
   countDrugsFunc<-function(x){
     #drugs name are repeated for the same genes, i used unique to manage this issue: the reason is that different database have the same drugs.
     ld<-as.numeric(length(unique(unlist(strsplit(x,split="#")))))
@@ -235,6 +238,7 @@ print("Step5: Find rules for patient")
   
   #test the druggability of a modules
   mergeGAC_COM_res_K_2_drugs<-cbind(mergeGAC_COM_res_K_2_drugs,Count_Drugs_For_Gene=resCountDrugs)
+  print(colnames(mergeGAC_COM_res_K_2_drugs))
   
   ### estimate the druggability of the modules
   
@@ -242,21 +246,36 @@ print("Step5: Find rules for patient")
   
   TOTAL_score_module<-NULL
   TOTAL_score_module_drugs<-NULL
-  mergeGAC_COM_res_K_2_drugs$Groups_Apriori<-as.numeric(mergeGAC_COM_res_K_2_drugs$Groups_Apriori)
+  mergeGAC_COM_res_K_2_drugs$clusters<-as.numeric(mergeGAC_COM_res_K_2_drugs$clusters)
+  print(colnames(mergeGAC_COM_res_K_2_drugs))
   
-  mergeGAC_COM_res_K_2_drugs<-mergeGAC_COM_res_K_2_drugs[order(mergeGAC_COM_res_K_2_drugs$Groups_Apriori),]
+  mergeGAC_COM_res_K_2_drugs<-mergeGAC_COM_res_K_2_drugs[order(mergeGAC_COM_res_K_2_drugs$clusters),]
+  print(colnames(mergeGAC_COM_res_K_2_drugs))
   
-  uniqGA<-as.numeric(unique(mergeGAC_COM_res_K_2_drugs$Groups_Apriori))
+  uniqGA<-as.numeric(unique(mergeGAC_COM_res_K_2_drugs$clusters))
   
   for(mga in uniqGA){
     
     print(mga)
     
-    smgcrkl<- mergeGAC_COM_res_K_2_drugs[mergeGAC_COM_res_K_2_drugs$Groups_Apriori==mga,]
-    #check the presenc of at least one column with 1 for a gene
+    smgcrkl<- mergeGAC_COM_res_K_2_drugs[mergeGAC_COM_res_K_2_drugs$clusters==mga,]
+
+   # $ genesID                  : Factor w/ 22569 levels "1-Dec","1-Mar",..: 22 72 108 152 242 284 293 294 315 368 ...
+   # $ FC_GE_TF                 : num  1 1 1 1 1 1 1 1 1 1 ...
+   # $ Genes_overexpressed      : num  0 0 0 0 0 0 0 0 0 0 ...
+   # $ Genes_underexpressed     : num  0 0 0 0 0 0 0 0 0 0 ...
     
     #check the number of modules alterated: the first column is hugo symbol, the second is the fold-change between the expression (is not an alteration)
     #of tf and target genes. I remove these columns because are not useful in the categorization of alterated and not alterated genes
+    
+   # col_relTF
+   # [1] "genesID"                   "FC_GE_TF"                  "Genes_overexpressed"      
+   # [4] "Genes_underexpressed"      "CNV_EC_gain"               "CNV_EC_depletion"         
+   # [7] "CNV_gain"                  "CNV_depletion"             "CNV_TF_categorization_TF" 
+   # [10] "METH_EC_hyper"             "METH_EC_hypo"              "METH_hyper"               
+   # [13] "METH_hypo"                 "METH_TF_categorization_TF" "MUT_genes"                
+   # [16] "MUT_TF"
+    
     alterated_genes_in_module<-apply(smgcrkl[,col_relTF][,-c(1:2)],1,FUN=function(x){ifelse(sum(x)==0,"Not_altered","Alterated")})
     
     #count the number of not alterated genes in modules
@@ -305,9 +324,13 @@ print("Step5: Find rules for patient")
   #estimate SAD
   mergeGAC_COM_res_K_2_drugs <-cbind(cbind(cbind(mergeGAC_COM_res_K_2_drugs,scorescorestatusmodule=TOTAL_score_module),TOTAL_score_module_drugs),combinedscore=TOTAL_score_module_drugs+TOTAL_score_module)
 
+ # > colnames(mergeGAC_COM_res_K_2_drugs)
+ # [1] "genesID"                   "FC_GE_TF"                  "Genes_overexpressed"      
+ # [4] "Genes_underexpressed"      "CNV_depletion"
+ # scorescorestatusmodule
+ # TOTAL_score_module_drugs
+ # combinedscore
   
-  
- # assign(as.character(paste(se_patient_selection,".analysisGMIEC",sep="")),mergeGAC_COM_res_K_2_drugs) 
 
   RES_ENGINE[[asu]]<-mergeGAC_COM_res_K_2_drugs
 
