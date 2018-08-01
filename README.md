@@ -39,4 +39,4 @@ Analysis using all genes between the datasets.
 Exploration of the data at the level of groups of or single patient
 
 
-The manual is available in the following: https://github.com/guidmt/GMIEC-shiny/blob/master/GMIEC_www/manual.html.
+The manual is available in [here](https://github.com/guidmt/GMIEC-shiny/blob/master/GMIEC_www/manual.html)
