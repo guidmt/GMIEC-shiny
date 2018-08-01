@@ -4,6 +4,8 @@
 01/08/2018
 
 - update functions to run analysis
+- update server.R for vis-gmiec, implemented upload and reading of output GMIEC
+- update create_report.R and function run_create_output
 
 19/07/2018
 
