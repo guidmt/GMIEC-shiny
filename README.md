@@ -1,6 +1,10 @@
 ### NOTE: GMIEC-shiny is again in beta version, some step of analysis are again to improve. In the next days some updates will be available:
 
 # News:
+01/08/2018
+
+- update functions to run analysis
+
 19/07/2018
 
 - removed apriori analysis and implemented kmodes from klaR 
