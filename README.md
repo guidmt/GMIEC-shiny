@@ -1,12 +1,20 @@
 ### NOTE: GMIEC-shiny is again in beta version, some step of analysis are again to improve. In the next days some updates will be available:
 
-News:
+# News:
 19/07/2018
 
 - removed apriori analysis and implemented kmodes from klaR 
 - modify engine_all_dataset.R  
 - modify create_output.R 
 - add some comments 
+
+# To do list:
+
+- 01/09/2018
+- update manual page
+- implement VIS-GMIEC (code ready, only to implement in gui-shiny)
+- implement FD-GMIEC (handle multiple datasets)
+- refine rules
 
 05/07/2018
 
