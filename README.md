@@ -6,7 +6,7 @@
 - update server.R
 - update ui.R
 - create function create_report.R
-- debug .Rmd files of index files, global single patients, reports
+- debug .Rmd files of index, global single patients, reports html templates
 
 01/08/2018
 
