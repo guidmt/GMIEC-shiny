@@ -1,6 +1,13 @@
 ### NOTE: GMIEC-shiny is again in beta version, some step of analysis are again to improve. In the next days some updates will be available:
 
 # News:
+02/08/2018
+
+- update server.R
+- update ui.R
+- create function create_report.R
+- debug .Rmd files of index files, global single patients, reports
+
 01/08/2018
 
 - update functions to run analysis
@@ -15,8 +22,15 @@
 - add some comments 
 
 # To do list:
+02/09/2018
+- update introduction, manual page, removing the description of apriori, insert k-modes
+- implement VIS-GMIEC
+  - i) complete the implementation
+  - ii) optimize code to create the reports
+  - iii) create output .zip with the results
+- implement FD-GMIEC (handle multiple datasets) 
 
-- 01/09/2018
+01/09/2018
 - update introduction, manual page, removing the description of apriori, insert k-modes
 - implement VIS-GMIEC (code ready, only to implement in gui-shiny)
 - implement FD-GMIEC (handle multiple datasets)
