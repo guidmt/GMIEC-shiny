@@ -5,7 +5,7 @@ output:
   html_document:
     theme: journal
 params:
-  patient: 
+  patient: "test"
   value: x
 ---
 

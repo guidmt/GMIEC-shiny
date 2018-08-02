@@ -6,6 +6,9 @@ library(stats)
 library(shiny)
 library(shinydashboard)
 library(heatmaply)
+library(klaR)
+library(formattable)
+library(kableExtra)
 
 ui <- dashboardPage(
   dashboardHeader(title = "gmiec-app"),
@@ -57,8 +60,7 @@ ui <- dashboardPage(
                       
                   ),
                   box(title="GMIEC - Parameters Analysis",status="success",solidHeader=TRUE,collapsible =TRUE,
-                      numericInput("support","Support",value=0.0001),
-                      numericInput("confidence","Confidence",value=0.90)
+                      numericInput("clusters","Number Clusters k-mode",value=2)
                       ),
                   box(title="GMIEC - Output Parameters",status="success",solidHeader=TRUE,collapsible =TRUE,
                       textInput("output_file","Insert the name of output",value="") ),

@@ -20,7 +20,8 @@ You will be able to see
 
 ```{r message=F,include=TRUE, echo=FALSE, results='asis', warning=FALSE}
 
-#tab_patient<-params$patient
+
+tab_patient<-params$patient
 
 idx_module_genes<-grep(tab_patient[,1],pattern="genes_in_module")
 idx_module_drugs<-grep(tab_patient[,1],pattern="drugs_in_module")

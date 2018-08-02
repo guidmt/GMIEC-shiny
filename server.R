@@ -7,6 +7,7 @@ source("./src/internal_annotation.R", local = TRUE)
 source("./src/rules_for_tf.R", local = TRUE)
 source("./src/rules_fornot_tf.R", local = TRUE)
 source("./src/GMIEC.R", local = TRUE)
+source("./src/create_report.R", local = TRUE)
 
 
 function(input,output,session) { 
@@ -415,37 +416,21 @@ function(input,output,session) {
   # VIS-GMIEC
   #########################################
   
-  
-  input_for_report<-reactive({
+  observeEvent(input$run_vis,{
+    
+  input_for_report2<-reactive({
     infile_for_report<- input$vis_gmiec2
-    read.table(file=infile_for_report$datapath,sep="\t",stringsAsFactors=FALSE,header=T,quote=NULL,fill=F) #read empty values with 0 
-  })
+    read.table(file=infile_for_report$datapath,sep="\t",stringsAsFactors=FALSE,header=T,quote=NULL,fill=T) #read empty values with 0 
+    })
   
-  output_report<-reactive({run_create_output(
+  print(dim(input_for_report2()))
+  
+    print("Run creation report!")
     
-    input_for_report2=input_for_report()
+   # resReport<-reactive({
+      run_create_output(input_for_report=input_for_report2())
+    #})
     
-  )})  
+  })  
   
 }#end function
-
-
-###
-### Start the part for the visualization
-###
-
-# function(input,output){
-#   gmiec_results<-observeEvent(input$run_vis,{
-#   
-#   showNotification("I start to create the report!",type="message")
-#     
-#   gmiec_vis2<-reactive({
-#     gmiec_vis<- input$vis_gmiec2
-#     read.table(file=gmiec_vis$datapath,sep="\t",stringsAsFactors=FALSE,header=T,quote=NULL,fill=F) #read empty values with 0 
-#   })
-# 
-#   }
-#   )
-# }
-
-###

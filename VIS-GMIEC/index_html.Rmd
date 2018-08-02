@@ -4,6 +4,9 @@ author: GMIEC
 output: 
   html_document:
     theme: journal
+params: 
+  input_for_gmiec_report: "test"
+  patient: "patient"
 ---
 
 
@@ -23,6 +26,7 @@ library(formattable)
 #input_for_gmiec<-read.delim(file="C:/Users/guida/Desktop/work/GMIEC_shiny/Analysis_GMIEC_main_results.txt")
 ##clean the input for analysis
 colToselect<-paste(c("gene","drug","sad","score"),collapse="|")
+input_for_gmiec<-params$input_for_gmiec_report
 idx<-grep(input_for_gmiec[,1],pattern=colToselect)
 input_for_gmiec<-input_for_gmiec[idx,]
 
@@ -85,50 +89,4 @@ rownames(matrix_sadrugs2)<-rownames(matrix_sadrugs)
 
 ```{r message=F, echo=FALSE}
 heatmaply(matrix_sadrugs2,colors=PRGn,Colv=FALSE)
-```
-
-```{r message=F, echo=FALSE}
-### parse to create table with formattable
-
-#rmarkdown::render("index_html.Rmd",output_file="index.html",output_dir="./output_vis/")
-
-number_of_patients<-2:ncol(input_for_gmiec)
-
-#this is for sad score
-# for(i in number_of_patients){
-#   
-#   current_data_patient<-input_for_gmiec[,c(1,i)]
-#   sampleID<-colnames(current_data_patient)[2]
-#   
-#   output_file2<-paste("report",sampleID,"single.patient.html",sep=".")
-# 
-#   rmarkdown::render('./template_single_patient2.Rmd',
-#                   params = list(
-#                      patient=current_data_patient
-#                      ),output_file=output_file2,output_dir="./output_vis/")
-# 
-# 
-# }
-```
-
-```{r message=F, echo=FALSE}
-# number_of_patients<-2:ncol(input_for_gmiec)
-# 
-# for(i in number_of_patients){
-#   
-#   current_data_patient<-input_for_gmiec[,c(1,i)]
-#   sampleID<-colnames(current_data_patient)[2]
-# 
-#   output_file<-paste("report",sampleID,"html",sep=".")
-#   gc()
-#   rmarkdown::render('./template_single_patient.Rmd',
-#                   params = list(
-#                     patient=current_data_patient
-#                     ),output_file=output_file,output_dir="./output_vis/"
-#                   )
-#   rm(current_data_patient)
-#   rm(matrix_sad2)
-#   rm(matrix_sam2)
-#   rm(matrix_sadrugs2)
-# }
 ```
