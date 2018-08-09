@@ -6,7 +6,8 @@ output:
     theme: journal
 params:
   patient: "test"
-  value: x
+  name_patient: "NULL"
+  value: x  
 ---
 
 ```{r include= FALSE}
@@ -16,9 +17,8 @@ library(formattable)
 library(kableExtra)
 ```
 
-##this will fix the chunk duplicate error
 ```{r GlobalOptions, include= FALSE}
-options(knitr.duplicate.label = 'allow')
+options(knitr.duplicate.label = 'allow') ##this will fix the chunk duplicate error
 ```
 ### Welcome! This is the report of your analysis.
 
@@ -33,7 +33,14 @@ The table reported in this page contains the results for the current patient. Th
 
 ```{r message=F, echo=FALSE}
 tab_patient<-params$patient
+sample_name<-params$name_patient
 
+  string<-paste(paste("[",sample_name,sep=""),"]",sep="")
+  link_to_string<-paste(paste("(",paste(paste(paste(getwd(),"output_vis/",sep="/"),paste("report.",sample_name,".single.patient",sep=""),sep=""),".html",sep=""),sep=""),")",sep="")
+  
+  LinkPatient<-paste(string,link_to_string,sep="")
+
+  
 idx_number_drugs<-grep(tab_patient[,1],pattern="#drugs")
 idx_number_genes<-grep(tab_patient[,1],pattern="#genes")
 
@@ -53,7 +60,7 @@ tab_ndrugs_ngenes<-data.frame(Module = paste("Module",seq=1:length(number_drugs_
                                     number_of_genes=number_genes_table,
                               sad=tab_patient[idx_number_sad,2]
                               ,sam=tab_patient[idx_number_sam,2]
-                              ,drugs_score=tab_patient[idx_number_sadrugs,2])
+                              ,drugs_score=tab_patient[idx_number_sadrugs,2],module_link=rep(LinkPatient,length(number_drugs_table)))
 #put NA to 0
 
 tab_ndrugs_ngenes %>%

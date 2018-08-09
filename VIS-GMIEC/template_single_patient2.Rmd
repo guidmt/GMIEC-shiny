@@ -8,7 +8,7 @@ params:
   patient: 
   value: x
 ---
-  
+
 ### Welcome! This is the report of your analysis.
   
 ## Results for the current patient
@@ -19,7 +19,6 @@ You will be able to see
 - tables with the drugs in each module (links to DGIdb)
 
 ```{r message=F,include=TRUE, echo=FALSE, results='asis', warning=FALSE}
-
 
 tab_patient<-params$patient
 
@@ -36,24 +35,26 @@ df_genes_drugs<-data.frame(sad=tab_patient[idx_number_sad,2],genes=tab_patient[i
   genes_in_current_module<-df_genes_drugs[i,2]
   drugs_in_current_module<-df_genes_drugs[i,3]
   
-  subdf<-data.frame(module=paste("Module",i),sad=sad_in_current_module)
+  subdf<-data.frame(module=as.character(paste("Module",i)),sad=sad_in_current_module)
 
-print(subdf %>%
+ print( subdf %>%
   mutate(
     module = cell_spec(module,background = "orange", color = "white", align = "center"),
     sad = color_tile("orange4", "cyan4")(sad) 
   ) %>%
+    
   kable(escape = F) %>%
   kable_styling("hover", full_width = F) %>%
   column_spec(c(1,2), width = "4cm") %>%
   row_spec(1,align='left',color="black")%>%
   row_spec(c(0,1),color="black",align='center',font_size=30))
 
+
 cat('\n')
 
 #handle genes
 split_genes<-strsplit(as.character(genes_in_current_module),split=",")[[1]]
-
+if(!is.null(split_genes)){
 #i add na to reduce probles in creation matrix
 length(split_genes) <- prod(dim(matrix(split_genes, ncol = 8)))
 
@@ -75,6 +76,7 @@ print(kable(dfGenes) %>%
   kable_styling(bootstrap_options = "striped", full_width = F)%>%
   row_spec(1:nrow(dfGenes),color="black"))
 #dfGenes$website <- paste0("[", split_genes, "](https://", links_genes, ")")
+}
 
 cat('\n')
 
@@ -86,6 +88,8 @@ cat('\n')
 split_drugs<-strsplit(as.character(drugs_in_current_module),split="#")[[1]]
 split_drugs2<-unlist(strsplit(as.character(split_drugs),split="@"))
 
+if(!is.null(split_drugs2)){
+  
 length(split_drugs2) <- prod(dim(matrix(split_drugs2, ncol = 8)))
 
 
@@ -105,6 +109,8 @@ colnames(dfDrugs)<-NULL
 print(kable(dfDrugs) %>%
   kable_styling(bootstrap_options = "striped", full_width = F)%>%
   row_spec(1:nrow(dfDrugs),color="black"))
+
+}
 
 }
 ```

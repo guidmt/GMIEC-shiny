@@ -14,10 +14,11 @@ params:
 ### Welcome! This is the report of your analysis.
 
 Features:
+- Visualization of groups of patients by scores (SAD, SAM, SAD drugs) 
+- principal component analysis results
+- Visualization of the single patient results
 
-- Visualization of groups of patients by score sad, 
-- Each cell of the heatmaps contains a link, to explore the data of a patient (genes in module, drugs in module etc.)
-
+# Navigation bar {.tabset}
 
 ```{r include= FALSE}
 library(heatmaply)
@@ -89,4 +90,55 @@ rownames(matrix_sadrugs2)<-rownames(matrix_sadrugs)
 
 ```{r message=F, echo=FALSE}
 heatmaply(matrix_sadrugs2,colors=PRGn,Colv=FALSE)
+```
+
+# Navigation bar principal component analysis {.tabset}
+
+## PCA - matrix SAD scores
+Results of the principal component analysis of the patients and pca-biplot variable-individuals of SAD scores.
+```{r message=F, echo=FALSE}
+library(psych)
+library("factoextra")
+
+res.pc1<-prcomp(matrix_sad2[,-1])
+
+fviz_pca_ind(res.pc1,col.ind="cos2")
+fviz_pca_biplot(res.pc1,repel=TRUE)
+```
+
+## PCA - matrix SAM scores
+Results of the principal component analysis of the patients and pca-biplot variable-individuals of SAM scores.
+```{r message=F, echo=FALSE}
+library(psych)
+library("factoextra")
+
+res.pc2<-prcomp(matrix_sam2[,-1])
+
+fviz_pca_ind(res.pc2,col.ind="cos2")
+fviz_pca_biplot(res.pc2,repel=TRUE)
+```
+
+## PCA - matrix SAD drugs scores
+Results of the principal component analysis of the patients and pca-biplot variable-individuals of SAD drugs scores.
+```{r message=F, echo=FALSE}
+library(psych)
+library("factoextra")
+
+res.pc3<-prcomp(matrix_sadrugs2[,-1])
+
+fviz_pca_ind(res.pc3,col.ind="cos2")
+fviz_pca_biplot(res.pc3,repel=TRUE)
+```
+
+# Visualization of the single patient results {.tabset .tabset-fade .tabset-dropdown}
+
+```{r message=F, echo=FALSE, results='asis',include=TRUE}
+for (i in rownames(matrix_sad)){
+  
+  string<-paste(paste("[",paste(i," |",sep=""),sep=""),"]",sep="")
+  link_to_string<-paste(paste("(",paste(paste(paste(getwd(),"output_vis/",sep="/"),paste("report.",i,sep=""),sep=""),".html",sep=""),sep=""),")",sep="")
+  cat(paste(string,link_to_string,sep=""))
+  cat("\n")
+
+}
 ```
