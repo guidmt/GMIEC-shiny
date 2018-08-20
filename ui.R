@@ -93,19 +93,23 @@ ui <- dashboardPage(
       tabItem(tabName = "fd_gmiec2",
               fluidRow(
                 box(title="GMIEC - FD first dataset",status="primary",solidHeader=TRUE,collapsible =TRUE,
-                    fileInput("ge_dataset", "Upload gene-expression data",buttonLabel=icon("folder-open")),
+                    fileInput("fd_dataset1", "Upload the first dataset",buttonLabel=icon("folder-open")),
                     checkboxInput("cb_ge", label = "gene-expression", value = FALSE),
                     checkboxInput("cb_cnv", label = "copy-number", value = FALSE),
                     checkboxInput("cb_meth", label = "methylation", value = FALSE),
                     checkboxInput("cb_mutation", label = "mutation", value = FALSE)
                     ),
               box(title="GMIEC - FD second dataset",status="primary",solidHeader=TRUE,collapsible =TRUE,
-                  fileInput("ge_dataset2", "Upload gene-expression data",buttonLabel=icon("folder-open")),
+                  fileInput("fd_dataset2", "Upload the second dataset",buttonLabel=icon("folder-open")),
                   checkboxInput("cb_ge2", label = "gene-expression", value = FALSE),
                   checkboxInput("cb_cnv2", label = "copy-number", value = FALSE),
                   checkboxInput("cb_meth2", label = "methylation", value = FALSE),
                   checkboxInput("cb_mutation2", label = "mutation", value = FALSE)
               ),
+              box(title="GMIEC - FD clinical dataset",status="primary",solidHeader=TRUE,collapsible =TRUE,
+                  fileInput("fd_clinical_dataset", "Upload clinical data",buttonLabel=icon("folder-open"))
+              )
+              ,
               box(title="GMIEC - FD, Input annotation",status="warning",solidHeader=TRUE,collapsible =TRUE,
                   fileInput("fd_annotation_dataset", "Upload annotation data",buttonLabel=icon("folder")),
                   numericInput("fd_distance","distance (bp)",value=20000)
@@ -114,7 +118,7 @@ ui <- dashboardPage(
                   fileInput("fd_drugs_dataset", "Upload drugs-genes data",buttonLabel=icon("folder-open"))
               ),
               box(title="GMIEC - FD, Type of Analysis",status="danger",solidHeader=TRUE,collapsible =TRUE,
-                  fileInput("bed_file", "Upload the bed file - for 1,2",buttonLabel=icon("folder")),
+                  fileInput("fd_bed_file", "Upload the bed file - for 1,2",buttonLabel=icon("folder")),
                   checkboxInput("fd_genes_annotated","1) Use only the genes annotated",FALSE),
                   checkboxInput("fd_genes_annotated_TF","2) Use only the genes annotated and explore the TF",FALSE),
                   textInput("fd_name_tf","Insert name of TF - only for 3",value=""),

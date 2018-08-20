@@ -412,6 +412,412 @@ function(input,output,session) {
   }#end function obeserve event
  ) #end observed event1
   
+  
+  #########################################
+  # FD-GMIEC
+  #########################################
+  
+  
+  gmiec_results<-observeEvent(input$run_gmiec,{
+    
+    ###
+    ### Upload experiment datas
+    ###
+    
+    ##2
+    fd_dataset1_read<-reactive({
+      fd_dataset_infile1<- input$fd_dataset1
+      read.table(file=fd_dataset_infile1$datapath,sep="\t",stringsAsFactors=FALSE,header=T,quote=NULL,fill=F) #read empty values with 0 
+    })
+    
+    print(paste("Load first dataset data",dim(fd_dataset1_read())))
+    
+    ##3
+    fd_dataset2_read<-reactive({
+      fd_dataset_infile2<-input$cnv_dataset
+      read.table(file=fd_dataset_infile2$datapath,sep="\t",stringsAsFactors=F,header=T,quote=NULL,fill=T)
+    })
+    
+    input_clinical_fd<-reactive({
+      infile6<-input$clinical_dataset
+      read.table(file=infile6$datapath,sep="\t",stringsAsFactors=F,quote=NULL,header=T,fill=T)
+    })
+    
+    
+    ##7
+    input_clusters_fd<-reactive({
+      infile7_fd<-input$fd_clusters
+    })
+    
+    
+    cb_ge <- renderPrint({ input$cb_ge2 })
+    cb_cnv <- renderPrint({ input$cb_cnv2 })
+    cb_meth <- renderPrint({ input$cb_meth2 })
+    cb_mutation <- renderPrint({ input$cb_mutation2 })
+    
+    cb_ge2 <- renderPrint({ input$cb_ge })
+    cb_cnv2 <- renderPrint({ input$cb_cnv })
+    cb_meth2 <- renderPrint({ input$cb_meth })
+    cb_mutation2 <- renderPrint({ input$cb_mutation })
+    
+    
+    print(paste("Number Clusters",input_clusters_fd()))
+    
+    
+    ###
+    ### Input annotation
+    ###
+    
+    genes_annotated_fv_fd<-renderText({ input$fd_genes_annotated})
+    genes_annotated_TF_fv_fd<-renderText({ input$fd_genes_annotated_TF})
+    
+    #if you want use a bed file then are required an annotation file,max-gap, bed file
+    if(genes_annotated_fv_fd()==TRUE | genes_annotated_TF_fv_fd()==TRUE){
+      annotation_dataset<-reactive({
+        infile9<-input$fd_annotation_dataset
+        read.table(file=infile9$datapath,sep="\t",stringsAsFactors=F,header=T,fill=T)
+      })
+      
+      print(paste("Load annotation data",dim(annotation_dataset())))
+      
+    }
+    
+    if(genes_annotated_fv()==TRUE | genes_annotated_TF_fv()==TRUE){
+      
+      distance_max<-input$fd_distance
+      print(paste("This is the distance",distance_max))
+      
+    }
+    
+    if(genes_annotated_fv()==TRUE | genes_annotated_TF_fv()==TRUE){
+      
+      bed_dataset<-reactive({
+        infile_bed<-input$fd_bed_file
+        read.table(file=infile_bed$datapath,sep="\t",stringsAsFactors=F,header=T,fill=T)
+      })   
+      print(paste("Upload bed file",dim(bed_dataset())))
+    }  
+    
+    ###
+    ### Input Drugs
+    ###
+    
+    drugs_for_analysis<-reactive({
+      infile1<-input$fd_drugs_dataset
+      read.table(file=infile1$datapath,sep="\t",stringsAsFactors=F,header=T,fill=T)
+    })
+    
+    print(paste("Upload drugs file",dim(drugs_for_analysis())))
+    
+    ###
+    ### Input Type of analysis
+    ###
+    input_list_of_genes_test<-renderText({ input$list_of_genes_fd})
+    
+    #if the user want use a custom list, upload it!  
+    if(input_list_of_genes_test()==TRUE){
+      
+      list_genes_for_analysis<-reactive({
+        infile_LG<-input$fd_list_of_genes2
+        read.table(file=infile_LG$datapath,sep="\t",stringsAsFactors=F,header=T,fill=T)
+        
+      })
+      
+      print(paste("Upload list genes file",dim(list_genes_for_analysis())))
+      
+    }
+    
+    
+    genes_annotated_TF2_test<-renderText({ input$fd_genes_annotated_TF})
+    
+    #if the use want evalute the impact of TF
+    if(genes_annotated_TF2_test()==TRUE) {
+      
+      # extract the gene expression data for the current TF
+      fd_dataset1_read_tf<-fd_dataset1_read()[fd_dataset1_read()[,1]== input$fd_name_tf,]
+      fd_dataset2_read_tf<-fd_dataset2_read()[fd_dataset2_read()[,1]==input$fd_name_tf,]
+    }
+    
+    all_genes_test<-renderText({ input$fd_all_genes})
+    
+    #if the use want use the entire list of genes
+    if(all_genes_test()==TRUE) {
+      
+      list_genes_dataset<-unique(c(fd_dataset1_read()[,1],fd_dataset2_read()[,1]))
+      all_genes_for_analysis<-fd_list_genes_dataset
+      print(length(all_genes_for_analysis))
+      
+    } 
+    
+    output_file<-input$output_file_fd
+    #
+    # Genes annotated and not TF
+    #  
+    if(genes_annotated_fv()==TRUE){
+      print("run annotation")
+      
+      print(dim(bed_dataset()))
+      print(dim(annotation_dataset()))
+      
+      showNotification("Start annotation!",type="message")
+      
+      list_genes_for_analysis<-internal_annotation(bed_dataset(),annotation_dataset(),distance_max)
+      
+      print(length(list_genes_for_analysis))  
+      
+      fd_dataset1_read_ok<-fd_dataset1_read()
+      fd_dataset2_read_ok<-fd_dataset2_read()
+      fd_drugs_for_analysis2<-drugs_for_analysis()
+      fd_input_clinical2<-input_clinical()
+      
+      showNotification("Start annotation! wait...",type="message")
+      
+      list_genes_for_analysis<-internal_annotation(bed_dataset(),annotation_dataset(),distance_max)
+      
+      fd_dataset1_read_selected<-fd_dataset1_read_ok[fd_dataset1_read_ok[,1]%in%list_genes_for_analysis,]
+      fd_dataset2_read_selected<-fd_dataset2_read_ok[fd_dataset2_read_ok[,1]%in%list_genes_for_analysis,]
+
+      print("run gmiec!")
+      
+      output_gmiec<-reactive({run_GMIEC(
+        
+        input_dataset1=fd_dataset1_read_ok,
+        input_dataset2=fd_dataset2_read_ok,
+        check_exp=cb_ge,
+        check_cnv=cb_cnv,
+        check_meth=cb_meth,
+        check_mut=cb_mut,
+        check_exp2=cb_ge2,
+        check_cnv2=cb_cnv2,
+        check_meth2=cb_meth2,
+        check_mut2=cb_mut2,
+        tabDrugs=drugs_for_analysis2,
+        input_clinical=input_clinical2,
+        parameter_discr=c("1.5;1;0.5"),
+        clusters=input_clusters(),
+        genes_annotated_TF_fv=FALSE
+        
+      )})
+      
+      if(!is.null(output_gmiec())){
+        
+        showNotification("You can download the results of analysis!",type="message")
+        print("here your output")
+        print(dim(output_gmiec()))  
+        print(output_file)
+        
+        output_gmiec2<-output_gmiec()
+        print(dim(output_gmiec2))
+        output$downloadData <- downloadHandler(
+          
+          filename = paste(output_file,".txt",sep="")
+          ,
+          content = function(file) {
+            write.table(t(output_gmiec2[-1,]),file,sep="\t",row.names=T,col.names=T,quote=F)
+          }
+        )
+        
+      }
+      
+    } 
+    
+    
+    #
+    # Genes annotated and  TF
+    #  
+    
+    if(genes_annotated_TF_fv()==TRUE){
+      print("run annotation")
+      print(output_file)
+      
+      showNotification("Start annotation!",type="message")
+      fd_dataset1_read_ok<-fd_dataset1_read()
+      fd_dataset2_read_ok<-fd_dataset2_read()
+      fd_drugs_for_analysis2<-drugs_for_analysis()
+      fd_input_clinical2<-input_clinical()
+      
+      showNotification("Start annotation! wait...",type="message")
+      
+      list_genes_for_analysis<-internal_annotation(bed_dataset(),annotation_dataset(),distance_max)
+      
+      print(length(list_genes_for_analysis))  
+      
+      fd_dataset1_read_selected<-fd_dataset1_read_ok[fd_dataset1_read_ok[,1]%in%list_genes_for_analysis,]
+      fd_dataset2_read_selected<-fd_dataset2_read_ok[fd_dataset2_read_ok[,1]%in%list_genes_for_analysis,]
+
+      print(dim(input_MUTATION_selected))
+      print("run gmiec!")
+      
+      output_gmiec<-reactive({run_GMIEC(
+        
+        input_dataset1=fd_dataset1_read_ok,
+        input_dataset2=fd_dataset2_read_ok,
+        check_exp=cb_ge,
+        check_cnv=cb_cnv,
+        check_meth=cb_meth,
+        check_mut=cb_mut,
+        check_exp2=cb_ge2,
+        check_cnv2=cb_cnv2,
+        check_meth2=cb_meth2,
+        check_mut2=cb_mut2,              
+        tabDrugs=drugs_for_analysis2,
+        input_clinical=input_clinical2,
+        parameter_discr=c("1.5;1;0.5"),
+        input_GE_tf=input_GE_tf,
+        input_CNV_tf=input_CNV_tf,
+        input_MUTATION_tf=input_MUTATION_tf,
+        input_METH_tf=input_METH_tf,
+        clusters=input_clusters(),
+        genes_annotated_TF_fv=TRUE
+        
+      )})
+      
+      
+      if(!is.null(output_gmiec())){
+        
+        showNotification("You can download the results of analysis!",type="message")
+        print("here your output")
+        print(dim(output_gmiec()))  
+        print(output_file)
+        
+        output_gmiec2<-output_gmiec()
+        print(dim(output_gmiec2))
+        output$downloadData <- downloadHandler(
+          
+          filename = paste(output_file,".txt",sep="")
+          ,
+          content = function(file) {
+            write.table(t(output_gmiec2[-1,]),file,sep="\t",row.names=T,col.names=T,quote=F)
+          }
+        )
+        
+      }
+      
+    }
+    
+    #
+    # Genes list 
+    #  
+    
+    if(input_list_of_genes_test()==TRUE) {
+      
+      subsetAnnoDF_unique<-list_genes_for_analysis()[,1]
+      
+      fd_dataset1_read_ok<-fd_dataset1_read()
+      fd_dataset2_read_ok<-fd_dataset2_read()
+      fd_input_clinical_ok<-input_clinical()
+      fd_drugs_for_analysis2<-drugs_for_analysis()
+      fd_input_clinical2<-input_clinical()
+      
+      fd_dataset1_read_selected<-fd_dataset1_read_ok[fd_dataset1_read_ok[,1]%in%subsetAnnoDF_unique,]
+      fd_dataset2_read_selected<-fd_dataset2_read_ok[fd_dataset2_read_ok[,1]%in%subsetAnnoDF_unique,]
+
+      print("run gmiec!")
+      
+      output_gmiec<-reactive({run_GMIEC(
+        
+        input_dataset1=fd_dataset1_read_ok,
+        input_dataset2=fd_dataset2_read_ok,
+        check_exp=cb_ge,
+        check_cnv=cb_cnv,
+        check_meth=cb_meth,
+        check_mut=cb_mut,
+        check_exp2=cb_ge2,
+        check_cnv2=cb_cnv2,
+        check_meth2=cb_meth2,
+        check_mut2=cb_mut2,       
+        tabDrugs=drugs_for_analysis2,
+        input_clinical=input_clinical2,
+        parameter_discr=c("1.5;1;0.5"),
+        clusters=input_clusters(),
+        genes_annotated_TF_fv=FALSE
+        
+      )})
+      
+      if(!is.null(output_gmiec())){
+        
+        showNotification("You can download the results of analysis!",type="message")
+        print("here your output")
+        print(dim(output_gmiec()))  
+        print(output_file)
+        
+        output_gmiec2<-output_gmiec()
+        print(dim(output_gmiec2))
+        output$downloadData <- downloadHandler(
+          
+          filename = paste(output_file,".txt",sep="")
+          ,
+          content = function(file) {
+            write.table(t(output_gmiec2[-1,]),file,sep="\t",row.names=T,col.names=T,quote=F)
+          }
+        )
+        
+      }
+      
+    }
+    
+    #
+    # Genes list  all
+    #  
+    
+    if(all_genes_test()==TRUE) {
+      
+      fd_dataset1_read_ok<-fd_dataset1_read()
+      fd_dataset2_read_ok<-fd_dataset2_read()
+      fd_input_clinical_ok<-input_clinical()
+      fd_drugs_for_analysis2<-drugs_for_analysis()
+      fd_input_clinical<-input_clinical()
+
+      fd_dataset1_read_selected<-fd_dataset1_read_ok[fd_dataset1_read_ok[,1]%in%all_genes_for_analysis,]
+      fd_dataset2_selected<-fd_dataset2_read_ok[fd_dataset2_read_ok[,1]%in%all_genes_for_analysis,]
+
+      print("run gmiec!")
+      
+      output_gmiec<-reactive({run_GMIEC(
+        
+        input_dataset1=fd_dataset1_read_ok,
+        input_dataset2=fd_dataset2_read_ok,
+        check_exp=cb_ge,
+        check_cnv=cb_cnv,
+        check_meth=cb_meth,
+        check_mut=cb_mut,
+        check_exp2=cb_ge2,
+        check_cnv2=cb_cnv2,
+        check_meth2=cb_meth2,
+        check_mut2=cb_mut2,
+        tabDrugs=drugs_for_analysis2,
+        input_clinical=input_clinical2,
+        parameter_discr=c("1.5;1;0.5"),
+        clusters=input_clusters(),
+        genes_annotated_TF_fv=FALSE
+        
+      )})
+      
+      if(!is.null(output_gmiec())){
+        
+        showNotification("You can download the results of analysis!",type="message")
+        print("here your output")
+        print(dim(output_gmiec()))  
+        print(output_file)
+        
+        output_gmiec2<-output_gmiec()
+        print(dim(output_gmiec2))
+        output$downloadData <- downloadHandler(
+          
+          filename = paste(output_file,".txt",sep="")
+          ,
+          content = function(file) {
+            write.table(t(output_gmiec2[-1,]),file,sep="\t",row.names=T,col.names=T,quote=F)
+          }
+        )
+        
+      }
+      
+    }
+  }#end function obeserve event
+  ) #end observed event1
+  
+  
   #########################################
   # VIS-GMIEC
   #########################################
