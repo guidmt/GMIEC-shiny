@@ -1,8 +1,5 @@
 run_GMIEC_fd<-function(input_dataset1,input_dataset2,check_exp,check_exp2,check_cnv,check_cnv2,check_meth,check_meth2,check_mut,check_mut2,tabDrugs,input_clinical,parameter_discr,genes_annotated_TF_fv,input_GE_tf=NA,input_CNV_tf=NA,input_MUTATION_tf=NA,input_METH_tf=NA,clusters){
   
-  input_dataset1
-  input_dataset2
-  
   withProgress(message="Start analysis!",min=0,max=1,{
     
     Sys.sleep(0.25)
@@ -16,7 +13,7 @@ run_GMIEC_fd<-function(input_dataset1,input_dataset2,check_exp,check_exp2,check_
       return(x3)
       
     }
-    print(dim(input_MUTATION_selected))
+
     #check columns of the genes
     colnames(input_dataset1)[1]<-"genesID"
     colnames(input_dataset2)[1]<-"genesID"
@@ -161,14 +158,46 @@ run_GMIEC_fd<-function(input_dataset1,input_dataset2,check_exp,check_exp2,check_
         
         print("Step5: Find rules for patient")
         
-        results_for_tf2<-rules_for_tf(dfPatientForAnalysis=dfPatientForAnalysis,se_patient_selection=se_patient_selection,ge_d=ge_d,cnv_d=cnv_d,meth_d=meth_d,input_GE_tf=input_GE_tf,input_CNV_tf=input_CNV_tf,input_METH_tf=input_METH_tf,input_MUTATION_tf=input_MUTATION_tf,MUT_current_patient=MUT_current_patient)
+        
+        results_for_tf2<-rules_for_tf_fd(dfPatientForAnalysis=dfPatientForAnalysis,
+                                         se_patient_selection=se_patient_selection,
+                                         ge_d=ge_d,
+                                         cnv_d=cnv_d,
+                                         meth_d=meth_d,
+                                         check_exp=check_exp,
+                                         check_cnv=check_cnv,
+                                         check_meth=check_meth,
+                                         check_mut=check_mut,
+                                         check_exp2=check_exp2,
+                                         check_cnv2=check_cnv2,
+                                         check_meth2=check_meth2,
+                                         check_mut2=check_mut2,
+                                         input_GE_tf=input_GE_tf,
+                                         input_CNV_tf=input_CNV_tf,
+                                         input_METH_tf=input_METH_tf,
+                                         input_MUTATION_tf=input_MUTATION_tf,
+                                         MUT_current_patient=MUT_current_patient)
         
         dfPatientForAnalysis_GAC<-results_for_tf2[[1]]
         col_relTF<-results_for_tf2[[2]]
         
       } else {
         
-        results_for_tf2<-rules_notfor_tf(dfPatientForAnalysis=dfPatientForAnalysis,se_patient_selection=se_patient_selection,ge_d=ge_d,cnv_d=cnv_d,meth_d=meth_d,MUT_current_patient=MUT_current_patient)
+        results_for_tf2<-rules_notfor_tf_fd(dfPatientForAnalysis=dfPatientForAnalysis,
+                                            se_patient_selection=se_patient_selection,
+                                            ge_d=ge_d,
+                                            cnv_d=cnv_d,
+                                            meth_d=meth_d,
+                                            MUT_current_patient=MUT_current_patient,
+                                            check_exp=check_exp,
+                                            check_cnv=check_cnv,
+                                            check_meth=check_meth,
+                                            check_mut=check_mut,
+                                            check_exp2=check_exp2,
+                                            check_cnv2=check_cnv2,
+                                            check_meth2=check_meth2,
+                                            check_mut2=check_mut2)
+        
         dfPatientForAnalysis_GAC<-results_for_tf2[[1]] #this a data.frame with the values of omics experiments and binary rules
         col_relTF<-results_for_tf2[[2]] 
         #col_relTF

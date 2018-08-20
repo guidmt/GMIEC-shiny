@@ -1,14 +1,15 @@
 options(shiny.maxRequestSize=100*1024^2)
 
-source("./src/create_output.R", local = TRUE)
-source("./src/engine_all_dataset.R", local = TRUE)
-source("./src/filter_ge.R", local = TRUE)
-source("./src/internal_annotation.R", local = TRUE)
-source("./src/rules_for_tf.R", local = TRUE)
-source("./src/rules_fornot_tf.R", local = TRUE)
-source("./src/GMIEC.R", local = TRUE)
-source("./src/create_report.R", local = TRUE)
-
+source("./src/create_output.R", local = FALSE)
+source("./src/engine_all_dataset.R", local = FALSE)
+source("./src/filter_ge.R", local = FALSE)
+source("./src/internal_annotation.R", local = FALSE)
+source("./src/rules_for_tf.R", local = FALSE)
+source("./src/rules_fornot_tf.R", local = FALSE)
+source("./src/GMIEC.R", local = FALSE)
+source("./src/create_report.R", local = FALSE)
+source("./src/run_gmiec_fd.R")
+source("./src/rules_for_tf_fd.R")
 
 function(input,output,session) { 
   
@@ -140,7 +141,7 @@ function(input,output,session) {
       input_CNV_tf<-input_CNV()[input_CNV()[,1]==input$name_tf,]
       input_MUTATION_tf<-input_MUT()[input_MUT()[,1]==input$name_tf,]
       input_METH_tf<-input_METH()[input_METH()[,1]==input$name_tf,]
-       }
+    }
   
   all_genes_test<-renderText({ input$all_genes})
   
@@ -412,13 +413,16 @@ function(input,output,session) {
   }#end function obeserve event
  ) #end observed event1
   
-  
-  #########################################
+  ############################################################
+  ############################################################
+  ############################################################
   # FD-GMIEC
-  #########################################
+  ############################################################
+  ############################################################
+  ############################################################
   
   
-  gmiec_results<-observeEvent(input$run_gmiec,{
+  gmiec_results<-observeEvent(input$fd_run_gmiec,{
     
     ###
     ### Upload experiment datas
@@ -434,12 +438,12 @@ function(input,output,session) {
     
     ##3
     fd_dataset2_read<-reactive({
-      fd_dataset_infile2<-input$cnv_dataset
+      fd_dataset_infile2<-input$fd_dataset2
       read.table(file=fd_dataset_infile2$datapath,sep="\t",stringsAsFactors=F,header=T,quote=NULL,fill=T)
     })
     
     input_clinical_fd<-reactive({
-      infile6<-input$clinical_dataset
+      infile6<-input$fd_clinical_dataset
       read.table(file=infile6$datapath,sep="\t",stringsAsFactors=F,quote=NULL,header=T,fill=T)
     })
     
@@ -450,16 +454,16 @@ function(input,output,session) {
     })
     
     
-    cb_ge <- renderPrint({ input$cb_ge2 })
-    cb_cnv <- renderPrint({ input$cb_cnv2 })
-    cb_meth <- renderPrint({ input$cb_meth2 })
-    cb_mutation <- renderPrint({ input$cb_mutation2 })
-    
-    cb_ge2 <- renderPrint({ input$cb_ge })
-    cb_cnv2 <- renderPrint({ input$cb_cnv })
-    cb_meth2 <- renderPrint({ input$cb_meth })
-    cb_mutation2 <- renderPrint({ input$cb_mutation })
-    
+    cb_ge_ok <- renderText({ input$cb_ge })
+    cb_cnv_ok <- renderText({ input$cb_cnv })
+    cb_meth_ok <- renderText({ input$cb_meth })
+    cb_mutation_ok <- renderText({ input$cb_mutation })
+
+    cb_ge2_ok <- renderText({ input$cb_ge2 })
+    cb_cnv2_ok <- renderText({ input$cb_cnv2 })
+    cb_meth2_ok <- renderText({ input$cb_meth2})
+    cb_mutation2_ok <- renderText({ input$cb_mutation2 })
+
     
     print(paste("Number Clusters",input_clusters_fd()))
     
@@ -482,14 +486,14 @@ function(input,output,session) {
       
     }
     
-    if(genes_annotated_fv()==TRUE | genes_annotated_TF_fv()==TRUE){
+    if(genes_annotated_fv_fd()==TRUE | genes_annotated_TF_fv_fd()==TRUE){
       
       distance_max<-input$fd_distance
       print(paste("This is the distance",distance_max))
       
     }
     
-    if(genes_annotated_fv()==TRUE | genes_annotated_TF_fv()==TRUE){
+    if(genes_annotated_fv_fd()==TRUE | genes_annotated_TF_fv_fd()==TRUE){
       
       bed_dataset<-reactive({
         infile_bed<-input$fd_bed_file
@@ -533,9 +537,62 @@ function(input,output,session) {
     #if the use want evalute the impact of TF
     if(genes_annotated_TF2_test()==TRUE) {
       
+      print(genes_annotated_TF2_test())
+      
+      
+      if(cb_ge_ok()==TRUE){
+        print("fatto")
       # extract the gene expression data for the current TF
-      fd_dataset1_read_tf<-fd_dataset1_read()[fd_dataset1_read()[,1]== input$fd_name_tf,]
-      fd_dataset2_read_tf<-fd_dataset2_read()[fd_dataset2_read()[,1]==input$fd_name_tf,]
+        input_GE_tf<-fd_dataset1_read()[fd_dataset1_read()[,1]== input$fd_name_tf,]
+        print("i created input ge tf")
+        print(dim(input_GE_tf))
+      }
+      
+      if(cb_ge2_ok()==TRUE){
+      input_GE_tf<-fd_dataset2_read()[fd_dataset2_read()[,1]==input$fd_name_tf,]
+      print(dim(input_GE_tf))
+      
+      }
+      
+      ##handle CNV
+      
+      if(cb_cnv_ok()==TRUE){
+        # extract the gene expression data for the current TF
+        input_CNV_tf<-fd_dataset1_read()[fd_dataset1_read()[,1]== input$fd_name_tf,]
+        print(dim(input_CNV_tf))
+        
+      }
+      
+      if(cb_cnv2_ok()==TRUE){
+        input_CNV_tf<-fd_dataset2_read()[fd_dataset2_read()[,1]==input$fd_name_tf,]
+        print(dim(input_CNV_tf))
+        
+      }
+      
+      ##handle METH
+      
+      if(cb_meth_ok()==TRUE){
+        # extract the gene expression data for the current TF
+        input_METH_tf<-fd_dataset1_read()[fd_dataset1_read()[,1]== input$fd_name_tf,]
+        print(dim(input_METH_tf))
+        
+      } 
+      
+      if(cb_meth2_ok()==TRUE){
+        input_METH_tf<-fd_dataset2_read()[fd_dataset2_read()[,1]==input$fd_name_tf,]
+        print(dim(input_METH_tf))
+        
+      }
+      
+      if(cb_mutation_ok()==TRUE){
+        # extract the gene expression data for the current TF
+        input_MUTATION_tf<-input_MUT()[input_MUT()[,1]==input$name_tf,]
+      } 
+      
+      if(cb_mutation2_ok()==TRUE){
+        input_MUTATION_tf<-input_MUT()[input_MUT()[,1]==input$name_tf,]
+      }
+      
     }
     
     all_genes_test<-renderText({ input$fd_all_genes})
@@ -550,10 +607,12 @@ function(input,output,session) {
     } 
     
     output_file<-input$output_file_fd
+    
+    
     #
     # Genes annotated and not TF
     #  
-    if(genes_annotated_fv()==TRUE){
+    if(genes_annotated_fv_fd()==TRUE){
       print("run annotation")
       
       print(dim(bed_dataset()))
@@ -568,7 +627,7 @@ function(input,output,session) {
       fd_dataset1_read_ok<-fd_dataset1_read()
       fd_dataset2_read_ok<-fd_dataset2_read()
       fd_drugs_for_analysis2<-drugs_for_analysis()
-      fd_input_clinical2<-input_clinical()
+      fd_input_clinical2<-input_clinical_fd()
       
       showNotification("Start annotation! wait...",type="message")
       
@@ -579,22 +638,22 @@ function(input,output,session) {
 
       print("run gmiec!")
       
-      output_gmiec<-reactive({run_GMIEC(
+      output_gmiec<-reactive({run_GMIEC_fd(
         
         input_dataset1=fd_dataset1_read_ok,
         input_dataset2=fd_dataset2_read_ok,
-        check_exp=cb_ge,
-        check_cnv=cb_cnv,
-        check_meth=cb_meth,
-        check_mut=cb_mut,
-        check_exp2=cb_ge2,
-        check_cnv2=cb_cnv2,
-        check_meth2=cb_meth2,
-        check_mut2=cb_mut2,
-        tabDrugs=drugs_for_analysis2,
-        input_clinical=input_clinical2,
+        check_exp=cb_ge_ok(),
+        check_cnv=cb_cnv_ok(),
+        check_meth=cb_meth_ok(),
+        check_mut=cb_mutation_ok(),
+        check_exp2=cb_ge2_ok(),
+        check_cnv2=cb_cnv2_ok(),
+        check_meth2=cb_meth2_ok(),
+        check_mut2=cb_mutation2_ok(),
+        tabDrugs=fd_drugs_for_analysis2,
+        input_clinical=fd_input_clinical2,
         parameter_discr=c("1.5;1;0.5"),
-        clusters=input_clusters(),
+        clusters=input_clusters_fd(),
         genes_annotated_TF_fv=FALSE
         
       )})
@@ -608,7 +667,7 @@ function(input,output,session) {
         
         output_gmiec2<-output_gmiec()
         print(dim(output_gmiec2))
-        output$downloadData <- downloadHandler(
+        output$fd_downloadData <- downloadHandler(
           
           filename = paste(output_file,".txt",sep="")
           ,
@@ -626,7 +685,8 @@ function(input,output,session) {
     # Genes annotated and  TF
     #  
     
-    if(genes_annotated_TF_fv()==TRUE){
+    if(genes_annotated_TF2_test()==TRUE){
+      
       print("run annotation")
       print(output_file)
       
@@ -634,7 +694,7 @@ function(input,output,session) {
       fd_dataset1_read_ok<-fd_dataset1_read()
       fd_dataset2_read_ok<-fd_dataset2_read()
       fd_drugs_for_analysis2<-drugs_for_analysis()
-      fd_input_clinical2<-input_clinical()
+      fd_input_clinical2<-input_clinical_fd()
       
       showNotification("Start annotation! wait...",type="message")
       
@@ -645,29 +705,28 @@ function(input,output,session) {
       fd_dataset1_read_selected<-fd_dataset1_read_ok[fd_dataset1_read_ok[,1]%in%list_genes_for_analysis,]
       fd_dataset2_read_selected<-fd_dataset2_read_ok[fd_dataset2_read_ok[,1]%in%list_genes_for_analysis,]
 
-      print(dim(input_MUTATION_selected))
       print("run gmiec!")
       
-      output_gmiec<-reactive({run_GMIEC(
+      output_gmiec<-reactive({run_GMIEC_fd(
         
         input_dataset1=fd_dataset1_read_ok,
         input_dataset2=fd_dataset2_read_ok,
-        check_exp=cb_ge,
-        check_cnv=cb_cnv,
-        check_meth=cb_meth,
-        check_mut=cb_mut,
-        check_exp2=cb_ge2,
-        check_cnv2=cb_cnv2,
-        check_meth2=cb_meth2,
-        check_mut2=cb_mut2,              
-        tabDrugs=drugs_for_analysis2,
-        input_clinical=input_clinical2,
+        check_exp=cb_ge_ok(),
+        check_cnv=cb_cnv_ok(),
+        check_meth=cb_meth_ok(),
+        check_mut=cb_mutation_ok(),
+        check_exp2=cb_ge2_ok(),
+        check_cnv2=cb_cnv2_ok(),
+        check_meth2=cb_meth2_ok(),
+        check_mut2=cb_mutation2_ok(),
+        tabDrugs=fd_drugs_for_analysis2,
+        input_clinical=fd_input_clinical2,
         parameter_discr=c("1.5;1;0.5"),
         input_GE_tf=input_GE_tf,
         input_CNV_tf=input_CNV_tf,
         input_MUTATION_tf=input_MUTATION_tf,
         input_METH_tf=input_METH_tf,
-        clusters=input_clusters(),
+        clusters=input_clusters_fd(),
         genes_annotated_TF_fv=TRUE
         
       )})
@@ -682,7 +741,7 @@ function(input,output,session) {
         
         output_gmiec2<-output_gmiec()
         print(dim(output_gmiec2))
-        output$downloadData <- downloadHandler(
+        output$fd_downloadData <- downloadHandler(
           
           filename = paste(output_file,".txt",sep="")
           ,
@@ -705,31 +764,30 @@ function(input,output,session) {
       
       fd_dataset1_read_ok<-fd_dataset1_read()
       fd_dataset2_read_ok<-fd_dataset2_read()
-      fd_input_clinical_ok<-input_clinical()
       fd_drugs_for_analysis2<-drugs_for_analysis()
-      fd_input_clinical2<-input_clinical()
+      fd_input_clinical2<-input_clinical_fd()
       
       fd_dataset1_read_selected<-fd_dataset1_read_ok[fd_dataset1_read_ok[,1]%in%subsetAnnoDF_unique,]
       fd_dataset2_read_selected<-fd_dataset2_read_ok[fd_dataset2_read_ok[,1]%in%subsetAnnoDF_unique,]
 
       print("run gmiec!")
       
-      output_gmiec<-reactive({run_GMIEC(
+      output_gmiec<-reactive({run_GMIEC_fd(
         
         input_dataset1=fd_dataset1_read_ok,
         input_dataset2=fd_dataset2_read_ok,
-        check_exp=cb_ge,
-        check_cnv=cb_cnv,
-        check_meth=cb_meth,
-        check_mut=cb_mut,
-        check_exp2=cb_ge2,
-        check_cnv2=cb_cnv2,
-        check_meth2=cb_meth2,
-        check_mut2=cb_mut2,       
-        tabDrugs=drugs_for_analysis2,
-        input_clinical=input_clinical2,
+        check_exp=cb_ge_ok(),
+        check_cnv=cb_cnv_ok(),
+        check_meth=cb_meth_ok(),
+        check_mut=cb_mutation_ok(),
+        check_exp2=cb_ge2_ok(),
+        check_cnv2=cb_cnv2_ok(),
+        check_meth2=cb_meth2_ok(),
+        check_mut2=cb_mutation2_ok(),    
+        tabDrugs=fd_drugs_for_analysis2,
+        input_clinical=fd_input_clinical2,
         parameter_discr=c("1.5;1;0.5"),
-        clusters=input_clusters(),
+        clusters=input_clusters_fd(),
         genes_annotated_TF_fv=FALSE
         
       )})
@@ -743,7 +801,7 @@ function(input,output,session) {
         
         output_gmiec2<-output_gmiec()
         print(dim(output_gmiec2))
-        output$downloadData <- downloadHandler(
+        output$fd_downloadData <- downloadHandler(
           
           filename = paste(output_file,".txt",sep="")
           ,
@@ -764,7 +822,6 @@ function(input,output,session) {
       
       fd_dataset1_read_ok<-fd_dataset1_read()
       fd_dataset2_read_ok<-fd_dataset2_read()
-      fd_input_clinical_ok<-input_clinical()
       fd_drugs_for_analysis2<-drugs_for_analysis()
       fd_input_clinical<-input_clinical()
 
@@ -773,22 +830,22 @@ function(input,output,session) {
 
       print("run gmiec!")
       
-      output_gmiec<-reactive({run_GMIEC(
+      output_gmiec<-reactive({run_GMIEC_fd(
         
         input_dataset1=fd_dataset1_read_ok,
         input_dataset2=fd_dataset2_read_ok,
-        check_exp=cb_ge,
-        check_cnv=cb_cnv,
-        check_meth=cb_meth,
-        check_mut=cb_mut,
-        check_exp2=cb_ge2,
-        check_cnv2=cb_cnv2,
-        check_meth2=cb_meth2,
-        check_mut2=cb_mut2,
-        tabDrugs=drugs_for_analysis2,
-        input_clinical=input_clinical2,
+        check_exp=cb_ge_ok(),
+        check_cnv=cb_cnv_ok(),
+        check_meth=cb_meth_ok(),
+        check_mut=cb_mutation_ok(),
+        check_exp2=cb_ge2_ok(),
+        check_cnv2=cb_cnv2_ok(),
+        check_meth2=cb_meth2_ok(),
+        check_mut2=cb_mutation2_ok(),
+        tabDrugs=fd_drugs_for_analysis2,
+        input_clinical=fd_input_clinical2,
         parameter_discr=c("1.5;1;0.5"),
-        clusters=input_clusters(),
+        clusters=input_clusters_fd(),
         genes_annotated_TF_fv=FALSE
         
       )})
@@ -802,7 +859,7 @@ function(input,output,session) {
         
         output_gmiec2<-output_gmiec()
         print(dim(output_gmiec2))
-        output$downloadData <- downloadHandler(
+        output$fd_downloadData <- downloadHandler(
           
           filename = paste(output_file,".txt",sep="")
           ,

@@ -1,14 +1,42 @@
-rules_for_tf_fd<-function(dfPatientForAnalysis,se_patient_selection,ge_d,cnv_d,meth_d,input_dataset1_tf,input_dataset2_tf,MUT_current_patient) {
-
+rules_for_tf_fd<-function(dfPatientForAnalysis,se_patient_selection,ge_d,cnv_d,meth_d,input_dataset1_tf,input_dataset2_tf,check_exp=FALSE, check_cnv=FALSE, check_meth=FALSE,check_mut=FALSE,check_exp2=FALSE, check_cnv2=FALSE, check_meth2=FALSE,check_mut2=FALSE,input_GE_tf,input_CNV_tf,input_METH_tf,input_MUTATION_tf,MUT_current_patient) {
+  
     results_rules_TF<-list()
+  
+    print(check_exp)
+    print(check_exp2)
+    print(check_cnv)
+    print(check_cnv2)
+    print(check_meth)
+    print(check_meth2)
+    print(check_mut)
+    print(check_mut2)
     
-    #some processing of data
-    dataset1_TF_current_patient<-as.numeric(input_dataset1_tf[se_patient_selection]) 
-    dataset1_TF_current_patient[is.na(dataset1_TF_current_patient)]<-0 #if NA the data is not available
+    #check the presence of gene-expression data for TF
+    if(check_exp == TRUE | check_exp2 == TRUE ){
+      
+    ge_TF_current_patient<-as.numeric(input_GE_tf[se_patient_selection]) 
     
-    dataset2_TF_current_patient<-as.numeric(input_dataset2_tf[se_patient_selection])
-    dataset2_TFcurrent_patient[is.na(dataset2_TF_current_patient)]<-0 #if NA the data is not available
+    }
+  
+    #check the presence of cnv data for TF
+    if(check_cnv==TRUE| check_cnv2 == TRUE){
+    cnv_TF_current_patient<-as.numeric(input_CNV_tf[se_patient_selection])
+    cnv_TF_current_patient[is.na(cnv_TF_current_patient)]<-0 #if NA the data is not available
+    }
+  
+    #check the presence of methylation data for TF
+    if(check_meth==TRUE|check_meth2==TRUE){
+      
+    meth_TF_current_patient<-as.numeric(input_METH_tf[se_patient_selection])
+    meth_TF_current_patient[is.na(meth_TF_current_patient)]<-0 #if NA the data is not available
     
+    } else {
+      
+      meth_TF_current_patient<-0
+    }
+  
+    #check the presence of mutation data for TF
+    if(check_mut==TRUE|check_mut2==TRUE){
       
     if(nrow(input_MUTATION_tf[input_MUTATION_tf$Tumor_Sample_Barcode==se_patient_selection,])){
       
@@ -19,26 +47,27 @@ rules_for_tf_fd<-function(dfPatientForAnalysis,se_patient_selection,ge_d,cnv_d,m
     mutation_TF_current_patient_variant<-1 #yes mutation of TF 1
     
     }
-    
-    #extract the other data of experiment
-    input_dataset1_rep<-rep(as.numeric(input_dataset1_TF_current_patient),length(dfPatientForAnalysis[,"input_dataset1_current_patient"]))
-    input_dataset2_rep<-rep(as.numeric(input_dataset2_TF_current_patient),length(dfPatientForAnalysis[,"input_dataset2_current_patient"]))
-
+    } else {
+      
+      mutation_TF_current_patient_variant<-1 #yes mutation of TF 1
+      
+    }
+  
 
     ##
     ## Step 1.1: categorize the genes associated with the expression or not of the tf using a fold-change values cut-off
     ##
     
-    if(isTRUE(check_exp)|isTRUE(check_exp)){ #if the datasets are from gene-expression
+    if(check_exp == TRUE|check_exp2 == TRUE){ #if the datasets are from gene-expression
       
       
-      if(isTRUE(check_exp)){ #verify which is the dataset of gene-expression (first or second)
+      if(check_exp == TRUE){ #verify which is the dataset of gene-expression (first or second)
         
         dataset_colnames<-"input_dataset1_current_patient"
         
       } 
      
-      if(isTRUE(check_exp2)){
+      if(check_exp2 == TRUE){
         
         dataset_colnames<-"input_dataset2_current_patient"
       }
@@ -47,29 +76,29 @@ rules_for_tf_fd<-function(dfPatientForAnalysis,se_patient_selection,ge_d,cnv_d,m
       
       FC_GE_TF_categorization<-rep(0,length(FC_GE_TF))
     
+      #where the fold-change is less than to a thresholds then those genes are related with the transcriptional factors
+      FC_GE_TF_categorization[which(FC_GE_TF<=ge_d)]<-1 #absolute values
+      FC_GE_TF_categorization[which(FC_GE_TF>ge_d)]<-0 
+      
     } else { #if are not gene-expression data
         
       FC_GE_TF_categorization<-rep(0,length(dfPatientForAnalysis[,dataset_colnames]))
       
     }
     
-    #where the fold-change is less than to a thresholds then those genes are related with the transcriptional factors
-    FC_GE_TF_categorization[which(FC_GE_TF<=ge_d)]<-1 #absolute values
-    FC_GE_TF_categorization[which(FC_GE_TF>ge_d)]<-0 
-    
 
     ### Discreterization of ghe gene expression values according to https://www.ncbi.nlm.nih.gov/pmc/articles/PMC151169/
     ### works for that median-centered at the levels of genes and z-score
     
-  if(isTRUE(check_exp)|isTRUE(check_exp2)){
+  if(check_exp == TRUE|check_exp2 == TRUE){
     
-      if(isTRUE(check_exp)){
+      if(check_exp == TRUE){
         
         dataset_colnames<-"input_dataset1_current_patient"
         
       } 
       
-      if(isTRUE(check_exp2)){ 
+      if(check_exp2 == TRUE){ 
         
         dataset_colnames<-"input_dataset2_current_patient"
         
@@ -99,16 +128,16 @@ rules_for_tf_fd<-function(dfPatientForAnalysis,se_patient_selection,ge_d,cnv_d,m
     ## Copy number alteration
     ##
     
-    if(isTRUE(check_cnv)|isTRUE(check_cnv2)){
+    if(check_cnv == TRUE|check_cnv2 == TRUE){
       
 
-    if(isTRUE(check_cnv)){
+    if(check_cnv == TRUE){
       
       dataset_colnames<-"input_dataset1_current_patient"
       
     } 
       
-    if(isTRUE(check_cnv2)){ 
+    if(check_cnv2 == TRUE){ 
       
       dataset_colnames<-"input_dataset2_current_patient"
       
@@ -155,7 +184,7 @@ rules_for_tf_fd<-function(dfPatientForAnalysis,se_patient_selection,ge_d,cnv_d,m
     } else {
   
       CNV_TF_gain<-rep(0,length(dfPatientForAnalysis[,3]))
-        CNV_TF_depletion<-rep(0,length(dfPatientForAnalysis[,3]))
+      CNV_TF_depletion<-rep(0,length(dfPatientForAnalysis[,3]))
       
     }
     
@@ -163,34 +192,52 @@ rules_for_tf_fd<-function(dfPatientForAnalysis,se_patient_selection,ge_d,cnv_d,m
     #0 The CNV of the genes is greater than the copy-number variation of TF
     #1 The CNV of the genes is less than the copy-number variation of the TF, interest this case because allow to identify TFs that are alterated
     #and that regulates the genes
-    
+    if(check_cnv == TRUE|check_cnv2 == TRUE){ 
+      
+      if(check_exp == TRUE){
+        
+        dataset_colnames<-"input_dataset1_current_patient"
+        
+      } 
+      
+      if(check_exp2 == TRUE){ 
+        
+        dataset_colnames<-"input_dataset2_current_patient"
+        
+      }
+      
     if(cnv_TF_current_patient>=cnv_d | cnv_TF_current_patient<=-cnv_d){
       #create a new object to fill
       CNV_TF_categorization_TF<-CNV_TF_categorization
-      CNV_TF_categorization_TF[which(dfPatientForAnalysis[,"CNV_current_patient"] >= cnv_TF_current_patient)]<-0
-      CNV_TF_categorization_TF[which(dfPatientForAnalysis[,"CNV_current_patient"] < cnv_TF_current_patient)]<-1
+      CNV_TF_categorization_TF[which(dfPatientForAnalysis[,dataset_colnames] >= cnv_TF_current_patient)]<-0
+      CNV_TF_categorization_TF[which(dfPatientForAnalysis[,dataset_colnames] < cnv_TF_current_patient)]<-1
       
     } else {
       
       CNV_TF_categorization_TF<-CNV_TF_categorization
       
     }
+      
+    } else {
+      
+      CNV_TF_categorization_TF<-CNV_TF_categorization
+    }
     
     ##
     ## Step 1.3: categorize the methylation
     ##
     
-if(isTRUE(check_meth) | isTRUE(check_meth2)){
+if(check_meth == TRUE | check_meth2 == TRUE){
   
       output_meth<-list(1:2)
       
-      if(isTRUE(check_meth)){
+      if(check_meth == TRUE){
         
         dataset_colnames<-"input_dataset1_current_patient"
         
       } 
       
-      if(isTRUE(check_meth2)){ 
+      if(check_meth2 == TRUE){ 
         
         dataset_colnames<-"input_dataset2_current_patient"
         
@@ -202,7 +249,6 @@ if(isTRUE(check_meth) | isTRUE(check_meth2)){
     ###
     ### Step 1.4: categorize the hyper-hypomethylation
     ###
-    
     METH_TF_hyper<-rep(0,length(dfPatientForAnalysis[,dataset_colnames]))
     
     tmeth<-which(dfPatientForAnalysis[,dataset_colnames] >= meth_d |  dfPatientForAnalysis[,dataset_colnames]< meth_d)
@@ -239,7 +285,6 @@ if(isTRUE(check_meth) | isTRUE(check_meth2)){
       METH_TF_hypo<-rep(0,length(dfPatientForAnalysis[,dataset_colnames]))
       METH_TF_hyper<-rep(0,length(dfPatientForAnalysis[,dataset_colnames]))
       
-  
     }
     
     #now i can test in which case the methylation is greater or less than the methylation of TFs
@@ -247,18 +292,38 @@ if(isTRUE(check_meth) | isTRUE(check_meth2)){
     #1 The METH of the genes is less than the methylation variation of the TF, interest this case because allow to identify TFs that are alterated
     #and that regulates the genes
     
-    
+    if(check_meth == TRUE | check_meth2 == TRUE){
+      
+      if(check_meth == TRUE){
+        
+        dataset_colnames<-"input_dataset1_current_patient"
+        
+      } 
+      
+      if(check_meth2 == TRUE){ 
+        
+        dataset_colnames<-"input_dataset2_current_patient"
+        
+      }
+      
     if(meth_TF_current_patient>=meth_TF_current_patient | meth_TF_current_patient< meth_TF_current_patient){
       
       METH_TF_categorization_TF<-METH_TF_categorization
       
-      METH_TF_categorization_TF[which(dfPatientForAnalysis[,"METH_current_patient"] >= meth_TF_current_patient)]<-0
-      METH_TF_categorization_TF[which(dfPatientForAnalysis[,"METH_current_patient"] < meth_TF_current_patient)]<-1
+      METH_TF_categorization_TF[which(dfPatientForAnalysis[,dataset_colnames] >= meth_TF_current_patient)]<-0
+      METH_TF_categorization_TF[which(dfPatientForAnalysis[,dataset_colnames] < meth_TF_current_patient)]<-1
       
     } else {
       
       
-      METH_TF_categorization_TF<-METH_TF_categorization
+      METH_TF_categorization_TF<-rep(0,length(dfPatientForAnalysis))
+      
+    }
+      
+    } else {
+      
+      
+      METH_TF_categorization_TF<-rep(0,length(dfPatientForAnalysis))
       
     }
     
@@ -266,14 +331,17 @@ if(isTRUE(check_meth) | isTRUE(check_meth2)){
     ## Step 1.4: categorize the MUTATION
     ##
     
+    if(check_mut == TRUE|check_mut2 == TRUE){
+      
     MUT_TF_categorization<-rep(0,nrow(dfPatientForAnalysis))
-    print("test")
-    print(MUT_current_patient)
+
     umutationallpatient<-unique(MUT_current_patient[,"genesID"])
     #find which genes are mutated 
     index_MUT_genes_allPatients<-which(dfPatientForAnalysis[,"genesID"] %in% umutationallpatient)
     MUT_TF_categorization[index_MUT_genes_allPatients]<-1 
-  
+    } else {
+      MUT_TF_categorization<-rep(0,nrow(dfPatientForAnalysis))
+    }
     #create a data.frame with the update data
     dfPatientForAnalysis_GAC<-cbind(dfPatientForAnalysis,
                                     
@@ -300,7 +368,7 @@ if(isTRUE(check_meth) | isTRUE(check_meth2)){
                                     
                                     MUT_genes=MUT_TF_categorization,
                                     MUT_TF=rep(mutation_TF_current_patient_variant,nrow(dfPatientForAnalysis)))
-    
+    print(dim(dfPatientForAnalysis_GAC))
     #columns that describe relation between genes and TF considering other data
     col_relTF<-c("genesID","FC_GE_TF",
                  "Genes_overexpressed","Genes_underexpressed",
