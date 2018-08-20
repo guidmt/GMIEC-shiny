@@ -1,6 +1,10 @@
 ### NOTE: GMIEC-shiny is again in beta version, some step of analysis are again to improve. In the next days some updates will be available:
 
 # News:
+20/08/2018: Start implementation FD-GMIEC
+- create ui.R for FD GMIEC analysis
+- update index.Rmd in GMIEC_www
+
 08/09/2018: Big updates before of summer! The code of VIS-GMIEC is complete!
 
 - index_html. Rmd: i) add links to pages created from template_single_patients.Rmd ii) add PCA analysis
