@@ -2,8 +2,11 @@
 
 # News:
 20/08/2018: Start implementation FD-GMIEC
-- create ui.R for FD GMIEC analysis
+- modify ui.R to implement FD GMIEC analysis
 - update index.Rmd in GMIEC_www
+- add function rules_for_tf_fd.R
+- add function run_GMIEC_fd.R
+- update ui.R
 
 08/09/2018: Big updates before of summer! The code of VIS-GMIEC is complete!
 
