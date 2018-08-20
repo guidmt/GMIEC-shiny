@@ -6,7 +6,7 @@ Welcome in **GMIEC**!! **GMIEC** is a framework, GMIEC, that integrates omics da
 
 ####**Methods:**
 
-This shiny application contatin different two  modules: **GMIEC** and **FD-GMIEC**. The input of GMIEC are:  i) a file with the genomic regions of the regulators of interest; ii) omics data; ii) a file that includes the association between genes and drugs. The four principal steps  of analysis are: i) the annotation of the epigenetic components (ECs) derived from a catalogue (ReMap) with their target genes; ii) a step  of discretization used  to mark the presence of one alteration (1) or not (0) for all genes of single patient, considering all datasets (e.g. gene-expression data, copy-number alterations data, mutations data);  iii) the genes with the similar genomic features grouped using Association Rules Discovery (ARD) technique. 
+This shiny application contatin different two  modules: **GMIEC** and **FD-GMIEC**. The input of GMIEC are:  i) a file with the genomic regions of the regulators of interest; ii) omics data; ii) a file that includes the association between genes and drugs. The four principal steps  of analysis are: i) the annotation of the epigenetic components (ECs) derived from a catalogue (ReMap) with their target genes; ii) a step  of discretization used  to mark the presence of one alteration (1) or not (0) for all genes of single patient, considering all datasets (e.g. gene-expression data, copy-number alterations data, mutations data);  iii) the genes with the similar genomic features grouped using k-mode clustering. 
 
 
 

@@ -91,7 +91,69 @@ ui <- dashboardPage(
       
       
       tabItem(tabName = "fd_gmiec2",
-            h2("run_fd_gmiec")),
+              fluidRow(
+                box(title="GMIEC - FD first dataset",status="primary",solidHeader=TRUE,collapsible =TRUE,
+                    fileInput("ge_dataset", "Upload gene-expression data",buttonLabel=icon("folder-open")),
+                    checkboxInput("cb_ge", label = "gene-expression", value = FALSE),
+                    checkboxInput("cb_cnv", label = "copy-number", value = FALSE),
+                    checkboxInput("cb_meth", label = "methylation", value = FALSE),
+                    checkboxInput("cb_mutation", label = "mutation", value = FALSE)
+                    ),
+              box(title="GMIEC - FD second dataset",status="primary",solidHeader=TRUE,collapsible =TRUE,
+                  fileInput("ge_dataset2", "Upload gene-expression data",buttonLabel=icon("folder-open")),
+                  checkboxInput("cb_ge2", label = "gene-expression", value = FALSE),
+                  checkboxInput("cb_cnv2", label = "copy-number", value = FALSE),
+                  checkboxInput("cb_meth2", label = "methylation", value = FALSE),
+                  checkboxInput("cb_mutation2", label = "mutation", value = FALSE)
+              ),
+              box(title="GMIEC - FD, Input annotation",status="warning",solidHeader=TRUE,collapsible =TRUE,
+                  fileInput("fd_annotation_dataset", "Upload annotation data",buttonLabel=icon("folder")),
+                  numericInput("fd_distance","distance (bp)",value=20000)
+              ),
+              box(title="GMIEC - FD, Input drugs",status="info",solidHeader=TRUE,collapsible =TRUE,
+                  fileInput("fd_drugs_dataset", "Upload drugs-genes data",buttonLabel=icon("folder-open"))
+              ),
+              box(title="GMIEC - FD, Type of Analysis",status="danger",solidHeader=TRUE,collapsible =TRUE,
+                  fileInput("bed_file", "Upload the bed file - for 1,2",buttonLabel=icon("folder")),
+                  checkboxInput("fd_genes_annotated","1) Use only the genes annotated",FALSE),
+                  checkboxInput("fd_genes_annotated_TF","2) Use only the genes annotated and explore the TF",FALSE),
+                  textInput("fd_name_tf","Insert name of TF - only for 3",value=""),
+                  checkboxInput("fd_all_genes","3) Use all genes",FALSE),
+                  checkboxInput("fd_list_of_genes","4) Use a list of genes",FALSE),
+                  fileInput("fd_list_of_genes2", "Upload the list of genes - only for 4",buttonLabel=icon("folder"))
+                  
+              ),
+              box(title="GMIEC - FD, Parameters Analysis",status="success",solidHeader=TRUE,collapsible =TRUE,
+                  numericInput("fd_clusters","Number Clusters k-mode",value=2)
+              ),
+              box(title="GMIEC - FD, Output Parameters",status="success",solidHeader=TRUE,collapsible =TRUE,
+                  textInput("fd_output_file","Insert the name of output",value="") ),
+              actionButton('fd_run_gmiec', 'Run analysis',style = "color: white; 
+                           background-color: #0066CC; 
+                           position: relative; 
+                           left: 3%;
+                           height: 35px;
+                           width: 200px;
+                           text-align:center;
+                           text-indent: -2px;
+                           border-radius: 6px;
+                           border-width: 2px"),
+              downloadButton('fd_downloadData', 'Download',style = "color: white; 
+                             background-color: #ec0000; 
+                             position: relative; 
+                             left:10%;
+                             height: 35px;
+                             width: 200px;
+                             text-align:center;
+                             text-indent: -2px;
+                             border-radius: 6px;
+                             border-width: 2px")
+      
+      #end fluid row
+      
+              )
+      ),
+      
       tabItem(tabName = "vis_gmiec2",
               fluidRow(
               fileInput("vis_gmiec2", "Upload results GMIEC2",buttonLabel=icon("folder"))),
