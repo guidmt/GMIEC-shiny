@@ -4,7 +4,7 @@
 20/08/2018: Start implementation FD-GMIEC
 - modify ui.R to implement FD GMIEC analysis
 - update index.Rmd in GMIEC_www
-- add function rules_for_tf_fd.R
+- add function rules_for_tf_fd.R and update it. First implementation. V.beta
 - add function run_GMIEC_fd.R
 - update ui.R
 
@@ -35,6 +35,11 @@
 - add some comments 
 
 # To do list:
+20/08/2018
+- debug rules_for_tf_fd.R for the analysis of TF
+- implement analysis to not consider TF
+- debug create_output.R
+
 08/09/2018:
 - implement FD-GMIEC
 - improve code VIS-GMIEC (create output .zip with the results), add more details about the report
