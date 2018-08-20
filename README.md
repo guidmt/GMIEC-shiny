@@ -1,6 +1,12 @@
 ### NOTE: GMIEC-shiny is again in beta version, some step of analysis are again to improve. In the next days some updates will be available:
 
 # News:
+08/09/2018: Big updates before of summer! The code of VIS-GMIEC is complete!
+
+- index_html. Rmd: i) add links to pages created from template_single_patients.Rmd ii) add PCA analysis
+- template_single_patients.Rmd: add links to output created in template_single_patients2.Rmd
+- template_single_patients2.Rmd: resolved some bugs in the chunk of codes
+
 02/08/2018
 
 - update server.R
@@ -22,6 +28,12 @@
 - add some comments 
 
 # To do list:
+08/09/2018:
+- implement FD-GMIEC
+- improve code VIS-GMIEC (create output .zip with the results), add more details about the report
+- improve code GMIEC
+- improve documentation
+
 02/09/2018
 - update introduction, manual page, removing the description of apriori, insert k-modes
 - implement VIS-GMIEC
