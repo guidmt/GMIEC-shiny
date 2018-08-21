@@ -10,6 +10,7 @@ source("./src/GMIEC.R", local = FALSE)
 source("./src/create_report.R", local = FALSE)
 source("./src/run_gmiec_fd.R")
 source("./src/rules_for_tf_fd.R")
+source("./src/rules_fornot_tf_fd.R", local=FALSE)
 
 function(input,output,session) { 
   
@@ -516,7 +517,7 @@ function(input,output,session) {
     ###
     ### Input Type of analysis
     ###
-    input_list_of_genes_test<-renderText({ input$list_of_genes_fd})
+    input_list_of_genes_test<-renderText({ input$fd_list_of_genes})
     
     #if the user want use a custom list, upload it!  
     if(input_list_of_genes_test()==TRUE){
@@ -601,7 +602,7 @@ function(input,output,session) {
     if(all_genes_test()==TRUE) {
       
       list_genes_dataset<-unique(c(fd_dataset1_read()[,1],fd_dataset2_read()[,1]))
-      all_genes_for_analysis<-fd_list_genes_dataset
+      all_genes_for_analysis<-list_genes_dataset
       print(length(all_genes_for_analysis))
       
     } 
@@ -823,7 +824,7 @@ function(input,output,session) {
       fd_dataset1_read_ok<-fd_dataset1_read()
       fd_dataset2_read_ok<-fd_dataset2_read()
       fd_drugs_for_analysis2<-drugs_for_analysis()
-      fd_input_clinical<-input_clinical()
+      fd_input_clinical2<-input_clinical_fd()
 
       fd_dataset1_read_selected<-fd_dataset1_read_ok[fd_dataset1_read_ok[,1]%in%all_genes_for_analysis,]
       fd_dataset2_selected<-fd_dataset2_read_ok[fd_dataset2_read_ok[,1]%in%all_genes_for_analysis,]

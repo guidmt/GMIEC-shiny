@@ -57,20 +57,24 @@ run_GMIEC_fd<-function(input_dataset1,input_dataset2,check_exp,check_exp2,check_
       input_dataset1_current_patient<-input_dataset1[,c("genesID",se_patient_selection)]
       input_dataset2_current_patient<-input_dataset2[,c("genesID",se_patient_selection)]
 
-      #it is possible that 1 patient does not have a gene
-     # if(isTRUE(input_MUTATION_selected$Tumor_Sample_Barcode==se_patient_selection)){
-      #  MUT_current_patient<-input_MUTATION_selected[which(input_MUTATION_selected$Tumor_Sample_Barcode==se_patient_selection),]
+      if(check_mut==TRUE | check_mut2 ==TRUE){
         
-      ##} else {
-      #  print("i do not have a patient with mutations")
-       # 
-       ## dfparse<-matrix(nrow=1,ncol=ncol(input_MUTATION_selected))
-      # # dfparse[1]<-"NA" #false gene
-       # #dfparse[2:ncol(input_MUTATION_selected)]<-as.numeric(0)
-        #colnames(dfparse)<-colnames(input_MUTATION_selected)
-        #
-      # # MUT_current_patient<-dfparse
-      #}
+      #it is possible that 1 patient does not have a gene
+      if(isTRUE(input_MUTATION_selected$Tumor_Sample_Barcode==se_patient_selection)){
+       MUT_current_patient<-input_MUTATION_selected[which(input_MUTATION_selected$Tumor_Sample_Barcode==se_patient_selection),]
+        
+      } else {
+       print("i do not have a patient with mutations")
+      
+       dfparse<-matrix(nrow=1,ncol=ncol(input_MUTATION_selected))
+       dfparse[1]<-"NA" #false gene
+       dfparse[2:ncol(input_MUTATION_selected)]<-as.numeric(0)
+       colnames(dfparse)<-colnames(input_MUTATION_selected)
+        
+       MUT_current_patient<-dfparse
+      }
+        
+      }
       
       list_DF<-c("input_dataset1_current_patient","input_dataset2_current_patient")
       #check the presence of empty data.frame
