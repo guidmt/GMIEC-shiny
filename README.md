@@ -1,6 +1,11 @@
 ### NOTE: GMIEC-shiny is again in beta version, some step of analysis are again to improve. In the next days some updates will be available:
 
 # News:
+21/08/2018:
+- update server.R files for the analysis considering the rules without TF
+- created script rules_fornot_tf_fd.R
+- update run_GMIEC_fd.R
+
 20/08/2018: Start implementation FD-GMIEC
 - modify ui.R to implement FD GMIEC analysis
 - update index.Rmd in GMIEC_www
