@@ -198,6 +198,7 @@ print("Step5: Find rules for patient")
   
   dfPatientForAnalysis_GAC_rel_TF<-dfPatientForAnalysis_GAC[,col_relTF]
   rownames(dfPatientForAnalysis_GAC_rel_TF)<-dfPatientForAnalysis_GAC_rel_TF[,1]
+  
   #do a control, if the properties of the genes are always equal to 0 it you can remove these columns
   #this step it is important to reduce the computational cost.
   resSumControl<-apply(dfPatientForAnalysis_GAC_rel_TF[,2:ncol(dfPatientForAnalysis_GAC_rel_TF)],2,sum)

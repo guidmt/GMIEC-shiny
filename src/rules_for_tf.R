@@ -41,21 +41,37 @@ rules_for_tf<-function(dfPatientForAnalysis,se_patient_selection,ge_d,cnv_d,meth
     ### works for that median-centered at the levels of genes and z-score
     ###
     
+    # genes_overexpressed<-rep(0,length(dfPatientForAnalysis[,3]))
+    # names(genes_overexpressed)<-as.character(dfPatientForAnalysis[,1])#give the names to the vector
+    # rows_to_selected<-round((length(dfPatientForAnalysis[,1])*5)/100)
+    # #select the over expressed genes in the current_patient
+    # genes.overexpressed.strings<-dfPatientForAnalysis[order(dfPatientForAnalysis[,"GE_current_patient"],decreasing=T),][1:rows_to_selected,1]
+    # genes_overexpressed[which(names(genes_overexpressed) %in% genes.overexpressed.strings)]<-1
+    # 
+    # 
+    # genes_underexpressed<-rep(0,length(dfPatientForAnalysis[,3]))
+    # names(genes_underexpressed)<-as.character(dfPatientForAnalysis[,1])#give the names to the vector
+    # rows_to_selected<-round((length(dfPatientForAnalysis[,1])*5)/100)
+    # #select the under expressed genes in the current_patient
+    # genes.underexpressed.strings<-dfPatientForAnalysis[order(dfPatientForAnalysis[,"GE_current_patient"]),][1:rows_to_selected,1]
+    # genes_underexpressed[which(names(genes_underexpressed) %in% genes.underexpressed.strings)]<-1
+    zscore<-quantile((mean(dfPatientForAnalysis[,"GE_current_patient"])-dfPatientForAnalysis[,"GE_current_patient"])/sd(dfPatientForAnalysis[,"GE_current_patient"]))
+    
+    
     genes_overexpressed<-rep(0,length(dfPatientForAnalysis[,3]))
-    names(genes_overexpressed)<-as.character(dfPatientForAnalysis[,1])#give the names to the vector
-    rows_to_selected<-round((length(dfPatientForAnalysis[,1])*5)/100)
-    #select the over expressed genes in the current_patient
-    genes.overexpressed.strings<-dfPatientForAnalysis[order(dfPatientForAnalysis[,"GE_current_patient"],decreasing=T),][1:rows_to_selected,1]
-    genes_overexpressed[which(names(genes_overexpressed) %in% genes.overexpressed.strings)]<-1
+    genes_overexpressed[which(dfPatientForAnalysis[,"GE_current_patient"]>=zscore[5])]<-2
     
+    genes_downexpressed<-rep(0,length(dfPatientForAnalysis[,3]))
+    genes_downexpressed[which(dfPatientForAnalysis[,"GE_current_patient"]<=zscore[1])]<-3
     
-    genes_underexpressed<-rep(0,length(dfPatientForAnalysis[,3]))
-    names(genes_underexpressed)<-as.character(dfPatientForAnalysis[,1])#give the names to the vector
-    rows_to_selected<-round((length(dfPatientForAnalysis[,1])*5)/100)
-    #select the under expressed genes in the current_patient
-    genes.underexpressed.strings<-dfPatientForAnalysis[order(dfPatientForAnalysis[,"GE_current_patient"]),][1:rows_to_selected,1]
-    genes_underexpressed[which(names(genes_underexpressed) %in% genes.underexpressed.strings)]<-1
+    genes_lowexpressed<-rep(0,length(dfPatientForAnalysis[,3]))
+    genes_lowexpressed[which(dfPatientForAnalysis[,"GE_current_patient"]>zscore[1] & dfPatientForAnalysis[,"GE_current_patient"]<=zscore[2])]<-4
     
+    genes_expressed<-rep(0,length(dfPatientForAnalysis[,3]))
+    genes_expressed[which(dfPatientForAnalysis[,"GE_current_patient"]>=zscore[4] & dfPatientForAnalysis[,"GE_current_patient"]<zscore[5])]<-5
+    
+    genes_otherexp<-rep(0,length(dfPatientForAnalysis[,3]))
+    genes_otherexp[which(dfPatientForAnalysis[,"GE_current_patient"]>zscore[2] & dfPatientForAnalysis[,"GE_current_patient"]<zscore[4])]<-6
     
     ##
     ## Step 1.2: categorize the copy-number alteration
@@ -69,10 +85,9 @@ rules_for_tf<-function(dfPatientForAnalysis,se_patient_selection,ge_d,cnv_d,meth
     ###
     ### Step3: Find Gain-amplication
     ###
-    
     CNV_TF_gain<-rep(0,length(dfPatientForAnalysis[,"CNV_current_patient"]))
     
-    tcnv<-which(dfPatientForAnalysis[,"CNV_current_patient"] >= cnv_d |  dfPatientForAnalysis[,"CNV_current_patient"]<= -cnv_d)
+    tcnv<-which(dfPatientForAnalysis[,"CNV_current_patient"] >= 1 & dfPatientForAnalysis[,"CNV_current_patient"] < 2)
     
     if(length(tcnv)==0){
       
@@ -81,18 +96,54 @@ rules_for_tf<-function(dfPatientForAnalysis,se_patient_selection,ge_d,cnv_d,meth
     } else {
       
       #if is false the condition tcnv ==0, then this mean that all genes have a copy number alteration less than -1 or greater than 1
-      CNV_TF_gain[which(dfPatientForAnalysis[,"CNV_current_patient"] >= cnv_d)]<-1
-      CNV_TF_gain[which(dfPatientForAnalysis[,"CNV_current_patient"] <= -cnv_d)]<-0
+      CNV_TF_gain[which(dfPatientForAnalysis[,"CNV_current_patient"] >= 1 & dfPatientForAnalysis[,"CNV_current_patient"]< 2)]<-7
+      CNV_TF_gain[which(dfPatientForAnalysis[,"CNV_current_patient"] < 1)]<-0
+      
+    }
+    
+    ## find amplification
+    
+    CNV_TF_amplification<-rep(0,length(dfPatientForAnalysis[,"CNV_current_patient"]))
+    
+    tcnv<-which(dfPatientForAnalysis[,"CNV_current_patient"] >= 2)
+    
+    if(length(tcnv)==0){
+      
+      tcnv<-CNV_TF_amplification #all genes are not alterated by the copy number variation 
+      
+    } else {
+      
+      #if is false the condition tcnv ==0, then this mean that all genes have a copy number alteration less than -1 or greater than 1
+      CNV_TF_amplification[which(dfPatientForAnalysis[,"CNV_current_patient"] >= 2)]<-8
+      CNV_TF_amplification[which(dfPatientForAnalysis[,"CNV_current_patient"] < 1)]<-0
       
     }
     
     ###
-    ### Step3: Find Depletion
+    ### Step3: Find loss
     ###
     
+    CNV_TF_loss<-rep(0,length(dfPatientForAnalysis[,"CNV_current_patient"]))
+    
+    tcnv<-which(dfPatientForAnalysis[,"CNV_current_patient"] > -2 |  dfPatientForAnalysis[,"CNV_current_patient"]<= -1)
+    
+    if(length(tcnv)==0){
+      
+      tcnv<-CNV_TF_loss #all genes are not alterated by the copy number variation 
+      
+    } else {
+      
+      #if is false the condition tcnv ==0, then this mean that all genes have a copy number alteration less than -1 or greater than 1
+      CNV_TF_loss[which(dfPatientForAnalysis[,"CNV_current_patient"] > -2 |  dfPatientForAnalysis[,"CNV_current_patient"]<= -1)]<-9
+      CNV_TF_loss[which(dfPatientForAnalysis[,"CNV_current_patient"] > -1)]<-0
+      
+    }
+    
+    
+    #find depletion
     CNV_TF_depletion<-rep(0,length(dfPatientForAnalysis[,"CNV_current_patient"]))
     
-    tcnv<-which(dfPatientForAnalysis[,"CNV_current_patient"] >= cnv_d |  dfPatientForAnalysis[,"CNV_current_patient"]<= -cnv_d)
+    tcnv<-which(dfPatientForAnalysis[,"CNV_current_patient"] <= -2)
     
     if(length(tcnv)==0){
       
@@ -101,8 +152,8 @@ rules_for_tf<-function(dfPatientForAnalysis,se_patient_selection,ge_d,cnv_d,meth
     } else {
       
       #if is false the condition tcnv ==0, then this mean that all genes have a copy number alteration less than -1 or greater than 1
-      CNV_TF_depletion[which(dfPatientForAnalysis[,"CNV_current_patient"] <= -cnv_d)]<-1
-      CNV_TF_depletion[which(dfPatientForAnalysis[,"CNV_current_patient"] >= cnv_d)]<-0
+      CNV_TF_depletion[which(dfPatientForAnalysis[,"CNV_current_patient"] > -2 |  dfPatientForAnalysis[,"CNV_current_patient"]<= -1)]<-10
+      CNV_TF_depletion[which(dfPatientForAnalysis[,"CNV_current_patient"] > -1)]<-0
       
     }
     
@@ -111,18 +162,18 @@ rules_for_tf<-function(dfPatientForAnalysis,se_patient_selection,ge_d,cnv_d,meth
     #1 The CNV of the genes is less than the copy-number variation of the TF, interest this case because allow to identify TFs that are alterated
     #and that regulates the genes
     
+    
     if(cnv_TF_current_patient>=cnv_d | cnv_TF_current_patient<=-cnv_d){
       #create a new object to fill
       CNV_TF_categorization_TF<-CNV_TF_categorization
-      CNV_TF_categorization_TF[which(dfPatientForAnalysis[,"CNV_current_patient"] >= cnv_TF_current_patient)]<-0
-      CNV_TF_categorization_TF[which(dfPatientForAnalysis[,"CNV_current_patient"] < cnv_TF_current_patient)]<-1
+      CNV_TF_categorization_TF[which(dfPatientForAnalysis[,"CNV_current_patient"] >= cnv_TF_current_patient)]<-11
+      CNV_TF_categorization_TF[which(dfPatientForAnalysis[,"CNV_current_patient"] < cnv_TF_current_patient)]<-12
       
     } else {
       
       CNV_TF_categorization_TF<-CNV_TF_categorization
       
-    }
-    
+    }    
     # ##
     # ## Step 1.3: categorize the methylation
     # ##
@@ -143,7 +194,7 @@ rules_for_tf<-function(dfPatientForAnalysis,se_patient_selection,ge_d,cnv_d,meth
       
     } else {
       
-      METH_TF_hyper[which(dfPatientForAnalysis[,"METH_current_patient"] >= meth_d)]<-1
+      METH_TF_hyper[which(dfPatientForAnalysis[,"METH_current_patient"] >= meth_d)]<-13
       METH_TF_hyper[which(dfPatientForAnalysis[,"METH_current_patient"] < meth_d)]<-0
       
     }
@@ -158,11 +209,10 @@ rules_for_tf<-function(dfPatientForAnalysis,se_patient_selection,ge_d,cnv_d,meth
       
     } else {
       
-      METH_TF_hypo[which(dfPatientForAnalysis[,"METH_current_patient"] <  meth_d)]<-1
+      METH_TF_hypo[which(dfPatientForAnalysis[,"METH_current_patient"] <  meth_d)]<-14
       METH_TF_hypo[which(dfPatientForAnalysis[,"METH_current_patient"] >= meth_d)]<-0
       
     }
-    
     
     #now i can test in which case the methylation is greater or less than the methylation of TFs
     #0 The METH of the genes is greater than the methylation variation of TF
@@ -173,8 +223,8 @@ rules_for_tf<-function(dfPatientForAnalysis,se_patient_selection,ge_d,cnv_d,meth
       
       METH_TF_categorization_TF<-METH_TF_categorization
       
-      METH_TF_categorization_TF[which(dfPatientForAnalysis[,"METH_current_patient"] >= meth_TF_current_patient)]<-0
-      METH_TF_categorization_TF[which(dfPatientForAnalysis[,"METH_current_patient"] < meth_TF_current_patient)]<-1
+      METH_TF_categorization_TF[which(dfPatientForAnalysis[,"METH_current_patient"] >= meth_TF_current_patient)]<-15
+      METH_TF_categorization_TF[which(dfPatientForAnalysis[,"METH_current_patient"] < meth_TF_current_patient)]<-16
       
     } else {
       
@@ -182,7 +232,6 @@ rules_for_tf<-function(dfPatientForAnalysis,se_patient_selection,ge_d,cnv_d,meth
       METH_TF_categorization_TF<-METH_TF_categorization
       
     }
-    
     ##
     ## Step 1.4: categorize the MUTATION
     ##
@@ -193,21 +242,29 @@ rules_for_tf<-function(dfPatientForAnalysis,se_patient_selection,ge_d,cnv_d,meth
     umutationallpatient<-unique(MUT_current_patient[,"genesID"])
     #find which genes are mutated 
     index_MUT_genes_allPatients<-which(dfPatientForAnalysis[,"genesID"] %in% umutationallpatient)
-    MUT_TF_categorization[index_MUT_genes_allPatients]<-1 
+    MUT_TF_categorization[index_MUT_genes_allPatients]<-18 
   
     #create a data.frame with the update data
     dfPatientForAnalysis_GAC<-cbind(dfPatientForAnalysis,
                                     
                                     GexpTF=rep(ge_TF_current_patient,nrow(dfPatientForAnalysis)),
                                     FC_GE_TF=FC_GE_TF_categorization,
-                                    Genes_overexpressed=genes_overexpressed,
-                                    Genes_underexpressed=genes_underexpressed,
+                                    genes_overexpressed=genes_overexpressed,
+                                    genes_downexpressed=genes_downexpressed,
+                                    genes_lowexpressed=genes_lowexpressed,
+                                    genes_expressed=genes_expressed,
+                                    genes_otherexp=genes_otherexp,
                                     
                                     CNV_TF=rep(cnv_TF_current_patient,nrow(dfPatientForAnalysis)),
-                                    CNV_EC_gain=if(cnv_TF_current_patient>=cnv_d){rep(1,nrow(dfPatientForAnalysis))}else{rep(0,nrow(dfPatientForAnalysis))},
-                                    CNV_EC_depletion=if(cnv_TF_current_patient<=-cnv_d){rep(1,nrow(dfPatientForAnalysis))}else{rep(0,nrow(dfPatientForAnalysis))},
+                                    CNV_EC_gain=if(cnv_TF_current_patient>=1 & cnv_TF_current_patient<2){rep(19,nrow(dfPatientForAnalysis))}else{rep(0,nrow(dfPatientForAnalysis))},
+                                    CNV_EC_amplified=if(cnv_TF_current_patient>=2){rep(1,nrow(dfPatientForAnalysis))}else{rep(0,nrow(dfPatientForAnalysis))},
+                                    
+                                    CNV_EC_loss=if(cnv_TF_current_patient>=-2 & cnv_TF_current_patient<=-1){rep(20,nrow(dfPatientForAnalysis))}else{rep(0,nrow(dfPatientForAnalysis))},
+                                    CNV_EC_depletion=if(cnv_TF_current_patient<=-2){rep(1,nrow(dfPatientForAnalysis))}else{rep(0,nrow(dfPatientForAnalysis))},
                                     
                                     CNV_gain=CNV_TF_gain,
+                                    CNV_amplification=CNV_TF_amplification,
+                                    CNV_loss=CNV_TF_loss,
                                     CNV_depletion=CNV_TF_depletion,
                                     CNV_TF_categorization_TF=CNV_TF_categorization_TF,
                                     
@@ -224,9 +281,9 @@ rules_for_tf<-function(dfPatientForAnalysis,se_patient_selection,ge_d,cnv_d,meth
     
     #columns that describe relation between genes and TF considering other data
     col_relTF<-c("genesID","FC_GE_TF",
-                 "Genes_overexpressed","Genes_underexpressed",
-                 "CNV_EC_gain","CNV_EC_depletion",
-                 "CNV_gain","CNV_depletion",
+                 "genes_overexpressed","genes_downexpressed","genes_lowexpressed","genes_expressed","genes_otherexp",
+                 "CNV_EC_gain","CNV_EC_amplified","CNV_EC_loss","CNV_EC_depletion",
+                 "CNV_gain","CNV_amplification","CNV_loss","CNV_depletion",
                  "CNV_TF_categorization_TF",
                  "METH_EC_hyper","METH_EC_hypo",
                  "METH_hyper","METH_hypo",
