@@ -347,6 +347,8 @@ print(length(RES_ENGINE))
 MATRIX_RESULTS_ALL_CLINICAL<-create_output(res_analysis_each_patient=RES_ENGINE,input_clinical=input_clinical)
 #write.table(t(MATRIX_RESULTS_ALL_CLINICAL[-1,]),file="Analysis_GMIEC_main_results.txt",sep="\t",row.names=T,col.names=F,quote=F) # the first row is always empty
 
+#save.image(file="C:/Users/guida/Desktop/GMIEC.RData")
+
 print("Step8: send results")
 
 incProgress(0.15, detail = "Step7: Analysis finished, click on download button!")

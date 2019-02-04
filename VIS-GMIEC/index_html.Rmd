@@ -28,18 +28,20 @@ library(formattable)
 ##clean the input for analysis
 colToselect<-paste(c("gene","drug","sad","score"),collapse="|")
 input_for_gmiec<-params$input_for_gmiec_report
+input_for_gmiec<-cbind(rownames(input_for_gmiec),input_for_gmiec)
+colnames(input_for_gmiec)[2:ncol(input_for_gmiec)]<-input_for_gmiec[1,2:ncol(input_for_gmiec)]
+
 idx<-grep(input_for_gmiec[,1],pattern=colToselect)
 input_for_gmiec<-input_for_gmiec[idx,]
 
 #this is for sad score
 idx_sad<-grep(input_for_gmiec[,1],pattern="sad")
 
-matrix_sad<-t(input_for_gmiec[idx_sad,-1])
+matrix_sad<-input_for_gmiec[idx_sad,]
 matrix_sad[is.na(matrix_sad)]<-0
 
 matrix_sad2<-apply(matrix_sad, 2, as.numeric)
-colnames(matrix_sad2)<-paste("Module",1:ncol(matrix_sad2))
-rownames(matrix_sad2)<-rownames(matrix_sad)
+rownames(matrix_sad2)<-paste("Module",1:nrow(matrix_sad2))
 ```
 
 ## Heatmap of the combined scores (SAD) 
@@ -50,7 +52,7 @@ The following heatmap represent the SAD scores of the modules in each patient. T
 - red colors highlight modules with group of genes that share  genomic alterations and targeted by few drugs.
 
 ```{r message=F, echo=FALSE}
-heatmaply(matrix_sad2,col=RdYlBu,Colv=FALSE)
+heatmaply(t(matrix_sad2[,-1]),col=RdYlBu,Colv=FALSE)
 ```
 
 ```{r message=F, echo=FALSE}
@@ -61,8 +63,8 @@ matrix_sam<-t(input_for_gmiec[idx_sam,-1])
 matrix_sam[is.na(matrix_sam)]<-0
 
 matrix_sam2<-apply(matrix_sam, 2, as.numeric)
-colnames(matrix_sam2)<-paste("Module",1:ncol(matrix_sam2))
 rownames(matrix_sam2)<-rownames(matrix_sam)
+colnames(matrix_sam2)<-paste("Module",1:ncol(matrix_sam2))
 ```
 
 ## Heatmap of the SAM scores (delta A)
@@ -112,7 +114,7 @@ Results of the principal component analysis of the patients and pca-biplot varia
 library(psych)
 library("factoextra")
 
-res.pc2<-prcomp(matrix_sam2[,-1])
+res.pc2<-prcomp(matrix_sam2)
 
 fviz_pca_ind(res.pc2,col.ind="cos2")
 fviz_pca_biplot(res.pc2,repel=TRUE)
@@ -124,7 +126,7 @@ Results of the principal component analysis of the patients and pca-biplot varia
 library(psych)
 library("factoextra")
 
-res.pc3<-prcomp(matrix_sadrugs2[,-1])
+res.pc3<-prcomp(matrix_sadrugs2)
 
 fviz_pca_ind(res.pc3,col.ind="cos2")
 fviz_pca_biplot(res.pc3,repel=TRUE)
@@ -133,7 +135,7 @@ fviz_pca_biplot(res.pc3,repel=TRUE)
 # Visualization of the single patient results {.tabset .tabset-fade .tabset-dropdown}
 
 ```{r message=F, echo=FALSE, results='asis',include=TRUE}
-for (i in rownames(matrix_sad)){
+for (i in colnames(matrix_sad[,-1])){
   
   string<-paste(paste("[",paste(i," |",sep=""),sep=""),"]",sep="")
   link_to_string<-paste(paste("(",paste(paste(paste(getwd(),"output_vis/",sep="/"),paste("report.",i,sep=""),sep=""),".html",sep=""),sep=""),")",sep="")

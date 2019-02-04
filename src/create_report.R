@@ -17,6 +17,9 @@ run_create_output<-function(input_for_report){
   
   incProgress(0.15, detail = "Step2: Create reports single patient html - Step1")
   
+  input_for_report<-cbind(rownames(input_for_report),input_for_report)
+  colnames(input_for_report)[2:ncol(input_for_report)]<-input_for_report[1,2:ncol(input_for_report)]
+
   number_of_patients<-2:ncol(input_for_report)
   
   for(i in number_of_patients){
@@ -37,7 +40,7 @@ run_create_output<-function(input_for_report){
   }
   
   ##
-  ## Create report Single patient 2
+  ## Create report Single patient 3
   ##
   incProgress(0.15, detail = "Step3: Create reports single patient html - Step2")
   
