@@ -213,12 +213,15 @@ function(input,output,session) {
         
         output_gmiec2<-output_gmiec()
         print(dim(output_gmiec2))
+        
         output$downloadData <- downloadHandler(
           
-          filename = paste(output_file,".txt",sep="")
+          filename = function() {
+            paste('Analysis_GMIEC_main_results.', Sys.Date(), '.txt', sep='')
+          }
           ,
           content = function(file) {
-            write.table(t(output_gmiec2[-1,]),file,sep="\t",row.names=T,col.names=T,quote=F)
+            write.table(output_gmiec(),file,sep="\t",row.names=T,col.names=T,quote=F)
           }
         )
         
@@ -287,10 +290,12 @@ function(input,output,session) {
     print(dim(output_gmiec2))
     output$downloadData <- downloadHandler(
       
-      filename = paste(output_file,".txt",sep="")
+      filename = function() {
+        paste('Analysis_GMIEC_main_results.', Sys.Date(), '.txt', sep='')
+      }
       ,
       content = function(file) {
-        write.table(t(output_gmiec2[-1,]),file,sep="\t",row.names=T,col.names=T,quote=F)
+        write.table(output_gmiec(),file,sep="\t",row.names=T,col.names=T,quote=F)
       }
     )
   
@@ -345,10 +350,12 @@ function(input,output,session) {
         print(dim(output_gmiec2))
         output$downloadData <- downloadHandler(
           
-          filename = paste(output_file,".txt",sep="")
+          filename = function() {
+            paste('Analysis_GMIEC_main_results.', Sys.Date(), '.txt', sep='')
+          }
           ,
           content = function(file) {
-            write.table(t(output_gmiec2[-1,]),file,sep="\t",row.names=T,col.names=T,quote=F)
+            write.table(output_gmiec(),file,sep="\t",row.names=T,col.names=T,quote=F)
           }
         )
         
@@ -401,10 +408,12 @@ function(input,output,session) {
       print(dim(output_gmiec2))
       output$downloadData <- downloadHandler(
         
-        filename = paste(output_file,".txt",sep="")
+        filename = function() {
+          paste('Analysis_GMIEC_main_results.', Sys.Date(), '.txt', sep='')
+        }
         ,
         content = function(file) {
-          write.table(t(output_gmiec2[-1,]),file,sep="\t",row.names=T,col.names=T,quote=F)
+          write.table(output_gmiec(),file,sep="\t",row.names=T,col.names=T,quote=F)
         }
       )
       
@@ -670,10 +679,12 @@ function(input,output,session) {
         print(dim(output_gmiec2))
         output$fd_downloadData <- downloadHandler(
           
-          filename = paste(output_file,".txt",sep="")
+          filename = function() {
+            paste('Analysis_GMIEC_main_results.', Sys.Date(), '.txt', sep='')
+          }
           ,
           content = function(file) {
-            write.table(t(output_gmiec2[-1,]),file,sep="\t",row.names=T,col.names=T,quote=F)
+            write.table(output_gmiec(),file,sep="\t",row.names=T,col.names=T,quote=F)
           }
         )
         
@@ -744,10 +755,12 @@ function(input,output,session) {
         print(dim(output_gmiec2))
         output$fd_downloadData <- downloadHandler(
           
-          filename = paste(output_file,".txt",sep="")
+          filename = function() {
+            paste('Analysis_GMIEC_main_results.', Sys.Date(), '.txt', sep='')
+          }
           ,
           content = function(file) {
-            write.table(t(output_gmiec2[-1,]),file,sep="\t",row.names=T,col.names=T,quote=F)
+            write.table(output_gmiec(),file,sep="\t",row.names=T,col.names=T,quote=F)
           }
         )
         
@@ -804,10 +817,12 @@ function(input,output,session) {
         print(dim(output_gmiec2))
         output$fd_downloadData <- downloadHandler(
           
-          filename = paste(output_file,".txt",sep="")
+          filename = function() {
+            paste('Analysis_GMIEC_main_results.', Sys.Date(), '.txt', sep='')
+          }
           ,
           content = function(file) {
-            write.table(t(output_gmiec2[-1,]),file,sep="\t",row.names=T,col.names=T,quote=F)
+            write.table(output_gmiec(),file,sep="\t",row.names=T,col.names=T,quote=F)
           }
         )
         

@@ -1,7 +1,6 @@
 library(bcp)
 library(ChIPpeakAnno)
 library(plyr)
-library(arules)
 library(stats)
 library(shiny)
 library(shinydashboard)
@@ -62,8 +61,6 @@ ui <- dashboardPage(
                   box(title="GMIEC - Parameters Analysis",status="success",solidHeader=TRUE,collapsible =TRUE,
                       numericInput("clusters","Number Clusters k-mode",value=2)
                       ),
-                  box(title="GMIEC - Output Parameters",status="success",solidHeader=TRUE,collapsible =TRUE,
-                      textInput("output_file","Insert the name of output",value="") ),
                   actionButton('run_gmiec', 'Run analysis',style = "color: white; 
                      background-color: #0066CC; 
                                position: relative; 
@@ -130,8 +127,7 @@ ui <- dashboardPage(
               box(title="GMIEC - FD, Parameters Analysis",status="success",solidHeader=TRUE,collapsible =TRUE,
                   numericInput("fd_clusters","Number Clusters k-mode",value=2)
               ),
-              box(title="GMIEC - FD, Output Parameters",status="success",solidHeader=TRUE,collapsible =TRUE,
-                  textInput("fd_output_file","Insert the name of output",value="") ),
+              box(title="GMIEC - FD, Output Parameters",status="success",solidHeader=TRUE,collapsible =TRUE),
               actionButton('fd_run_gmiec', 'Run analysis',style = "color: white; 
                            background-color: #0066CC; 
                            position: relative; 
