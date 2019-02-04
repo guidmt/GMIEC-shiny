@@ -213,15 +213,16 @@ function(input,output,session) {
         
         output_gmiec2<-output_gmiec()
         print(dim(output_gmiec2))
+        print(class(output_gmiec()))
         
         output$downloadData <- downloadHandler(
           
           filename = function() {
-            paste('Analysis_GMIEC_main_results.', Sys.Date(), '.txt', sep='')
+            paste('Analysis_GMIEC_main_results.', Sys.Date(), '.csv', sep='')
           }
           ,
           content = function(file) {
-            write.table(output_gmiec(),file,sep="\t",row.names=T,col.names=T,quote=F)
+            write.csv(output_gmiec(),file,row.names=FALSE, na="")
           }
         )
         
@@ -291,11 +292,11 @@ function(input,output,session) {
     output$downloadData <- downloadHandler(
       
       filename = function() {
-        paste('Analysis_GMIEC_main_results.', Sys.Date(), '.txt', sep='')
+        paste('Analysis_GMIEC_main_results.', Sys.Date(), '.csv', sep='')
       }
       ,
       content = function(file) {
-        write.table(output_gmiec(),file,sep="\t",row.names=T,col.names=T,quote=F)
+        write.csv(output_gmiec(),file,row.names=FALSE, na="")
       }
     )
   
@@ -351,11 +352,11 @@ function(input,output,session) {
         output$downloadData <- downloadHandler(
           
           filename = function() {
-            paste('Analysis_GMIEC_main_results.', Sys.Date(), '.txt', sep='')
+            paste('Analysis_GMIEC_main_results.', Sys.Date(), '.csv', sep='')
           }
           ,
           content = function(file) {
-            write.table(output_gmiec(),file,sep="\t",row.names=T,col.names=T,quote=F)
+            write.csv(output_gmiec(),file,row.names=FALSE, na="")
           }
         )
         
@@ -409,11 +410,11 @@ function(input,output,session) {
       output$downloadData <- downloadHandler(
         
         filename = function() {
-          paste('Analysis_GMIEC_main_results.', Sys.Date(), '.txt', sep='')
+          paste('Analysis_GMIEC_main_results.', Sys.Date(), '.csv', sep='')
         }
         ,
         content = function(file) {
-          write.table(output_gmiec(),file,sep="\t",row.names=T,col.names=T,quote=F)
+          write.csv(output_gmiec(),file,row.names=FALSE, na="")
         }
       )
       
@@ -680,11 +681,11 @@ function(input,output,session) {
         output$fd_downloadData <- downloadHandler(
           
           filename = function() {
-            paste('Analysis_GMIEC_main_results.', Sys.Date(), '.txt', sep='')
+            paste('Analysis_GMIEC_main_results.', Sys.Date(), '.csv', sep='')
           }
           ,
           content = function(file) {
-            write.table(output_gmiec(),file,sep="\t",row.names=T,col.names=T,quote=F)
+            write.csv(output_gmiec(),file,row.names=FALSE, na="")
           }
         )
         
@@ -756,11 +757,11 @@ function(input,output,session) {
         output$fd_downloadData <- downloadHandler(
           
           filename = function() {
-            paste('Analysis_GMIEC_main_results.', Sys.Date(), '.txt', sep='')
+            paste('Analysis_GMIEC_main_results.', Sys.Date(), '.csv', sep='')
           }
           ,
           content = function(file) {
-            write.table(output_gmiec(),file,sep="\t",row.names=T,col.names=T,quote=F)
+            write.csv(output_gmiec(),file,row.names=FALSE, na="")
           }
         )
         
@@ -818,11 +819,11 @@ function(input,output,session) {
         output$fd_downloadData <- downloadHandler(
           
           filename = function() {
-            paste('Analysis_GMIEC_main_results.', Sys.Date(), '.txt', sep='')
+            paste('Analysis_GMIEC_main_results.', Sys.Date(), '.csv', sep='')
           }
           ,
           content = function(file) {
-            write.table(output_gmiec(),file,sep="\t",row.names=T,col.names=T,quote=F)
+            write.csv(output_gmiec(),file,row.names=FALSE, na="")
           }
         )
         
@@ -877,10 +878,12 @@ function(input,output,session) {
         print(dim(output_gmiec2))
         output$fd_downloadData <- downloadHandler(
           
-          filename = paste(output_file,".txt",sep="")
+          filename = function() {
+            paste('Analysis_GMIEC_main_results.', Sys.Date(), '.csv', sep='')
+          }
           ,
           content = function(file) {
-            write.table(t(output_gmiec2[-1,]),file,sep="\t",row.names=T,col.names=T,quote=F)
+            write.csv(output_gmiec(),file,row.names=FALSE, na="")
           }
         )
         
