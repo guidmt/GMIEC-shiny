@@ -1,6 +1,11 @@
 ### NOTE: GMIEC-shiny is again in beta version, some step of analysis are again to improve. In the next days some updates will be available:
 
 # News:
+04/02/2019
+after a long stop here some updates on server/ui.R 
+- update server.R
+- update ui.R
+
 23/08/2018
 - implement new rules for gene-expression and copy-number variation
 - update code: rule_for_tf.R, rule_for_tf_fd.R, rules_fornot_tf.R, rules_fornot_tf_fd.R
