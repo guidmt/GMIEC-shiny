@@ -5,6 +5,11 @@
 after a long stop here some updates on server/ui.R 
 - update server.R
 - update ui.R
+- update create_output.R
+- updare create_report.R, this is only for debug
+- update GMIEC.R
+- update index_html.Rmd
+- update template_single_patient.Rmd
 
 23/08/2018
 - implement new rules for gene-expression and copy-number variation
