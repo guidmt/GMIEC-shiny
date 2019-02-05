@@ -9,8 +9,9 @@ run_create_output<-function(input_for_report){
   ## Create report Index
   ##
     
-  rmarkdown::render(paste(getwd(),"VIS-GMIEC/index_html.Rmd",sep="/"),params= list(input_for_gmiec_report=input_for_report))
-  
+rmarkdown::render(paste(getwd(),"src/index_html.Rmd",sep="/"),params= list(input_for_gmiec_report=input_for_report)
+                  ,output_file="index.html",output_dir=paste(getwd(),"VIS-GMIEC/",sep="/"))
+
   ##
   ## Create report Single patient 
   ##
@@ -29,7 +30,7 @@ run_create_output<-function(input_for_report){
     
     output_file<-paste("report",sampleID,"html",sep=".")
     gc()
-    rmarkdown::render(paste(getwd(),"VIS-GMIEC/template_single_patient.Rmd",sep="/"),
+    rmarkdown::render(paste(getwd(),"src/template_single_patient.Rmd",sep="/"),
                       params = list(
                         patient=current_data_patient, name_patient=sampleID
                       ),output_file=output_file,output_dir=paste(getwd(),"VIS-GMIEC/output_vis",sep="/")
@@ -54,7 +55,7 @@ run_create_output<-function(input_for_report){
     print(sampleID)
     output_file2<-paste("report",sampleID,"single.patient.html",sep=".")
     
-    rmarkdown::render(paste(getwd(),"VIS-GMIEC/template_single_patient2.Rmd",sep="/"),
+    rmarkdown::render(paste(getwd(),"src/template_single_patient2.Rmd",sep="/"),
                       params = list(
                         patient=current_data_patient
                       ),output_file=output_file2,output_dir=paste(getwd(),"VIS-GMIEC/output_vis",sep="/"))
@@ -68,7 +69,7 @@ run_create_output<-function(input_for_report){
   ## End
   ##
   
-  incProgress(0.15, detail = "End! Click Download Button")
+  incProgress(0.15, detail = "End! Your results are available in /VIS-GMIEC/output_vis")
   
   })
   

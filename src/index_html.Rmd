@@ -138,7 +138,8 @@ fviz_pca_biplot(res.pc3,repel=TRUE)
 for (i in colnames(matrix_sad[,-1])){
   
   string<-paste(paste("[",paste(i," |",sep=""),sep=""),"]",sep="")
-  link_to_string<-paste(paste("(",paste(paste(paste(getwd(),"output_vis/",sep="/"),paste("report.",i,sep=""),sep=""),".html",sep=""),sep=""),")",sep="")
+  path<-unlist(strsplit(getwd(),split="/GMIEC_shiny/src"))
+  link_to_string<-paste(paste("(",paste(paste(paste(path,"GMIEC_shiny/VIS-GMIEC","output_vis/",sep="/"),paste("report.",i,sep=""),sep=""),".html",sep=""),sep=""),")",sep="")
   cat(paste(string,link_to_string,sep=""))
   cat("\n")
 

@@ -36,7 +36,8 @@ tab_patient<-params$patient
 sample_name<-params$name_patient
 
   string<-paste(paste("[",sample_name,sep=""),"]",sep="")
-  link_to_string<-paste(paste("(",paste(paste(paste(getwd(),"output_vis/",sep="/"),paste("report.",sample_name,".single.patient",sep=""),sep=""),".html",sep=""),sep=""),")",sep="")
+  path<-unlist(strsplit(getwd(),split="/GMIEC_shiny"))
+  link_to_string<-paste(paste("(",paste(paste(paste(path,"GMIEC_shiny/VIS-GMIEC","output_vis/",sep="/"),paste("report.",sample_name,".single.patient",sep=""),sep=""),".html",sep=""),sep=""),")",sep="")
   
   LinkPatient<-paste(string,link_to_string,sep="")
 
