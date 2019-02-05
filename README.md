@@ -1,7 +1,14 @@
 ### NOTE: GMIEC-shiny is again in beta version, some step of analysis are again to improve. In the next days some updates will be available:
 
 # News:
-04/02/2019
+05/02/2019:
+- move .Rmd files in /src
+- change code to create link
+- change where to save the results
+- change code to save in correct directories the output
+- now all resutls of gmiec are saved VIS-GMIEC
+
+04/02/2019:
 after a long stop here some updates on server/ui.R 
 - update server.R
 - update ui.R
