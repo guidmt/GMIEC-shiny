@@ -15,7 +15,7 @@ rules_notfor_tf<-function(dfPatientForAnalysis=dfPatientForAnalysis,se_patient_s
   ##
   ## Step 1.1: categorize the genes associated with the expression or not of the tf using a fold-change values cut-off
   ##
-  FC_GE_TF<-rep(0,length(dfPatientForAnalysis))
+  FC_GE_TF<-rep(0,dim(dfPatientForAnalysis)[1])
   FC_GE_TF_categorization<-rep(0,length(FC_GE_TF))
   
   #where the fold-change is less than to a thresholds then those genes are related with the transcriptional factors
