@@ -303,7 +303,8 @@ print("Step5: Find rules for patient")
     #estimate the difference between the number of cell without alteration and with alteration in modules
     #positive values indicate that the modules is again integrate otherwise not. [range-1,1]
     
-    deltamodulesinalt<-ratio_na_inmodule_with_totsize-ratio_alt_inmodule_with_totsize
+    #deltamodulesinalt<-ratio_na_inmodule_with_totsize-ratio_alt_inmodule_with_totsize
+    deltamodulesinalt<-ratio_alt_inmodule_with_totsize
     scorestatusmodule<-as.numeric(rep(deltamodulesinalt,nrow_module))
     
     TOTAL_score_module<-c(TOTAL_score_module,scorestatusmodule)
@@ -315,7 +316,8 @@ print("Step5: Find rules for patient")
     genes_without_drugs<-length(which(smgcrkl[,"Count_Drugs_For_Gene"]==0))/nrow_module
     
     #estimate DELTA-D
-    deltamodulegenesdrugs<-genes_with_drugs-genes_without_drugs
+    #deltamodulegenesdrugs<-genes_with_drugs-genes_without_drugs
+    deltamodulegenesdrugs<-genes_with_drugs
     deltamodulegenesdrugs <-rep(deltamodulegenesdrugs,nrow_module)
     
     TOTAL_score_module_drugs<-c(TOTAL_score_module_drugs,deltamodulegenesdrugs)
@@ -323,7 +325,7 @@ print("Step5: Find rules for patient")
   }
   
   #estimate SAD
-  mergeGAC_COM_res_K_2_drugs <-cbind(cbind(cbind(mergeGAC_COM_res_K_2_drugs,scorescorestatusmodule=TOTAL_score_module),TOTAL_score_module_drugs),combinedscore=TOTAL_score_module_drugs+TOTAL_score_module)
+  mergeGAC_COM_res_K_2_drugs <-cbind(cbind(cbind(mergeGAC_COM_res_K_2_drugs,scorescorestatusmodule=TOTAL_score_module),TOTAL_score_module_drugs),combinedscore=TOTAL_score_module_drugs*TOTAL_score_module)
 
  # > colnames(mergeGAC_COM_res_K_2_drugs)
  # [1] "genesID"                   "FC_GE_TF"                  "Genes_overexpressed"      
