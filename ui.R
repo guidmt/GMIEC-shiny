@@ -8,6 +8,7 @@ library(heatmaply)
 library(klaR)
 library(formattable)
 library(kableExtra)
+library(randomForest)
 
 ui <- dashboardPage(
   dashboardHeader(title = "gmiec-app"),
@@ -59,7 +60,8 @@ ui <- dashboardPage(
                       
                   ),
                   box(title="GMIEC - Parameters Analysis",status="success",solidHeader=TRUE,collapsible =TRUE,
-                      numericInput("clusters","Number Clusters k-mode",value=2)
+                      numericInput("clusters","Number Clusters k-mode",value=4),
+                      checkboxInput("RF_ANALYSIS","Analysis with randomForest + k-means",FALSE)
                       ),
                   actionButton('run_gmiec', 'Run analysis',style = "color: white; 
                      background-color: #0066CC; 

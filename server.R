@@ -11,11 +11,14 @@ source("./src/create_report.R", local = FALSE)
 source("./src/run_gmiec_fd.R")
 source("./src/rules_for_tf_fd.R")
 source("./src/rules_fornot_tf_fd.R", local=FALSE)
+source("./src/gmiec_ML.R",local=FALSE)
 
 function(input,output,session) { 
   
   gmiec_results<-observeEvent(input$run_gmiec,{
   
+  RFA<-renderText({input$RF_ANALYSIS})
+    
   ###
   ### Upload experiment datas
   ###
@@ -116,8 +119,8 @@ function(input,output,session) {
   ###
   ### Input Type of analysis
   ###
-  input_list_of_genes_test<-renderText({ input$list_of_genes})
-  
+  input_list_of_genes_test<-renderText({input$list_of_genes})
+
   #if the user want use a custom list, upload it!  
   if(input_list_of_genes_test()==TRUE){
     
@@ -135,7 +138,7 @@ function(input,output,session) {
  genes_annotated_TF2_test<-renderText({ input$genes_annotated_TF})
   
   #if the use want evalute the impact of TF
-   if(genes_annotated_TF2_test()==TRUE) {
+   if(genes_annotated_TF2_test()==TRUE & RFA()!= TRUE) {
       
       # extract the gene expression data for the current TF
       input_GE_tf<-input_GE()[input_GE()[,1]== input$name_tf,]
@@ -151,6 +154,7 @@ function(input,output,session) {
     
     list_genes_dataset<-unique(c(input_GE()[,1],input_CNV()[,1],input_MUT()[,1],input_METH()[,1]))
     all_genes_for_analysis<-list_genes_dataset
+    print("The number of genes in common is:")
     print(length(all_genes_for_analysis))
     
   } 
@@ -159,7 +163,7 @@ function(input,output,session) {
   #
   # Genes annotated and not TF
   #  
-  if(genes_annotated_fv()==TRUE){
+  if(genes_annotated_fv()==TRUE & RFA()!= TRUE){
     print("run annotation")
     
     print(dim(bed_dataset()))
@@ -199,7 +203,7 @@ function(input,output,session) {
       tabDrugs=drugs_for_analysis2,
       input_clinical=input_clinical2,
       parameter_discr=c("1.5;1;0.5"),
-        clusters=input_clusters(),
+      clusters=input_clusters(),
       genes_annotated_TF_fv=FALSE
       
     )})
@@ -235,7 +239,7 @@ function(input,output,session) {
     # Genes annotated and  TF
     #  
 
-    if(genes_annotated_TF_fv()==TRUE){
+    if(genes_annotated_TF_fv()==TRUE & RFA()!= TRUE){
     print("run annotation")
     print(output_file)
     
@@ -308,7 +312,7 @@ function(input,output,session) {
   # Genes list 
   #  
   
-  if(input_list_of_genes_test()==TRUE) {
+  if(input_list_of_genes_test()==TRUE & RFA()!= TRUE) {
     
     subsetAnnoDF_unique<-list_genes_for_analysis()[,1]
     
@@ -368,7 +372,7 @@ function(input,output,session) {
   # Genes list  all
   #  
   
-  if(all_genes_test()==TRUE) {
+  if(all_genes_test()==TRUE & RFA()!= TRUE) {
     
     input_GE2<-input_GE()
     input_CNV2<-input_CNV()
@@ -420,7 +424,140 @@ function(input,output,session) {
       
     }
     
+  }
+  
+  
+  ###########
+  ###########
+  ########### RFK
+  ###########
+  ###########
+  
+  #
+  # Genes annotated  + RFK
+  #  
+  
+  if(genes_annotated_fv()==TRUE & RFA()== TRUE){
+    print("run annotation")
+    print(output_file)
+    
+    showNotification("Start annotation!",type="message")
+    
+    input_GE2<-input_GE()
+    input_CNV2<-input_CNV()
+    input_METH2<-input_METH()
+    input_MUTATION2<-input_MUT()
+    input_clinical2<-input_clinical()
+    drugs_for_analysis2<-drugs_for_analysis()
+    
+    showNotification("Start annotation! wait...",type="message")
+    
+    list_genes_for_analysis<-internal_annotation(bed_dataset(),annotation_dataset(),distance_max)
+    
+    print(length(list_genes_for_analysis))  
+    
+    input_GE_selected<-input_GE2[input_GE2[,1]%in%list_genes_for_analysis,]
+    input_CNV_selected<-input_CNV2[input_CNV2[,1]%in%list_genes_for_analysis,]
+    input_METH_selected<-input_METH2[input_METH2[,1]%in%list_genes_for_analysis,]
+    input_MUTATION_selected<-input_MUTATION2[input_MUTATION2[,1]%in%list_genes_for_analysis,]
+    print(dim(input_MUTATION_selected))
+    print("run gmiec!")
+    
+    output_gmiec<-reactive({GMIEC_MLK(
+      
+      input_GE_selected=input_GE_selected,
+      input_CNV_selected=input_CNV_selected,
+      input_METH_selected=input_METH_selected,
+      input_MUTATION_selected=input_MUTATION_selected,
+      drugs_for_analysis2=drugs_for_analysis2,
+      input_clinical=input_clinical2,
+      k_user=input_clusters(),
+      all_genes_for_analysis=list_genes_for_analysis
+      
+    )})
+    
+    
+    if(!is.null(output_gmiec())){
+      
+      showNotification("You can download the results of analysis!",type="message")
+      print("here your output")
+      print(dim(output_gmiec()))  
+      print(output_file)
+      
+      output_gmiec2<-output_gmiec()
+      print(dim(output_gmiec2))
+      output$downloadData <- downloadHandler(
+        
+        filename = function() {
+          paste('Analysis_GMIEC_main_results.', Sys.Date(), '.csv', sep='')
+        }
+        ,
+        content = function(file) {
+          write.csv(output_gmiec(),file,row.names=FALSE, na="")
+        }
+      )
+      
     }
+    
+  }
+  
+  #
+  # Genes list  + RFK
+  #  
+  
+  if(input_list_of_genes_test()==TRUE & RFA()== TRUE) {
+    print("avvio RFK")
+    subsetAnnoDF_unique<-list_genes_for_analysis()[,1]
+    
+    input_GE2<-input_GE()
+    input_CNV2<-input_CNV()
+    input_METH2<-input_METH()
+    input_MUTATION2<-input_MUT()
+    input_clinical2<-input_clinical()
+    drugs_for_analysis2<-drugs_for_analysis()
+    
+    input_GE_selected<-input_GE2[input_GE2[,1]%in%subsetAnnoDF_unique,]
+    input_CNV_selected<-input_CNV2[input_CNV2[,1]%in%subsetAnnoDF_unique,]
+    input_METH_selected<-input_METH2[input_METH2[,1]%in%subsetAnnoDF_unique,]
+    input_MUTATION_selected<-input_MUTATION2[input_MUTATION2[,1]%in%subsetAnnoDF_unique,]
+    
+    print("run gmiec!")
+    
+    output_gmiec<-reactive({GMIEC_MLK(
+      
+      input_GE_selected=input_GE_selected,
+      input_CNV_selected=input_CNV_selected,
+      input_METH_selected=input_METH_selected,
+      input_MUTATION_selected=input_MUTATION_selected,
+      drugs_for_analysis2=drugs_for_analysis2,
+      input_clinical=input_clinical2,
+      k_user=input_clusters(),
+      all_genes_for_analysis=subsetAnnoDF_unique
+    )})
+    
+    if(!is.null(output_gmiec())){
+      
+      showNotification("You can download the results of analysis!",type="message")
+      print("here your output")
+      print(dim(output_gmiec()))  
+      print(output_file)
+      
+      output_gmiec2<-output_gmiec()
+      print(dim(output_gmiec2))
+      output$downloadData <- downloadHandler(
+        
+        filename = function() {
+          paste('Analysis_GMIEC_main_results.', Sys.Date(), '.csv', sep='')
+        }
+        ,
+        content = function(file) {
+          write.csv(output_gmiec(),file,row.names=FALSE, na="")
+        }
+      )
+      
+    }
+    
+  }
   }#end function obeserve event
  ) #end observed event1
   
@@ -890,6 +1027,7 @@ function(input,output,session) {
       }
       
     }
+  
   }#end function obeserve event
   ) #end observed event1
   
@@ -902,7 +1040,7 @@ function(input,output,session) {
     
   input_for_report2<-reactive({
     infile_for_report<- input$vis_gmiec2
-    read.table(file=infile_for_report$datapath,sep="\t",stringsAsFactors=FALSE,header=T,quote=NULL,fill=T) #read empty values with 0 
+    read.csv(file=infile_for_report$datapath) #read empty values with 0 
     })
   
   print(dim(input_for_report2()))
@@ -910,7 +1048,7 @@ function(input,output,session) {
     print("Run creation report!")
     
    # resReport<-reactive({
-      run_create_output(input_for_report=input_for_report2())
+      run_create_output(input_for_report=t(input_for_report2()))
     #})
     
   })  
