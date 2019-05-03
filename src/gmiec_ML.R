@@ -95,10 +95,10 @@ GMIEC_MLK<-function(input_GE_selected,input_CNV_selected,input_METH_selected,inp
     #https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3978018/
     mu_pos<-function(x){
       vector_x<-x
-      idx_pos<-which(vector_x > 0)
-      vector_x_pos<-vector_x[idx_pos]
-      mu_pos<-mean(vector_x_pos)
-      return(mu_pos)
+      x_norm_mu<-mean(abs(vector_x)/max(abs(vector_x)))
+      #vector_x_pos<-vector_x[idx_pos]
+      #mu_pos<-mean(vector_x_pos)
+      return(x_norm_mu)
     }
     
     #count number of amplified genes
@@ -106,14 +106,14 @@ GMIEC_MLK<-function(input_GE_selected,input_CNV_selected,input_METH_selected,inp
       vector_x<-x
       idx_cnv_amp<-length(which(vector_x >= 1))
       
-      return((idx_cnv_amp/length(vector_x))*100)
+      return((idx_cnv_amp/length(vector_x)))
     }
     #count number of deleted genes
     cnv_del<-function(x){
       vector_x<-x
       idx_cnv_del<-length(which(vector_x <= -1))
       
-      return((idx_cnv_del/length(vector_x))*100)
+      return((idx_cnv_del/length(vector_x)))
     }
     
     #count drugs score
@@ -135,7 +135,7 @@ GMIEC_MLK<-function(input_GE_selected,input_CNV_selected,input_METH_selected,inp
     meth_score<-data.frame(t(aggregate(meth ~ resKmeans, data = RFKR, mu_pos)))[2,]
     colnames(meth_score)<-paste("meth_score",1:k_user,sep="_")
     
-    mut_score<-data.frame(t(aggregate(mutation ~ resKmeans, data = RFKR, sum)))[2,]
+    mut_score<-data.frame(t(aggregate(mutation ~ resKmeans, data = RFKR, FUN=function(x){sum(x)/length(x)})))[2,]
     colnames(mut_score)<-paste("mut_score",1:k_user,sep="_")
     
     tab_SCORES<-cbind(t(ge_score),t(cnv_score_amp),t(cnv_score_del),t(meth_score),t(mut_score))
