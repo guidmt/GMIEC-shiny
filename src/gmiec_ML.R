@@ -10,13 +10,13 @@ GMIEC_MLK<-function(input_GE_selected,input_CNV_selected,input_METH_selected,inp
   
   colnames(drugs_for_analysis2)[1:2]<-c("genes","drugs")   
   
-  unique_samples<-colGE
+  unique_samples<-Reduce(intersect, list(colGE[-1],colCNV[-1],colMETH[-1],colMUT))
   
   FINAL_DF<-data.frame()
   
   for(se_patient_selection in unique_samples){
     
-    if(isTRUE(input_MUTATION_selected$Tumor_Sample_Barcode==se_patient_selection)){
+    if(length(grep(input_MUTATION_selected$Tumor_Sample_Barcode,pattern=se_patient_selection))!=0){
       
       #select the mutation of the current patients                   
       MUT_current_patient_tp<-input_MUTATION_selected[which(input_MUTATION_selected$Tumor_Sample_Barcode==se_patient_selection),]
@@ -54,25 +54,32 @@ GMIEC_MLK<-function(input_GE_selected,input_CNV_selected,input_METH_selected,inp
     CNV_pzt<-input_CNV_selected[,c("genes",se_patient_selection)]
     METH_pzt<-input_METH_selected[,c("genes",se_patient_selection)]
     
-    genes_common<-Reduce(intersect, list(all_genes_for_analysis,
-                                         GE_pzt[,1],
-                                         CNV_pzt[,1],
-                                         METH_pzt[,1]))
+    #genes_common<-Reduce(intersect, list(all_genes_for_analysis,
+    #                                     GE_pzt[,1],
+    #                                     CNV_pzt[,1],
+    #                                     METH_pzt[,1]))
+    
+    genes_common<-all_genes_for_analysis
     
     ge_pzt2<-GE_pzt[which(GE_pzt[,1]%in%genes_common),]
     cnv_pzt2<-CNV_pzt[which(CNV_pzt[,1]%in%genes_common),]
     meth_pzt2<-METH_pzt[which(METH_pzt[,1]%in%genes_common),]
     
+    df_temp<-data.frame(matrix(0,ncol=5,nrow=length(genes_common)))
+    df_temp[,1]<-genes_common
     
-    df_GCM<-data.frame(genes=ge_pzt2[,1],
-                       ge=ge_pzt2[,2],
-                       cnv=cnv_pzt2[,2],
-                       meth=meth_pzt2[,2],
-                       stringsAsFactors = F)
+    df_temp[match(ge_pzt2[,1],df_temp[,1]),2]<-ge_pzt2[,2]
+    df_temp[match(cnv_pzt2[,1],df_temp[,1]),3]<-cnv_pzt2[,2]
+    df_temp[match(meth_pzt2[,1],df_temp[,1]),4]<-meth_pzt2[,2]
     
-    INPUT_FOR_RF<-merge(df_GCM,MUT_current_patient_temp,by="genes",stringsAsFactors=F)
-    INPUT_FOR_RF$mutation<-as.numeric(as.character(INPUT_FOR_RF$mutation))
+    if(!is.na(match(MUT_current_patient_temp[,1],df_temp[,1]))){
+    df_temp[match(MUT_current_patient_temp[,1],df_temp[,1]),5]<-1 #if there is a mutation is always 1
+    } #else the data.fram contains already 0 values
     
+    colnames(df_temp)<-c("genes","ge","cnv","meth","mutation")
+    df_GCM<-df_temp
+    #INPUT_FOR_RF$mutation<-as.numeric(as.character(INPUT_FOR_RF$mutation))
+    INPUT_FOR_RF<-df_GCM
     rf.pzt.clust <- randomForest(x = INPUT_FOR_RF[,-1], y = NULL, proximity = TRUE, oob.prox = TRUE)
     prox_rf<-rf.pzt.clust$proximity
     
@@ -95,7 +102,8 @@ GMIEC_MLK<-function(input_GE_selected,input_CNV_selected,input_METH_selected,inp
     #https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3978018/
     mu_pos<-function(x){
       vector_x<-x
-      x_norm_mu<-mean(abs(vector_x)/max(abs(vector_x)))
+      #x_norm_mu<-mean(abs(vector_x)/max(abs(vector_x)))
+      x_norm_mu<-mean((vector_x-min(vector_x))/(max(vector_x)-min(vector_x)))
       #vector_x_pos<-vector_x[idx_pos]
       #mu_pos<-mean(vector_x_pos)
       return(x_norm_mu)
@@ -114,6 +122,12 @@ GMIEC_MLK<-function(input_GE_selected,input_CNV_selected,input_METH_selected,inp
       idx_cnv_del<-length(which(vector_x <= -1))
       
       return((idx_cnv_del/length(vector_x)))
+    }
+    #count the number of mutations
+    mut_count<-function(x){
+      vector_x<-x
+      idx_mut<-length(which(vector_x%in%1))
+      return((idx_mut/length(vector_x)))
     }
     
     #count drugs score
@@ -135,7 +149,7 @@ GMIEC_MLK<-function(input_GE_selected,input_CNV_selected,input_METH_selected,inp
     meth_score<-data.frame(t(aggregate(meth ~ resKmeans, data = RFKR, mu_pos)))[2,]
     colnames(meth_score)<-paste("meth_score",1:k_user,sep="_")
     
-    mut_score<-data.frame(t(aggregate(mutation ~ resKmeans, data = RFKR, FUN=function(x){sum(x)/length(x)})))[2,]
+    mut_score<-data.frame(t(aggregate(mutation ~ resKmeans, data = RFKR, FUN=mut_count)))[2,]
     colnames(mut_score)<-paste("mut_score",1:k_user,sep="_")
     
     tab_SCORES<-cbind(t(ge_score),t(cnv_score_amp),t(cnv_score_del),t(meth_score),t(mut_score))
