@@ -31,6 +31,11 @@ The manual is available in [here](https://cdn.rawgit.com/guidmt/GMIEC-shiny/cf5f
 ### NOTE: GMIEC-shiny is again in beta version, some step of analysis are again to improve. In the next days some updates will be available:
 
 # News:
+03/05/2019:
+- BIG update: now GMIEC, implements a new system to integrate e analyze the data using random forest without a logic approach
+- implemented function for random forest analysis
+- implemented a new scoring system.
+
 05/02/2019:
 - move .Rmd files in /src
 - change code to create link
