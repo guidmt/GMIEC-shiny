@@ -54,6 +54,8 @@ GMIEC_MLK<-function(input_GE_selected,input_CNV_selected,input_METH_selected,inp
     CNV_pzt<-input_CNV_selected[,c("genes",se_patient_selection)]
     METH_pzt<-input_METH_selected[,c("genes",se_patient_selection)]
     
+    zscore_ge<-log(GE_pzt[,2]-mean(GE_pzt[,2])/sd(GE_pzt[,2])+1,2)
+    
     #genes_common<-Reduce(intersect, list(all_genes_for_analysis,
     #                                     GE_pzt[,1],
     #                                     CNV_pzt[,1],
@@ -80,15 +82,45 @@ GMIEC_MLK<-function(input_GE_selected,input_CNV_selected,input_METH_selected,inp
     df_GCM<-df_temp
     #INPUT_FOR_RF$mutation<-as.numeric(as.character(INPUT_FOR_RF$mutation))
     INPUT_FOR_RF<-df_GCM
+    INPUT_FOR_RF[is.na(INPUT_FOR_RF)]<-0
     rf.pzt.clust <- randomForest(x = INPUT_FOR_RF[,-1], y = NULL, proximity = TRUE, oob.prox = TRUE)
     prox_rf<-rf.pzt.clust$proximity
     
     #users definened
     resKmeans<-kmeans(prox_rf,k_user)$cluster
     RFKR<-data.frame(INPUT_FOR_RF,resKmeans,stringsAsFactors=F)
+    
     colnames(drugs_for_analysis2)[1]<-"genes"
     RFKR_drugs<-merge(RFKR,drugs_for_analysis2,by="genes",all.x=T)
     RFKR_drugs[is.na(RFKR_drugs)]<-0
+    
+    meth_pzt2[is.na(meth_pzt2)]<-0
+              
+    #find methylated genes
+    #mixture_models_methylation <- normalmixEM(meth_pzt2[,2], k = 3)
+    #use the posterior probability to understand which are the methylated genes
+    #why three components? Because the distribution have many zero, intermediate values, and values between 0.6-1.0
+    #genes_ismix<- meth_pzt2[which(mixture_models_methylation$posterior[,3]>0.50),1]
+    genes_ismix<-meth_pzt2[which(meth_pzt2[,2]>=0.7),1]
+    
+    RFKR<-data.frame(RFKR,meth_expressed=0)  
+    RFKR[match(genes_ismix,RFKR$gene),"meth_expressed"]<-1
+
+    #find up-regulated genes
+    ge_pzt2_log<-log(ge_pzt2[,2]+1,2)
+    zscore<-(ge_pzt2_log-mean(ge_pzt2_log))/sd(ge_pzt2_log)
+    
+    idx_up_genes<-which(zscore >= 1.5)
+    idx_down_genes<-which(zscore <= 1.5)
+    
+    genes_up<-ge_pzt2[idx_up_genes,1]
+    genes_down<-ge_pzt2[idx_down_genes,1]
+    
+    RFKR<-data.frame(RFKR,genes_up=0)  
+    RFKR[match(genes_up,RFKR$genes),"genes_up"]<-1
+    
+    RFKR<-data.frame(RFKR,genes_down=0)  
+    RFKR[match(genes_down,RFKR$genes),"genes_down"]<-1
     
     #group the genes by clusters
     GENES_GROUPED_FOR_K<-aggregate(genes ~ resKmeans, data = unique(RFKR_drugs[,c("genes","resKmeans")]), paste,collapse="#")
@@ -100,22 +132,15 @@ GMIEC_MLK<-function(input_GE_selected,input_CNV_selected,input_METH_selected,inp
     colnames(DGFK)<-paste("drugs_modules",1:k_user,sep="_")
     
     #https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3978018/
-    mu_pos<-function(x){
+    
+
+    #FOR S-score: gene-expression, amplication, up-regulated genes, down-regulated genes 
+    s_onc<-function(x){
       vector_x<-x
-      #x_norm_mu<-mean(abs(vector_x)/max(abs(vector_x)))
-      x_norm_mu<-mean((vector_x-min(vector_x))/(max(vector_x)-min(vector_x)))
-      #vector_x_pos<-vector_x[idx_pos]
-      #mu_pos<-mean(vector_x_pos)
-      return(x_norm_mu)
+      idx_s_onc<-length(which(vector_x >= 1))
+      return((idx_s_onc/length(vector_x)))
     }
     
-    #count number of amplified genes
-    cnv_amp<-function(x){
-      vector_x<-x
-      idx_cnv_amp<-length(which(vector_x >= 1))
-      
-      return((idx_cnv_amp/length(vector_x)))
-    }
     #count number of deleted genes
     cnv_del<-function(x){
       vector_x<-x
@@ -123,6 +148,7 @@ GMIEC_MLK<-function(input_GE_selected,input_CNV_selected,input_METH_selected,inp
       
       return((idx_cnv_del/length(vector_x)))
     }
+    
     #count the number of mutations
     mut_count<-function(x){
       vector_x<-x
@@ -137,26 +163,67 @@ GMIEC_MLK<-function(input_GE_selected,input_CNV_selected,input_METH_selected,inp
       return(score_genes_with_drugs)
     }
     
-    ge_score<-data.frame(t(aggregate(ge ~ resKmeans, data = RFKR,mu_pos)))[2,]
-    colnames(ge_score)<-paste("ge_scores",1:k_user,sep="_")
+    #1) mean of gene-expression
+    ge_mean<-data.frame(t(aggregate(ge ~ resKmeans, data = RFKR,mean)))[2,]
+    colnames(ge_mean)<-paste("ge_mean",1:k_user,sep="_")
     
-    cnv_score_amp<-data.frame(t(aggregate(cnv ~ resKmeans, data = RFKR, cnv_amp)))[2,]
+    ########################################################################
+    #2) first input for S-ONC
+    ge_score_up<-data.frame(t(aggregate(genes_up ~ resKmeans, data = RFKR,s_onc)))[2,]
+    colnames(ge_score_up)<-paste("ge_score_up",1:k_user,sep="_")
+    
+    #first input for S-ONC
+    cnv_score_amp<-data.frame(t(aggregate(cnv ~ resKmeans, data = RFKR, s_onc)))[2,]
     colnames(cnv_score_amp)<-paste("cnv_score_amp",1:k_user,sep="_")
     
+    #######################################################################
+    
+    #first input for S-SUP
     cnv_score_del<-data.frame(t(aggregate(cnv ~ resKmeans, data = RFKR, cnv_del)))[2,]
     colnames(cnv_score_del)<-paste("cnv_score_dep",1:k_user,sep="_")
     
-    meth_score<-data.frame(t(aggregate(meth ~ resKmeans, data = RFKR, mu_pos)))[2,]
-    colnames(meth_score)<-paste("meth_score",1:k_user,sep="_")
+    meth_mean<-data.frame(t(aggregate(meth ~ resKmeans, data = RFKR, mean)))[2,]
+    colnames(meth_mean)<-paste("meth_mean",1:k_user,sep="_")
     
+    #second input for S-SUP
+    meth_score<-data.frame(t(aggregate(meth_expressed ~ resKmeans, data = RFKR, s_onc)))[2,]
+    colnames(meth_score)<-paste("meth_score_exp",1:k_user,sep="_")
+    
+    #third input for S-SUP
     mut_score<-data.frame(t(aggregate(mutation ~ resKmeans, data = RFKR, FUN=mut_count)))[2,]
     colnames(mut_score)<-paste("mut_score",1:k_user,sep="_")
     
-    tab_SCORES<-cbind(t(ge_score),t(cnv_score_amp),t(cnv_score_del),t(meth_score),t(mut_score))
-    colnames(tab_SCORES)<-c("gene_expression","cnv_amp","cnv_del","meth","mutation")
+    #fourth: down-regulated genes
+    ge_score_down<-data.frame(t(aggregate(genes_down ~ resKmeans, data = RFKR, s_onc)))[2,]
+    colnames(ge_score_down)<-paste("ge_score_down",1:k_user,sep="_")
+    
+    ############################################################################
+    
+    
+    tab_SCORES<-cbind(t(ge_mean),t(ge_score_up),t(ge_score_down),t(cnv_score_amp),t(cnv_score_del),t(meth_mean),t(meth_score),t(mut_score))
+    colnames(tab_SCORES)<-c("mean_ge",
+                            "genes_up",
+                            "genes_down",
+                            "cnv_amp",
+                            "cnv_del",
+                            "meth_mean",
+                            "meth_exp",
+                            "mut")
+    
     tab_SCORES[is.na(tab_SCORES)]<-0
     
-    GLOBAL_GENETIC_SCORE<-t(data.frame(rowSums(tab_SCORES)))
+    S_ONC=(100*tab_SCORES[,"cnv_amp"])+(100*tab_SCORES[,"genes_up"])
+    
+    S_SUP=tab_SCORES[,"mut"]+(100*tab_SCORES[,"meth_exp"])+(100*tab_SCORES[,"cnv_del"])+(100*tab_SCORES[,"genes_down"])
+    
+    S = log(S_ONC/S_SUP,2)
+    S[grep(S,pattern="Inf")]<-0
+    
+    GLOBAL_GENETIC_SCORE<-data.frame(t(S))
+    
+    GLOBAL_GENETIC_SCORE[S_ONC==0]<--log(S_SUP[S_ONC==0],2)
+    GLOBAL_GENETIC_SCORE[S_SUP==0]<-log(S_ONC[S_SUP==0],2)
+    
     colnames(GLOBAL_GENETIC_SCORE)<-paste("gg_score",1:k_user,sep="_")
     
     #create the ouput
@@ -191,9 +258,12 @@ GMIEC_MLK<-function(input_GE_selected,input_CNV_selected,input_METH_selected,inp
                         number_genes=number_genes,
                         DGFK,
                         number_drugs=number_drugs,
-                        ge_score,
+                        ge_mean,
+                        ge_score_up,
                         cnv_score_amp,
                         cnv_score_del,
+                        ge_score_down,
+                        meth_mean,
                         meth_score,
                         mut_score,
                         GLOBAL_GENETIC_SCORE,
