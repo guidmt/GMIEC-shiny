@@ -125,11 +125,11 @@ GMIEC_MLK<-function(input_GE_selected,input_CNV_selected,input_METH_selected,inp
     #group the genes by clusters
     GENES_GROUPED_FOR_K<-aggregate(genes ~ resKmeans, data = unique(RFKR_drugs[,c("genes","resKmeans")]), paste,collapse="#")
     GGFK<-data.frame(t(GENES_GROUPED_FOR_K))[2,]
-    colnames(GGFK)<-paste("genes_module",1:k_user,sep="_")
+    colnames(GGFK)<-paste("genes_in_module",1:k_user,sep="_")
     #group the drugs by clusters
     DRUGS_GROUPED_FOR_K<-aggregate(drugs ~ resKmeans, data = unique(RFKR_drugs[,c("drugs","resKmeans")]), paste,collapse="#")
     DGFK<-data.frame(t(DRUGS_GROUPED_FOR_K))[2,]
-    colnames(DGFK)<-paste("drugs_module",1:k_user,sep="_")
+    colnames(DGFK)<-paste("drugs_in_module",1:k_user,sep="_")
     
     #https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3978018/
     
