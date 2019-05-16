@@ -15,9 +15,9 @@ ui <- dashboardPage(
   dashboardSidebar(
     sidebarMenu(
       menuItem("Home", tabName = "home", icon = icon("home")),
-      menuItem("GMIEC", tabName = "run_gmiec", icon = icon("play-circle")),
-      menuItem("FD-GMIEC", tabName = "fd_gmiec2", icon = icon("play-circle")),
-      menuItem("VIS-GMIEC", tabName = "vis_gmiec2", icon = icon("wpexplorer")),
+      menuItem("GMIEC-MD", tabName = "run_gmiec", icon = icon("play-circle")),
+      menuItem("GMIEC-FD", tabName = "fd_gmiec2", icon = icon("play-circle")),
+      menuItem("GMIEC-VIS", tabName = "vis_gmiec2", icon = icon("wpexplorer")),
       menuItem("Manual", tabName = "manual", icon = icon("book")),
       menuItem("FAQ", tabName = "faq", icon = icon("question")),
       menuItem("Contact", tabName = "contact", icon = icon("at")),

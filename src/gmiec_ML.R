@@ -111,7 +111,7 @@ GMIEC_MLK<-function(input_GE_selected,input_CNV_selected,input_METH_selected,inp
     zscore<-(ge_pzt2_log-mean(ge_pzt2_log))/sd(ge_pzt2_log)
     
     idx_up_genes<-which(zscore >= 1.5)
-    idx_down_genes<-which(zscore <= 1.5)
+    idx_down_genes<-which(zscore < 0)
     
     genes_up<-ge_pzt2[idx_up_genes,1]
     genes_down<-ge_pzt2[idx_down_genes,1]
@@ -125,11 +125,11 @@ GMIEC_MLK<-function(input_GE_selected,input_CNV_selected,input_METH_selected,inp
     #group the genes by clusters
     GENES_GROUPED_FOR_K<-aggregate(genes ~ resKmeans, data = unique(RFKR_drugs[,c("genes","resKmeans")]), paste,collapse="#")
     GGFK<-data.frame(t(GENES_GROUPED_FOR_K))[2,]
-    colnames(GGFK)<-paste("genes_modules",1:k_user,sep="_")
+    colnames(GGFK)<-paste("genes_module",1:k_user,sep="_")
     #group the drugs by clusters
     DRUGS_GROUPED_FOR_K<-aggregate(drugs ~ resKmeans, data = unique(RFKR_drugs[,c("drugs","resKmeans")]), paste,collapse="#")
     DGFK<-data.frame(t(DRUGS_GROUPED_FOR_K))[2,]
-    colnames(DGFK)<-paste("drugs_modules",1:k_user,sep="_")
+    colnames(DGFK)<-paste("drugs_module",1:k_user,sep="_")
     
     #https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3978018/
     
@@ -224,7 +224,11 @@ GMIEC_MLK<-function(input_GE_selected,input_CNV_selected,input_METH_selected,inp
     GLOBAL_GENETIC_SCORE[S_ONC==0]<--log(S_SUP[S_ONC==0],2)
     GLOBAL_GENETIC_SCORE[S_SUP==0]<-log(S_ONC[S_SUP==0],2)
     
-    colnames(GLOBAL_GENETIC_SCORE)<-paste("gg_score",1:k_user,sep="_")
+    #change Inf with 0
+    
+    GLOBAL_GENETIC_SCORE[mapply(is.infinite, GLOBAL_GENETIC_SCORE)] <- 0
+    
+    colnames(GLOBAL_GENETIC_SCORE)<-paste("score_alteration_module",1:k_user,sep="_")
     
     #create the ouput
     number_genes=t(data.frame(apply(GGFK,2,FUN=function(x){unlist(lapply(strsplit(x,split="#"),length))})))
@@ -243,7 +247,7 @@ GMIEC_MLK<-function(input_GE_selected,input_CNV_selected,input_METH_selected,inp
     
     
     SCORES_DRUGS_DF<-t(data.frame(SCORES_DRUGS))
-    colnames(SCORES_DRUGS_DF)<-paste("number_of_genes_with_drugs_on_total",1:k_user,sep="_")
+    colnames(SCORES_DRUGS_DF)<-paste("score_alteration_drugs",1:k_user,sep="_")
     #################
     
     
@@ -251,7 +255,7 @@ GMIEC_MLK<-function(input_GE_selected,input_CNV_selected,input_METH_selected,inp
     #combine GLOBAL GENETIC SCORE WITH SCORES DRUGS
     
     COMBINED_SCORES=data.frame(GLOBAL_GENETIC_SCORE*SCORES_DRUGS_DF)
-    colnames(COMBINED_SCORES)<-paste("combined_score",1:k_user,sep="_")
+    colnames(COMBINED_SCORES)<-paste("sad_score",1:k_user,sep="_")
     #################
     TEMP_DF<-data.frame(sample_id=se_patient_selection,
                         GGFK,
