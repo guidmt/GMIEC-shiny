@@ -69,9 +69,7 @@ h6 {
 </style>
 
 
-</head>
 
-<body>
 
 <style type = "text/css">
 .main-container {
@@ -96,6 +94,9 @@ img {
 button.code-folding-btn:focus {
   outline: none;
 }
+summary {
+  display: list-item;
+}
 </style>
 
 
@@ -110,7 +111,6 @@ body {
   padding-top: 56px;
   margin-top: -56px;
 }
-
 .section h2 {
   padding-top: 56px;
   margin-top: -56px;
@@ -130,6 +130,43 @@ body {
 .section h6 {
   padding-top: 56px;
   margin-top: -56px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
 }
 </style>
 
@@ -151,19 +188,85 @@ $(document).ready(function () {
 });
 </script>
 
-
-<div class="container-fluid main-container">
-
 <!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
 <script>
 $(document).ready(function () {
   window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
 });
 </script>
 
 <!-- code folding -->
 
 
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
 
 
 
@@ -212,121 +315,127 @@ $(document).ready(function () {
 </div>
 
 
-<div id="a-brief-summary" class="section level3">
-<h3><strong>A brief summary</strong></h3>
-<div id="step1-details-annotation" class="section level4">
-<h4><strong>Step1: Details annotation</strong></h4>
-<p>In the first step the ChIP-seq data of a transcriptional factors are annotated using ChIPPeakAnno, considering a distance <strong>(d)</strong> of <strong>(n)</strong> bp. After this step the mean absolute deviation (MAD) of the annotated genes is estimated. Then, to filter the genes a bayesian analysis of change points of MAD is perfomed. This allowed to selected only the genes with high MAD values and without use a pre-determinate user threshold. In IMMAS this step is conducted by bcp function implemented in bcp R-package. This function implements the Bayesian change point methods develop by Wang and Emerson (2015). Then, after that the selection of genes is perfomed, for each patient start the core of the IMMAS analysis. The main aim of the workflow is the identification of specifics genes that shares the same genomic alterations (e.g. copy number variation, methylation, gene-expression changes, mutation etc.). In our context we will use the term “module” to define groups of genes that share the same genomics alterations and that are regulated by the same transcriptional factors. The identification of modules involves the integration of all omics data available.</p>
-</div>
-<div id="step2-identification-alteration-at-the-level-of-single-patient" class="section level4">
-<h4><strong>Step2: Identification alteration at the level of single patient</strong></h4>
-<p>For GMIEC worklflow data from ChIP-seq data, gene-expression, copy-number variation, methylation and mutation are required. However, before to start the identification of the modules it is important codify if the genes of the single patients present or not some characteristics (e.g. presence of mutation or not). For this aim, we used a similar approach used in Ana B. Pavel et al., 2016 based on fuzzy logic. In our context we define different critereas. For all genes <strong>(g)</strong> of a patient <strong>(p)</strong> we defined using a binary coding the presence <strong>(1)</strong> or not <strong>(0)</strong> of a characteristic. To details about the rules see the reference[…] For FD-GMIEC see the description in the dedicated section.</p>
-</div>
-<div id="step3-apriori" class="section level4">
-<h4><strong>Step3: Apriori</strong></h4>
-<p>When the codification of the properties of genes is terminated for each patients, the second most important step of GMIEC is the identification of modules with genes that have the same properties. In this work we used association rules discovery technique (ARD) to identify similar modules. The ARD mining method has been extensively used in different application to aim to identify association between subsets of items from huge lists of transactions. This methodologies identify set of elements that frequently co-occur in a dataset and create relationship between them in form of <strong>X-&gt;Y</strong>. The advantage of this approach is that not rely on any prestablished assumptions.</p>
-</div>
-<div id="step4-computes-the-scores" class="section level4">
-<h4><strong>Step4: Computes the scores</strong></h4>
-<p>After this analysis we identify if a module is preserved or not. In this context the term “preserved module” indicate a group of genes without any genomic alteration. In contrast, an alterated module is a group of genes with different genomic alteration. In parallel to this, we identified also if a module is druggable or not. A module highly druggable is a module in which many genes are targeted by drugs. Finally we created a unique score to indicate the levels of alterations and druggability of a module. A module consist of <strong>n</strong> rows and <strong>p</strong> columns. The number of rows correspond with the genes targeted by one TF. The number of columns correspond with the number of genomic properties described in the previously section. We define c as the cell of ni row and pi column. For one gene <strong>(g)</strong>, <strong>c</strong> can assume binary value <strong>(0,1)</strong> indicating the presence or not of a property. See the reference for details.</p>
-</div>
 <div id="dependencies" class="section level4">
 <h4><strong>Dependencies</strong></h4>
-<p>GMIEC depends on several packages: - shiny - shinydashboard - rmarkdown - apriori - bcp - ChipPeakAnno</p>
+<p>GMIEC depends on several packages:</p>
+<ul>
+<li>bcp</li>
+<li>ChIPpeakAnno</li>
+<li>plyr</li>
+<li>stats</li>
+<li>shiny</li>
+<li>shinydashboard</li>
+<li>heatmaply</li>
+<li>klaR</li>
+<li>formattable</li>
+<li>kableExtra</li>
+<li>randomForest</li>
+</ul>
 </div>
+<div id="how-to-install-gmiec" class="section level3">
+<h3><strong>How to install GMIEC</strong></h3>
+<p>Copy and paste the code inside the INSTALL.R on a R shell.</p>
 <div id="how-to-run-gmiec-in-local" class="section level4">
 <h4><strong>How to run GMIEC in local:</strong></h4>
 <ol style="list-style-type: decimal">
 <li>Go to <a href="https://github.com/guidmt/gmiec-shiny" class="uri">https://github.com/guidmt/gmiec-shiny</a></li>
-<li>Download the repository</li>
-<li>Go in the folder with the application and:</li>
-</ol>
+<li>Download the repository or use git-clone</li>
+<li>Go in the folder with the application and:
 <ul>
 <li>From console <strong>shinyAppDir(appDir=“/mydir/GMIEC_shiny”)</strong></li>
+</ul></li>
+</ol>
+</div>
+</div>
+<div id="a-brief-summary" class="section level3">
+<h3><strong>A brief summary</strong></h3>
+<p>GMIEC consists of three application: - GMIEC-MD for the integration of multi-omics data - GMIEC-FD for the integration of only two data set - GMIEC-VIS to visualize the results of GMIEC-MD and GMIEC-FD</p>
+<div id="step1-methods-of-analysis" class="section level4">
+<h4><strong>Step1: Methods of analysis</strong></h4>
+<p>GMIEC-MD implements two methods for the integration of the multi-omics data and the identification of groups of genes at the level of single patient. <strong>Method 1 (M1)</strong>, The first method (M1) it is based on an unsupervised machine learning approach, here we implemented a random forest algorithm from random-Forest R-package. For each patient is generate a matrix used as input for random forest that integrate the data and compute the similarities measures between the points (proximity values).The vector with the values of proximity is used as input for k-means to identify cluster of genes. Each cluster will contain genes that shared common genomic features. <strong>Method 2 (M2)</strong>,GMIEC-MD and GMIEC-FD implements also a logic approach to iden-tify (method 2, M2), in each patient, the genes that has specifics genomic features. For each patient (i) a matrix Mi = (g x r), in which n are genes and r rules is generated (see supplementary data). If a gene respect a giv-en rule is marked as [1], otherwise [0]. The clustering of the matrix M is performed with k-mode using a number cluster defined by the user.</p>
+</div>
+<div id="step2-compute-the-scores" class="section level4">
+<h4><strong>Step2: Compute the scores</strong></h4>
+<p>In the case that GMIEC-MD was run to use M1, a S-score like is computed for each module to measure if a group of genes are oncogenic or suppressed. In parallel to this, we identified also if a module is druggable or not. A module highly druggable is a module in which many genes are targeted by drugs. Finally we created a unique score to indicate the levels of alterations and druggability of a module. In the case that GMIEC is run with M2 or GMIEC-FD a level alteration module is compute (LAM score) to measure the level of genomic alteration. Similarly for M1, for each module an estimation between the number of genes links with drugs (gtg) and the total number of genes in module (tgm) is computed. Also in this case a combine scores is computed.</p>
+</div>
+<div id="annotation" class="section level4">
+<h4><strong>Annotation</strong></h4>
+<p>GMIEC-MD and GMIEC-FD can used as input genomic data such as ChIP-seq data (chromosome, start, end). In this case, the first step is the annotation of ChIP-seq data of a transcriptional factors are annotated using ChIPPeakAnno, considering a distance <strong>(d)</strong> of <strong>(n)</strong> bp. After this step the mean absolute deviation (MAD) of the annotated genes is estimated. Then, to filter the genes a bayesian analysis of change points of MAD is perfomed. This allowed to selected only the genes with high MAD values and without use a pre-determinate user threshold. In GMIEC this step is conducted by bcp function implemented in bcp R-package. This function implements the Bayesian change point methods develop by Wang and Emerson (2015). Then, after that the selection of genes is perfomed, for each patient start the core of the GMIEC analysis. The main aim of the workflow is the identification of specifics genes that shares the same genomic alterations (e.g. copy number variation, methylation, gene-expression changes, mutation etc.). In our context we will use the term “module” to define groups of genes that share the same genomics alterations and that are regulated by the same transcriptional factors. The identification of modules involves the integration of all omics data available.</p>
+</div>
+<div id="input-of-gmiec-md-and-gmiec-fd" class="section level4">
+<h4><strong>Input of GMIEC-MD and GMIEC-FD:</strong></h4>
+<ul>
+<li><strong>omics data</strong>: gene-expression, copy-number epigenetics and mutations data in the form of tab-delimited files. In the case the genetic variants data, the user must create a file with only the mutations of interest (e.g. with deleterious variants).</li>
+<li><strong>drugs-genes table</strong>: a tab delimited file with the association between genes and drugs. The user can create a custom file selecting only the drugs and genes that are important for the disease of interest.</li>
+<li><strong>clinical data</strong>: a tab delimited file with clinical variables to include in the analysis.</li>
+<li><strong>epigenetic data</strong> (not mandatory): a bed file with chromosome, start, end.</li>
+<li><strong>list of genes</strong> (not mandatory): a list of genes of interest to consider for the analysis (e.g. genes of a pathway). The list of genes can be directly uploaded by the user. Otherwise if the user provides a file with genomic coordinates, the list of genes is obtained through a step of annotation.</li>
 </ul>
 </div>
-<div id="manual-of-gmiec" class="section level4">
-<h4><strong>Manual of GMIEC:</strong></h4>
-<ul>
-<li><strong>omics dataset</strong>: a tab-delimited file with the header, the first column contains the genes.</li>
-<li><strong>epigenetic data</strong>: a bed file with chromosome, start, end.</li>
-<li><strong>data association drug-gene</strong>: a tab delimited files with two columns. The first one contain the list of genes, the second the associated drugs.</li>
-</ul>
+<div id="output-of-gmiec-md-and-gmiec-fd" class="section level4">
+<h4><strong>Output of GMIEC-MD and GMIEC-FD:</strong></h4>
+<p>The output of GMIEC is a tab delimited file. This output contains the gene modules (GMs) and drug modules (DMs) identified during the analysis. The output reports also columns containing scores, that are a quantification of the levels of genomic alterations of the genes in GM, and the fraction of drugs links with a GMs. GMIEC allows also to gen-erate an html report (see figure S2) that can be interrogated directly click-ing on specific links. In particular, for each patient the groups of genes identified with common molecular features, the associated drugs and the clinical data provided by the user are reported.</p>
 </div>
 <div id="how-to-run-gmiec" class="section level4">
 <h4><strong>How to run GMIEC:</strong></h4>
+<p>If you use GMIEC-MD and GMIEC-FD two are the initial steps:</p>
 <ol style="list-style-type: decimal">
 <li>Upload all omics dataset</li>
 <li><p>Upload the data with the association drug-gene</p></li>
-<li><strong>Analysis considering only the annotated genes</strong></li>
-</ol>
+<li><strong>Analysis considering only the annotated genes</strong>
 <ul>
 <li>Upload the bed file</li>
 <li>Click on “Use only the annotated genes”</li>
+<li>Select the number of clusters</li>
+<li>Select if you want to run the analysis with “random + k-means (M1)”</li>
 <li>Type the name for the output</li>
 <li>Click on “Run Analysis”</li>
 <li>When the analysis is finished click on “Download”</li>
-</ul>
-<ol start="2" style="list-style-type: decimal">
-<li><strong>Analysis considering only the annotated genes and TF</strong></li>
-</ol>
+</ul></li>
+<li><strong>Analysis considering only the annotated genes and TF</strong>
 <ul>
 <li>Upload the bed file</li>
 <li>Type the name of TF</li>
 <li>Click on “Use only the annotated genes and explore the TF”</li>
+<li>Select the number of clusters</li>
+<li>The options “random + k-means (M1)” is not available in this case</li>
 <li>Type the name for the output</li>
 <li>Click on “Run Analysis”</li>
 <li>When the analysis is finished click on “Download”</li>
-</ul>
-<ol start="3" style="list-style-type: decimal">
-<li><strong>Analysis considering using a gene-list</strong></li>
-</ol>
+</ul></li>
+<li><strong>Analysis considering using a gene-list</strong>
 <ul>
 <li>Click on “Use a gene-list” (provide a tab-delimited file with one column reporting the genes)</li>
-<li>Upload the gene-list</li>
+<li>Upload the gene-list
+<ul>
+<li>Click on “Use only the annotated genes and explore the TF”</li>
+</ul></li>
+<li>Select the number of clusters</li>
+<li>Select if you want to run the analysis with “random + k-means (M1)”</li>
 <li>Click on “Run Analysis”</li>
 <li>When the analysis is finished click on “Download”</li>
-</ul>
-<ol start="4" style="list-style-type: decimal">
-<li><strong>Analysis considering using all genes</strong></li>
+</ul></li>
+<li><strong>Analysis considering using all genes</strong>
+<ul>
+<li>Click on “Use all genes”</li>
+<li>The options “random + k-means (M1)” is not available in this case</li>
+<li>Click on “Run Analysis”</li>
+<li>When the analysis is finished click on “Download”</li>
+</ul></li>
 </ol>
 <ul>
+<li><strong>Parameters for GMIEC</strong>
+<ul>
 <li>Click on “Use all genes”</li>
 <li>Click on “Run Analysis”</li>
-<li><p>When the analysis is finished click on “Download”</p></li>
-<li><strong>Parameters for GMIEC</strong></li>
-<li>Click on “Use all genes”</li>
-<li>Click on “Run Analysis”</li>
-<li><p>When the analysis is finished click on “Download”</p></li>
+<li>When the analysis is finished click on “Download”</li>
+</ul></li>
 </ul>
 </div>
-<div id="description-of-gmiec-output" class="section level4">
-<h4><strong>Description of GMIEC output:</strong></h4>
+<div id="how-to-run-gmiec-fd" class="section level4">
+<h4><strong>How to run GMIEC-FD</strong></h4>
 <ul>
-<li>The output is tab-delimited matrix. For each patients and for each modules the results of analysis are reported. For each module their score, list of genes and associated drugs are reported.</li>
-</ul>
-</div>
-<div id="functionalities-of-fd-gmiec" class="section level4">
-<h4><strong>Functionalities of FD-GMIEC:</strong></h4>
-<ul>
-<li><strong>omics dataset</strong>: a tab-delimited file with the header, the first column contains the genes.</li>
-<li><strong>epigenetic data</strong>: a bed file with chromosome, start, end.</li>
-<li><strong>data interaction drug-gene</strong>: a tab delimited files with two columns. The first one contain the list of genes, the second the associated drugs.</li>
-</ul>
-</div>
-<div id="how-to-run-fd-gmiec" class="section level4">
-<h4><strong>How to run FD-GMIEC:</strong></h4>
-</div>
-<div id="functionalities-of-vis-gmiec" class="section level4">
-<h4><strong>Functionalities of VIS-GMIEC:</strong></h4>
-<ul>
-<li>Exploration of the data at the level of groups of or single patient</li>
-</ul>
-</div>
-<div id="description-of-fd-gmiec-output" class="section level4">
-<h4><strong>Description of FD-GMIEC output:</strong></h4>
-<ul>
-<li>The output is tab-delimited matrix. For each patients and for each modules the results of analysis are reported. For each module their score, list of genes and associated drugs are reported.</li>
+<li>On the menu of GMIEC-Shiny, click on GMIC-FD and use the same procedures described for GMIEC-MD to analyze the data.</li>
 </ul>
 </div>
 </div>

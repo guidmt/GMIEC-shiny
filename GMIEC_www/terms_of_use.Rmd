@@ -17,4 +17,6 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+The features of GMIEC make it a tool that could be useful in the context of the data integration, data mining and data-exploration at the level of single patient. GMIEC is a tool that is provided only to perform analysis, exploratory analysis in basic and bioinformatic research with a scientific usage. GMIEC was not develop as tool to use in the clinical practice and authors decline each responsibility on its usage.
+
 You may contact the author of this code, Jessica Minnier, at <guidantonio.mt@gmail.com>

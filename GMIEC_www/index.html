@@ -69,9 +69,7 @@ h6 {
 </style>
 
 
-</head>
 
-<body>
 
 <style type = "text/css">
 .main-container {
@@ -96,6 +94,9 @@ img {
 button.code-folding-btn:focus {
   outline: none;
 }
+summary {
+  display: list-item;
+}
 </style>
 
 
@@ -110,7 +111,6 @@ body {
   padding-top: 56px;
   margin-top: -56px;
 }
-
 .section h2 {
   padding-top: 56px;
   margin-top: -56px;
@@ -130,6 +130,43 @@ body {
 .section h6 {
   padding-top: 56px;
   margin-top: -56px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
 }
 </style>
 
@@ -151,19 +188,85 @@ $(document).ready(function () {
 });
 </script>
 
-
-<div class="container-fluid main-container">
-
 <!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
 <script>
 $(document).ready(function () {
   window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
 });
 </script>
 
 <!-- code folding -->
 
 
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
 
 
 
@@ -213,10 +316,6 @@ $(document).ready(function () {
 
 
 <p>Welcome in <strong>GMIEC</strong>!! <strong>GMIEC</strong> is a framework, GMIEC, that integrates omics data (gene-expression, copy number variation, mutation, methylation) with data containing genomic coordinates of cis and/or trans epigenetic regulators (e.g. ChIP-seq). Then, at the level of the single patient, GMIEC identify groups of genes (modules) that share common genomic features. Then, using an external database, the genes in each module are associated with their own target drugs. Therefore, GMIEC allows the identification, at the level of the single patient, groups of genes that are regulated by the same epigenetic regulators (e.g. TFs), sharing common genomic features and associated with different number of drugs.</p>
-<div id="methods" class="section level4">
-<h4><strong>Methods:</strong></h4>
-<p>This shiny application contatin different two modules: <strong>GMIEC</strong> and <strong>FD-GMIEC</strong>. The input of GMIEC are: i) a file with the genomic regions of the regulators of interest; ii) omics data; ii) a file that includes the association between genes and drugs. The four principal steps of analysis are: i) the annotation of the epigenetic components (ECs) derived from a catalogue (ReMap) with their target genes; ii) a step of discretization used to mark the presence of one alteration (1) or not (0) for all genes of single patient, considering all datasets (e.g. gene-expression data, copy-number alterations data, mutations data); iii) the genes with the similar genomic features grouped using k-mode clustering.</p>
-</div>
 <div id="functionalities-of-gmiec" class="section level4">
 <h4><strong>Functionalities of GMIEC:</strong></h4>
 <ul>
@@ -227,8 +326,8 @@ $(document).ready(function () {
 <li>Analysis using all genes between the datasets.</li>
 </ul>
 </div>
-<div id="functionalities-of-fd-gmiec" class="section level4">
-<h4><strong>Functionalities of FD-GMIEC:</strong></h4>
+<div id="functionalities-of-gmiec-mdgmiec-fd" class="section level4">
+<h4><strong>Functionalities of GMIEC-MD/GMIEC-FD</strong></h4>
 <ul>
 <li>Identification of groups of genes with/without genomic alterations associated with drugs using <strong>predefined</strong> number of datasets.</li>
 <li>Analysis using only the annotated genes.</li>
