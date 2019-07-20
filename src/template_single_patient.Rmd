@@ -42,12 +42,23 @@ sample_name<-params$name_patient
   LinkPatient<-paste(string,link_to_string,sep="")
 
   
-idx_number_drugs<-grep(tab_patient[,1],pattern="drugs_module")
-idx_number_genes<-grep(tab_patient[,1],pattern="genes_module")
+idx_number_drugs<-grep(tab_patient[,1],pattern="drugs_in_module")
+idx_number_genes<-grep(tab_patient[,1],pattern="genes_in_module")
 
-idx_number_sad<-grep(tab_patient[,1],pattern="sad")
+idx_number_sad<-grep(tab_patient[,1],pattern="score_sad")
+
+if(length(grep(tab_patient[,1],pattern="score_alteration_module"))!=0){
+  
 idx_number_sam<-grep(tab_patient[,1],pattern="score_alteration_module")
-idx_number_sadrugs<-grep(tab_patient[,1],pattern="score_alteration_drugs")
+
+} else {
+  
+#the users used GMIEC-MD
+idx_number_sam<-grep(tab_patient[,1],pattern="score_sad")
+  
+}
+
+idx_number_sadrugs<-grep(tab_patient[,1],pattern="score_alteration_drugs_rdg")
 
 
 ##create the data.frame for the statistics about the number of patient for module
