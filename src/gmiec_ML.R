@@ -1,6 +1,11 @@
 GMIEC_MLK<-function(input_GE_selected,input_CNV_selected,input_METH_selected,input_MUTATION_selected,drugs_for_analysis2,input_clinical,k_user,all_genes_for_analysis){
   
   colGE<-colnames(input_GE_selected)[2:ncol(input_GE_selected)]
+  #compute the z-score between the patients
+  input_GE_selected[,-1]<-log(input_GE_selected[,-1]+1,2)
+  
+  input_GE_selected[,-1]<-apply(X=input_GE_selected[,-1],1,FUN=function(X){(X-mean(X))/sd(X)})
+  
   colnames(input_GE_selected)[1]<-"genes"
   colCNV<-colnames(input_CNV_selected)[2:ncol(input_CNV_selected)]
   colnames(input_CNV_selected)[1]<-"genes"
@@ -54,7 +59,7 @@ GMIEC_MLK<-function(input_GE_selected,input_CNV_selected,input_METH_selected,inp
     CNV_pzt<-input_CNV_selected[,c("genes",se_patient_selection)]
     METH_pzt<-input_METH_selected[,c("genes",se_patient_selection)]
     
-    zscore_ge<-log(GE_pzt[,2]-mean(GE_pzt[,2])/sd(GE_pzt[,2])+1,2)
+    zscore_ge<-GE_pzt 
     
     #genes_common<-Reduce(intersect, list(all_genes_for_analysis,
     #                                     GE_pzt[,1],
@@ -110,7 +115,7 @@ GMIEC_MLK<-function(input_GE_selected,input_CNV_selected,input_METH_selected,inp
     ge_pzt2_log<-log(ge_pzt2[,2]+1,2)
     zscore<-(ge_pzt2_log-mean(ge_pzt2_log))/sd(ge_pzt2_log)
     
-    idx_up_genes<-which(zscore >= 1.5)
+    idx_up_genes<-which(zscore >= 2)
     idx_down_genes<-which(zscore < 0)
     
     genes_up<-ge_pzt2[idx_up_genes,1]
@@ -228,7 +233,7 @@ GMIEC_MLK<-function(input_GE_selected,input_CNV_selected,input_METH_selected,inp
     GLOBAL_GENETIC_SCORE[S_SUP==0]<-log(S_ONC[S_SUP==0],2)
     GLOBAL_GENETIC_SCORE[mapply(is.infinite, GLOBAL_GENETIC_SCORE)] <- 0
     
-    colnames(GLOBAL_GENETIC_SCORE)<-paste("score_alteration_module",1:k_user,sep="_")
+    colnames(GLOBAL_GENETIC_SCORE)<-paste("s_score",1:k_user,sep="_")
     
     #create the ouput
     number_genes=t(data.frame(apply(GGFK,2,FUN=function(x){unlist(lapply(strsplit(x,split="#"),length))})))
