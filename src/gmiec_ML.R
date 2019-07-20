@@ -111,12 +111,11 @@ GMIEC_MLK<-function(input_GE_selected,input_CNV_selected,input_METH_selected,inp
     RFKR<-data.frame(RFKR,meth_expressed=0)  
     RFKR[match(genes_ismix,RFKR$gene),"meth_expressed"]<-1
 
-    #find up-regulated genes
-    ge_pzt2_log<-log(ge_pzt2[,2]+1,2)
-    zscore<-(ge_pzt2_log-mean(ge_pzt2_log))/sd(ge_pzt2_log)
+    #find up-regulated and down-regulated genes
+    zscore<-ge_pzt2[,2]
     
     idx_up_genes<-which(zscore >= 2)
-    idx_down_genes<-which(zscore < 0)
+    idx_down_genes<-which(zscore <= -2)
     
     genes_up<-ge_pzt2[idx_up_genes,1]
     genes_down<-ge_pzt2[idx_down_genes,1]
