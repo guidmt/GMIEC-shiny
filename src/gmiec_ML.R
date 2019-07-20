@@ -220,12 +220,12 @@ GMIEC_MLK<-function(input_GE_selected,input_CNV_selected,input_METH_selected,inp
     S[grep(S,pattern="Inf")]<-0
     
     GLOBAL_GENETIC_SCORE<-data.frame(t(S))
+    GLOBAL_GENETIC_SCORE[mapply(is.infinite, GLOBAL_GENETIC_SCORE)] <- 0
+    TRUE_MODULE_INDEX=paste(which(GLOBAL_GENETIC_SCORE!=0),collapse=",")
     
+    #WARNING!! Here i save the values of S_ONC or S_UP nevertheless are 0
     GLOBAL_GENETIC_SCORE[S_ONC==0]<--log(S_SUP[S_ONC==0],2)
     GLOBAL_GENETIC_SCORE[S_SUP==0]<-log(S_ONC[S_SUP==0],2)
-    
-    #change Inf with 0
-    
     GLOBAL_GENETIC_SCORE[mapply(is.infinite, GLOBAL_GENETIC_SCORE)] <- 0
     
     colnames(GLOBAL_GENETIC_SCORE)<-paste("score_alteration_module",1:k_user,sep="_")
@@ -272,7 +272,8 @@ GMIEC_MLK<-function(input_GE_selected,input_CNV_selected,input_METH_selected,inp
                         mut_score,
                         GLOBAL_GENETIC_SCORE,
                         SCORES_DRUGS_DF,
-                        COMBINED_SCORES
+                        COMBINED_SCORES,
+                        TRUE_MODULE_INDEX
     )
     
     FINAL_DF<-rbind(FINAL_DF,TEMP_DF)
