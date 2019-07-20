@@ -140,6 +140,7 @@ GMIEC_MLK<-function(input_GE_selected,input_CNV_selected,input_METH_selected,inp
     
 
     #FOR S-score: gene-expression, amplication, up-regulated genes, down-regulated genes 
+    
     s_onc<-function(x){
       vector_x<-x
       idx_s_onc<-length(which(vector_x >= 1))
