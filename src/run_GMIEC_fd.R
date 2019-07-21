@@ -3,17 +3,6 @@ run_GMIEC_fd<-function(input_dataset1,input_dataset2,check_exp,check_exp2,check_
   withProgress(message="Start analysis!",min=0,max=1,{
     
     Sys.sleep(0.25)
-    
-    #this is for TCGA data
-    parseID<-function(x){
-      
-      x2<- gsub(x,pattern="-",replacement=".") #replace all - with . 
-      x3<- substr(x2,0,15)
-      
-      return(x3)
-      
-    }
-
     #check columns of the genes
     colnames(input_dataset1)[1]<-"genesID"
     colnames(input_dataset2)[1]<-"genesID"
@@ -23,8 +12,8 @@ run_GMIEC_fd<-function(input_dataset1,input_dataset2,check_exp,check_exp2,check_
     colnames(input_clinical)[1]<-"SAMPLE_ID"
     
     
-    pts_exp_dataset1<-parseID(colnames(input_dataset1)[-1]) #the first column is the gene-name
-    pts_exp_dataset2<-parseID(colnames(input_dataset2)[-1])
+    pts_exp_dataset1<-colnames(input_dataset1)[-1]#the first column is the gene-name
+    pts_exp_dataset2<-colnames(input_dataset2)[-1]
     
     print("Do")
     list_pts_experiments<-list(dataset1=pts_exp_dataset1,dataset2=pts_exp_dataset2)
