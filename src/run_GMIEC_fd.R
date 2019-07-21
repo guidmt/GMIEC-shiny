@@ -2,6 +2,19 @@ run_GMIEC_fd<-function(input_dataset1,input_dataset2,check_exp,check_exp2,check_
   
   withProgress(message="Start analysis!",min=0,max=1,{
     
+    if(check_exp==TRUE){col_dataset1="GE_current_patient"}
+    if(check_exp2==TRUE){col_dataset2="GE_current_patient"}
+    
+    if(check_cnv==TRUE){col_dataset1="CNV_current_patient"}
+    if(check_cnv2==TRUE){col_dataset2="CNV_current_patient"}
+  
+    if(check_meth==TRUE){col_dataset1="METH_current_patient"}
+    if(check_meth2==TRUE){col_dataset2="METH_current_patient"}
+    
+    if(check_mut==TRUE){col_dataset1="MUT_current_patient"}
+    if(check_mut2==TRUE){col_dataset2="MUT_current_patient"}
+    
+    
     Sys.sleep(0.25)
     #check columns of the genes
     colnames(input_dataset1)[1]<-"genesID"
@@ -49,8 +62,8 @@ run_GMIEC_fd<-function(input_dataset1,input_dataset2,check_exp,check_exp2,check_
       if(check_mut==TRUE | check_mut2 ==TRUE){
         
       #it is possible that 1 patient does not have a gene
-      if(isTRUE(input_MUTATION_selected$Tumor_Sample_Barcode==se_patient_selection)){
-       MUT_current_patient<-input_MUTATION_selected[which(input_MUTATION_selected$Tumor_Sample_Barcode==se_patient_selection),]
+      if(isTRUE(input_MUTATION_selected[,2]==se_patient_selection)){
+       MUT_current_patient<-input_MUTATION_selected[which(input_MUTATION_selected[,2]==se_patient_selection),]
         
       } else {
        print("i do not have a patient with mutations")
@@ -117,7 +130,7 @@ run_GMIEC_fd<-function(input_dataset1,input_dataset2,check_exp,check_exp2,check_
       #create a new data.frame with hugo symbol and entrez and the values of experiments
       dfPatientForAnalysis<-cbind(merge_experiment_patient_df[,1],merge_experiment_patient_df[index_mepd],DF_notpresent=rep(0,nrow(merge_experiment_patient_df)))
       
-      colnames(dfPatientForAnalysis)<-c("genesID",list_DF_clean)
+      colnames(dfPatientForAnalysis)<-c("genesID",c(col_dataset1,col_dataset2))
       
       #Change the last column, the experiment without data is always in the last column, see previously line of code
       colnames(dfPatientForAnalysis)[ncol(dfPatientForAnalysis)]<-DF_notpresent
@@ -194,13 +207,13 @@ run_GMIEC_fd<-function(input_dataset1,input_dataset2,check_exp,check_exp2,check_
         dfPatientForAnalysis_GAC<-results_for_tf2[[1]] #this a data.frame with the values of omics experiments and binary rules
         col_relTF<-results_for_tf2[[2]] 
         #col_relTF
-        #[1] "genesID"                   "FC_GE_TF"                  "Genes_overexpressed"      
+        #[1] "genesID"                                     "Genes_overexpressed"      
         #[4] "Genes_underexpressed"      "CNV_EC_gain"               "CNV_EC_depletion"         
         #[7] "CNV_gain"      
       }
       
       dfPatientForAnalysis_GAC_rel_TF<-dfPatientForAnalysis_GAC[,col_relTF]
-      rownames(dfPatientForAnalysis_GAC_rel_TF)<-dfPatientForAnalysis_GAC_rel_TF[,1]
+      #rownames(dfPatientForAnalysis_GAC_rel_TF)<-dfPatientForAnalysis_GAC_rel_TF[,1]
       #do a control, if the properties of the genes are always equal to 0 it you can remove these columns
       #this step it is important to reduce the computational cost.
       resSumControl<-apply(dfPatientForAnalysis_GAC_rel_TF[,2:ncol(dfPatientForAnalysis_GAC_rel_TF)],2,sum)
