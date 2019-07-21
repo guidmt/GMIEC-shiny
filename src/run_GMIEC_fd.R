@@ -213,15 +213,15 @@ run_GMIEC_fd<-function(input_dataset1,input_dataset2,check_exp,check_exp2,check_
       }
       
       dfPatientForAnalysis_GAC_rel_TF<-dfPatientForAnalysis_GAC[,col_relTF]
-      #rownames(dfPatientForAnalysis_GAC_rel_TF)<-dfPatientForAnalysis_GAC_rel_TF[,1]
+
       #do a control, if the properties of the genes are always equal to 0 it you can remove these columns
       #this step it is important to reduce the computational cost.
-      resSumControl<-apply(dfPatientForAnalysis_GAC_rel_TF[,2:ncol(dfPatientForAnalysis_GAC_rel_TF)],2,sum)
-      names.good.properties<-names(resSumControl[which(resSumControl!=0)])
+      #resSumControl<-apply(dfPatientForAnalysis_GAC_rel_TF[,2:ncol(dfPatientForAnalysis_GAC_rel_TF)],2,sum)
+      #names.good.properties<-names(resSumControl[which(resSumControl!=0)])
       
-      input_for_klar<-cbind(genesID=dfPatientForAnalysis_GAC_rel_TF[,1],dfPatientForAnalysis_GAC_rel_TF[,names.good.properties])
-      input_for_klar2 <- data.frame(sapply(input_for_klar,as.factor))
-      
+      #input_for_klar<-cbind(genesID=dfPatientForAnalysis_GAC_rel_TF[,1],dfPatientForAnalysis_GAC_rel_TF[,names.good.properties])
+      #input_for_klar2 <- data.frame(sapply(input_for_klar,as.factor))
+      input_for_klar2<-dfPatientForAnalysis_GAC_rel_TF
       ###
       ### run the engine for the analysis 
       ###
