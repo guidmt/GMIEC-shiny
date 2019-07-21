@@ -22,7 +22,7 @@ genes_in_each_module<-paste("genes_in_",paste("module",total_modules,sep=""),sep
 number_drugs_for_module_size<-paste("#drugs_module",total_modules,sep="")
 drugs_in_each_module<-paste("drugs_in_",paste("module",total_modules,sep=""),sep="")
 scores_module_unique<-paste("score_alteration_module(deltaa)",total_modules,sep="")
-scores_module_drugs_unique<-paste("score_alteration_drugs(deltad)",total_modules,sep="")
+scores_module_drugs_unique<-paste("score_alteration_drugs_rdg",total_modules,sep="")
 scores_module_sad_unique<-paste("score_sad",total_modules,sep="")
 
 ALL_colnames<-c(patient_id,total_genes_patients,number_modules
@@ -56,7 +56,7 @@ for(bpm in 1:length(res_analysis_each_patient)){
   number_genes_for_module<-aggregate(genesID ~ clusters, data =  data_current_patient[,c("clusters","genesID")], length)
   
   number_genes_for_module_size<-number_genes_for_module[,2]
-  names(number_genes_for_module_size)<-paste("#genes_module",number_genes_for_module[,1],sep="")
+  names(number_genes_for_module_size)<-paste("#genes_in_module",number_genes_for_module[,1],sep="")
   
   genes_in_each_module<-aggregate(genesID ~ clusters, data =  data_current_patient[,c("clusters","genesID")], paste,collapse=",")
   genes_in_each_module<-genes_in_each_module[,2]
@@ -67,7 +67,7 @@ for(bpm in 1:length(res_analysis_each_patient)){
   number_drugs_for_module[,2]<-apply(number_drugs_for_module,1,FUN=function(x){length(unlist(strsplit(x[2],split="#")))})
   
   number_drugs_for_module_size<-number_drugs_for_module[,2]
-  names(number_drugs_for_module_size)<-paste("#drugs_module",number_drugs_for_module[,1],sep="")
+  names(number_drugs_for_module_size)<-paste("#drugs_in_module",number_drugs_for_module[,1],sep="")
   
   drugs_in_each_module<-aggregate(drug_primary_name ~ clusters, data =  data_current_patient[,c("clusters","drug_primary_name")], paste,collapse="@") #use this character to merge drugs because it is important in the next step.
   drugs_in_each_module<-drugs_in_each_module[,2]
@@ -76,12 +76,12 @@ for(bpm in 1:length(res_analysis_each_patient)){
   #extract the alteration scores for each module
   scores_module<-aggregate(scorescorestatusmodule ~ clusters, data =  data_current_patient[,c("clusters","scorescorestatusmodule")], unique)
   scores_module_unique<-scores_module[,2]
-  names(scores_module_unique)<-paste("score_alteration_module(deltaa)",scores_module[,1],sep="")
+  names(scores_module_unique)<-paste("score_alteration_module",scores_module[,1],sep="")
   
   #extract the drugs scores for each module
   scores_module_drugs<-aggregate(TOTAL_score_module_drugs ~ clusters, data =  data_current_patient[,c("clusters","TOTAL_score_module_drugs")], unique)
   scores_module_drugs_unique<-scores_module_drugs[,2]
-  names(scores_module_drugs_unique)<-paste("score_alteration_drugs(deltad)",scores_module_drugs[,1],sep="")
+  names(scores_module_drugs_unique)<-paste("score_alteration_drugs",scores_module_drugs[,1],sep="")
   
   #extract the sad scores for each module
   scores_module_sad<-aggregate(combinedscore ~ clusters, data =  data_current_patient[,c("clusters","combinedscore")], unique)
@@ -116,9 +116,10 @@ for(bpm in 1:length(res_analysis_each_patient)){
 }
 
 print(dim(MATRIX_RESULTS_ALL))
+
 MATRIX_RESULTS_ALL$patient_id<-gsub(MATRIX_RESULTS_ALL$patient_id,pattern=".analysisGMIEC",replacement="")
 
-MATRIX_RESULTS_ALL_CLINICAL<-merge(MATRIX_RESULTS_ALL[-1,],input_clinical,by.x="patient_id",by.y="SAMPLE_ID")
+MATRIX_RESULTS_ALL_CLINICAL<-merge(MATRIX_RESULTS_ALL,input_clinical,by.x="patient_id",by.y="SAMPLE_ID")
 
 return(MATRIX_RESULTS_ALL_CLINICAL)
 

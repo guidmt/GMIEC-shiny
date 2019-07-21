@@ -26,7 +26,7 @@ function(input,output,session) {
   ##2
   input_GE<-reactive({
   infile2<- input$ge_dataset
-  read.table(file=infile2$datapath,sep="\t",stringsAsFactors=FALSE,header=T,quote=NULL,fill=F) #read empty values with 0 
+  read.table(file=infile2$datapath,sep="\t",stringsAsFactors=FALSE,header=T,quote=NULL,fill=F,check.names = F) #read empty values with 0 
   })
   
   print(paste("Load gene-expression data",dim(input_GE())))
@@ -34,7 +34,7 @@ function(input,output,session) {
   ##3
   input_CNV<-reactive({
   infile3<-input$cnv_dataset
-  read.table(file=infile3$datapath,sep="\t",stringsAsFactors=F,header=T,quote=NULL,fill=T)
+  read.table(file=infile3$datapath,sep="\t",stringsAsFactors=F,header=T,quote=NULL,fill=T,check.names = F)
   })
   
   print(paste("Load cnv data",dim(input_CNV())))
@@ -42,7 +42,7 @@ function(input,output,session) {
   ##4
   input_MUT<-reactive({
     infile4<-input$mut_dataset
-    read.table(file=infile4$datapath,sep="\t",stringsAsFactors=F,quote=NULL,header=T,fill=T)
+    read.table(file=infile4$datapath,sep="\t",stringsAsFactors=F,quote=NULL,header=T,fill=T,check.names = F)
   })
   
   print(paste("Load mut data",dim(input_MUT())))
@@ -50,7 +50,7 @@ function(input,output,session) {
   ##5
   input_METH<-reactive({
     infile5<-input$meth_dataset
-    read.table(file=infile5$datapath,sep="\t",stringsAsFactors=F,quote=NULL,header=T,fill=T)
+    read.table(file=infile5$datapath,sep="\t",stringsAsFactors=F,quote=NULL,header=T,fill=T,check.names = F)
   })
   
   print(paste("Load meth data",dim(input_METH())))
@@ -58,7 +58,7 @@ function(input,output,session) {
   ##6
   input_clinical<-reactive({
     infile6<-input$clinical_dataset
-    read.table(file=infile6$datapath,sep="\t",stringsAsFactors=F,quote=NULL,header=T,fill=T)
+    read.table(file=infile6$datapath,sep="\t",stringsAsFactors=F,quote=NULL,header=T,fill=T,check.names = F)
   })
   
     print(paste("Load clinical data",dim(input_clinical())))
@@ -82,7 +82,7 @@ function(input,output,session) {
   if(genes_annotated_fv()==TRUE | genes_annotated_TF_fv()==TRUE){
   annotation_dataset<-reactive({
     infile9<-input$annotation_dataset
-    read.table(file=infile9$datapath,sep="\t",stringsAsFactors=F,header=T,fill=T)
+    read.table(file=infile9$datapath,sep="\t",stringsAsFactors=F,header=T,fill=T,check.names = F)
   })
   
   print(paste("Load annotation data",dim(annotation_dataset())))
@@ -100,7 +100,7 @@ function(input,output,session) {
     
     bed_dataset<-reactive({
       infile_bed<-input$bed_file
-      read.table(file=infile_bed$datapath,sep="\t",stringsAsFactors=F,header=T,fill=T)
+      read.table(file=infile_bed$datapath,sep="\t",stringsAsFactors=F,header=T,fill=T,check.names = F)
     })   
     print(paste("Upload bed file",dim(bed_dataset())))
   }  
@@ -111,7 +111,7 @@ function(input,output,session) {
   
   drugs_for_analysis<-reactive({
     infile1<-input$drugs_dataset
-    read.table(file=infile1$datapath,sep="\t",stringsAsFactors=F,header=T,fill=T)
+    read.table(file=infile1$datapath,sep="\t",stringsAsFactors=F,header=T,fill=T,check.names = F)
   })
   
   print(paste("Upload drugs file",dim(drugs_for_analysis())))
@@ -126,7 +126,7 @@ function(input,output,session) {
     
    list_genes_for_analysis<-reactive({
      infile_LG<-input$list_of_genes2
-     read.table(file=infile_LG$datapath,sep="\t",stringsAsFactors=F,header=T,fill=T)
+     read.table(file=infile_LG$datapath,sep="\t",stringsAsFactors=F,header=T,fill=T,check.names = F)
      
    })
    
@@ -579,7 +579,7 @@ function(input,output,session) {
     ##2
     fd_dataset1_read<-reactive({
       fd_dataset_infile1<- input$fd_dataset1
-      read.table(file=fd_dataset_infile1$datapath,sep="\t",stringsAsFactors=FALSE,header=T,quote=NULL,fill=F) #read empty values with 0 
+      read.table(file=fd_dataset_infile1$datapath,sep="\t",stringsAsFactors=FALSE,header=T,quote=NULL,fill=F,check.names = F) #read empty values with 0 
     })
     
     print(paste("Load first dataset data",dim(fd_dataset1_read())))
@@ -587,12 +587,12 @@ function(input,output,session) {
     ##3
     fd_dataset2_read<-reactive({
       fd_dataset_infile2<-input$fd_dataset2
-      read.table(file=fd_dataset_infile2$datapath,sep="\t",stringsAsFactors=F,header=T,quote=NULL,fill=T)
+      read.table(file=fd_dataset_infile2$datapath,sep="\t",stringsAsFactors=F,header=T,quote=NULL,fill=T,check.names = F)
     })
     
     input_clinical_fd<-reactive({
       infile6<-input$fd_clinical_dataset
-      read.table(file=infile6$datapath,sep="\t",stringsAsFactors=F,quote=NULL,header=T,fill=T)
+      read.table(file=infile6$datapath,sep="\t",stringsAsFactors=F,quote=NULL,header=T,fill=T,check.names = F)
     })
     
     
@@ -627,7 +627,7 @@ function(input,output,session) {
     if(genes_annotated_fv_fd()==TRUE | genes_annotated_TF_fv_fd()==TRUE){
       annotation_dataset<-reactive({
         infile9<-input$fd_annotation_dataset
-        read.table(file=infile9$datapath,sep="\t",stringsAsFactors=F,header=T,fill=T)
+        read.table(file=infile9$datapath,sep="\t",stringsAsFactors=F,header=T,fill=T,check.names = F)
       })
       
       print(paste("Load annotation data",dim(annotation_dataset())))
@@ -645,7 +645,7 @@ function(input,output,session) {
       
       bed_dataset<-reactive({
         infile_bed<-input$fd_bed_file
-        read.table(file=infile_bed$datapath,sep="\t",stringsAsFactors=F,header=T,fill=T)
+        read.table(file=infile_bed$datapath,sep="\t",stringsAsFactors=F,header=T,fill=T,check.names = F)
       })   
       print(paste("Upload bed file",dim(bed_dataset())))
     }  
@@ -656,7 +656,7 @@ function(input,output,session) {
     
     drugs_for_analysis<-reactive({
       infile1<-input$fd_drugs_dataset
-      read.table(file=infile1$datapath,sep="\t",stringsAsFactors=F,header=T,fill=T)
+      read.table(file=infile1$datapath,sep="\t",stringsAsFactors=F,header=T,fill=T,check.names = F)
     })
     
     print(paste("Upload drugs file",dim(drugs_for_analysis())))
@@ -671,7 +671,7 @@ function(input,output,session) {
       
       list_genes_for_analysis<-reactive({
         infile_LG<-input$fd_list_of_genes2
-        read.table(file=infile_LG$datapath,sep="\t",stringsAsFactors=F,header=T,fill=T)
+        read.table(file=infile_LG$datapath,sep="\t",stringsAsFactors=F,header=T,fill=T,check.names = F)
         
       })
       
