@@ -36,42 +36,25 @@ rules_for_tf<-function(dfPatientForAnalysis,se_patient_selection,ge_d,cnv_d,meth
     FC_GE_TF_categorization[which(FC_GE_TF<=ge_d)]<-1 #absolute values
     FC_GE_TF_categorization[which(FC_GE_TF>ge_d)]<-0 
     
-    ###
-    ### Discreterization of ghe gene expression values according to https://www.ncbi.nlm.nih.gov/pmc/articles/PMC151169/
-    ### works for that median-centered at the levels of genes and z-score
-    ###
     
-    # genes_overexpressed<-rep(0,length(dfPatientForAnalysis[,3]))
-    # names(genes_overexpressed)<-as.character(dfPatientForAnalysis[,1])#give the names to the vector
-    # rows_to_selected<-round((length(dfPatientForAnalysis[,1])*5)/100)
-    # #select the over expressed genes in the current_patient
-    # genes.overexpressed.strings<-dfPatientForAnalysis[order(dfPatientForAnalysis[,"GE_current_patient"],decreasing=T),][1:rows_to_selected,1]
-    # genes_overexpressed[which(names(genes_overexpressed) %in% genes.overexpressed.strings)]<-1
-    # 
-    # 
-    # genes_underexpressed<-rep(0,length(dfPatientForAnalysis[,3]))
-    # names(genes_underexpressed)<-as.character(dfPatientForAnalysis[,1])#give the names to the vector
-    # rows_to_selected<-round((length(dfPatientForAnalysis[,1])*5)/100)
-    # #select the under expressed genes in the current_patient
-    # genes.underexpressed.strings<-dfPatientForAnalysis[order(dfPatientForAnalysis[,"GE_current_patient"]),][1:rows_to_selected,1]
-    # genes_underexpressed[which(names(genes_underexpressed) %in% genes.underexpressed.strings)]<-1
-    zscore<-quantile((mean(dfPatientForAnalysis[,"GE_current_patient"])-dfPatientForAnalysis[,"GE_current_patient"])/sd(dfPatientForAnalysis[,"GE_current_patient"]))
+    ### Discreterization of ghe gene expression values 
     
+    zscore<-dfPatientForAnalysis[,"GE_current_patient"]
     
     genes_overexpressed<-rep(0,length(dfPatientForAnalysis[,3]))
-    genes_overexpressed[which(dfPatientForAnalysis[,"GE_current_patient"]>=zscore[5])]<-1
+    genes_overexpressed[which(dfPatientForAnalysis[,"GE_current_patient"]>= ge_d)]<-1
     
     genes_downexpressed<-rep(0,length(dfPatientForAnalysis[,3]))
-    genes_downexpressed[which(dfPatientForAnalysis[,"GE_current_patient"]<=zscore[1])]<-1
+    genes_downexpressed[which(dfPatientForAnalysis[,"GE_current_patient"]<= -ge_d)]<-1
     
     genes_lowexpressed<-rep(0,length(dfPatientForAnalysis[,3]))
-    genes_lowexpressed[which(dfPatientForAnalysis[,"GE_current_patient"]>zscore[1] & dfPatientForAnalysis[,"GE_current_patient"]<=zscore[2])]<-1
+    genes_lowexpressed[which(dfPatientForAnalysis[,"GE_current_patient"]> -ge_d & dfPatientForAnalysis[,"GE_current_patient"]<= -ge_d/2)]<-1
     
     genes_expressed<-rep(0,length(dfPatientForAnalysis[,3]))
-    genes_expressed[which(dfPatientForAnalysis[,"GE_current_patient"]>=zscore[4] & dfPatientForAnalysis[,"GE_current_patient"]<zscore[5])]<-1
+    genes_expressed[which(dfPatientForAnalysis[,"GE_current_patient"]>= ge_d/2 & dfPatientForAnalysis[,"GE_current_patient"]< ge_d)]<-1
     
     genes_otherexp<-rep(0,length(dfPatientForAnalysis[,3]))
-    genes_otherexp[which(dfPatientForAnalysis[,"GE_current_patient"]>zscore[2] & dfPatientForAnalysis[,"GE_current_patient"]<zscore[4])]<-1
+    genes_otherexp[which(dfPatientForAnalysis[,"GE_current_patient"]>-ge_d/2 & dfPatientForAnalysis[,"GE_current_patient"]<ge_d/2)]<-1
     
     ##
     ## Step 1.2: categorize the copy-number alteration

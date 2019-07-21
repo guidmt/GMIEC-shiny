@@ -4,50 +4,29 @@ run_GMIEC<-function(check_ge_for_patients,input_CNV_selected,input_METH_selected
   
     Sys.sleep(0.25)
     
-#this is for TCGA data
-parseID<-function(x){
-  
-  x2<- gsub(x,pattern="-",replacement=".") #replace all - with . 
-  x3<- substr(x2,0,15)
-  
-  return(x3)
-  
-}
 print(dim(input_MUTATION_selected))
+#compute z-scores for gene expression data
+check_ge_for_patients[,-1]<-log(check_ge_for_patients[,-1]+1,2)
+check_ge_for_patients[,-1]<-apply(X=check_ge_for_patients[,-1],1,FUN=function(X){(X-mean(X))/sd(X)})
+
 #check columns of the genes
 colnames(check_ge_for_patients)[1]<-"genesID"
 colnames(input_CNV_selected)[1]<-"genesID"
 colnames(input_METH_selected)[1]<-"genesID"
 colnames(input_MUTATION_selected)[1]<-"genesID"
-colnames(tabDrugs)[1]<-"genes"
+colnames(tabDrugs)[1:2]<-c("genes","drug_primary_name")
 #change id clinical data
 colnames(input_clinical)[1]<-"SAMPLE_ID"
 
 
-pts_exp_ge<-parseID(colnames(check_ge_for_patients)[-1]) #the first column is the gene-name
-pts_exp_cnv<-parseID(colnames(input_CNV_selected)[-1])
-pts_meth_cnv<-parseID(colnames(input_METH_selected)[-1])
-pts_mut<-parseID(input_MUTATION_selected$Tumor_Sample_Barcode) #tumor sample barcode it is the mandatory colnames
+pts_exp_ge<-colnames(check_ge_for_patients[-1]) #the first column is the gene-name
+pts_exp_cnv<-colnames(input_CNV_selected[-1])
+pts_meth_cnv<-colnames(input_METH_selected[-1])
+pts_mut<-colnames(input_MUTATION_selected[,2])#tumor sample barcode it is the mandatory colnames
 
 
 print("Do")
 list_pts_experiments<-list(ge=pts_exp_ge,cnv=pts_exp_cnv,meth=pts_meth_cnv,mut=pts_mut)
-
-# tts_for_reducing<-list()
-# 
-# for(tts in 1:length(list_pts_experiments)){
-#   
-#   tts_current<-list_pts_experiments[[tts]]
-#   
-#   if(length(tts_current)>1){
-#     
-#     tts_for_reducing[[tts]]<- tts_current
-#     
-#   } else {next}
-#   
-# }
-
-#common_patient_GE_CNV_METH_MUT<-Reduce(intersect, tts_for_reducing)
 
 
 ###
@@ -156,8 +135,6 @@ for(asu in 1:length(ALL_samples_UNIQUE)){
   ###
   print("Step4: ")
   
-  incProgress(0.15, detail = "Step3: Find the properties of genes")
-  
   #remove NA values 
   dfPatientForAnalysis[is.na(dfPatientForAnalysis)]<-0
   
@@ -212,8 +189,7 @@ print("Step5: Find rules for patient")
   ###
 
   print("Step6: Analysis")
-  incProgress(0.15, detail = "Step5: Run the engine")
-  
+
   mergeGAC_COM_res_K_2<-engine_all_dataset(input_for_klar2,dfPatientForAnalysis_GAC=dfPatientForAnalysis_GAC,clusters)
   
   print(colnames(mergeGAC_COM_res_K_2))
@@ -243,7 +219,7 @@ print("Step5: Find rules for patient")
   
   ### estimate the druggability of the modules
   
-  incProgress(0.15, detail = "Step4: Compute the scores")
+ # incProgress(0.15, detail = "Step4: Compute the scores")
   
   TOTAL_score_module<-NULL
   TOTAL_score_module_drugs<-NULL
@@ -340,15 +316,14 @@ print("Step5: Find rules for patient")
 }
   names(RES_ENGINE)<-as.character(ALL_samples_UNIQUE)
 
-#res_analysis_each_patient<-grep(ls(),pattern=".analysisGMIEC",value=T,fixed=T)
+print("test")
 
 print("Step5: Save output")
 incProgress(0.15, detail = "Step6: Create the output")
 
-print(length(RES_ENGINE))
 MATRIX_RESULTS_ALL_CLINICAL<-create_output(res_analysis_each_patient=RES_ENGINE,input_clinical=input_clinical)
 #write.table(t(MATRIX_RESULTS_ALL_CLINICAL[-1,]),file="Analysis_GMIEC_main_results.txt",sep="\t",row.names=T,col.names=F,quote=F) # the first row is always empty
-
+print(dim(MATRIX_RESULTS_ALL_CLINICAL))
 #save.image(file="C:/Users/guida/Desktop/GMIEC.RData")
 
 print("Step8: send results")

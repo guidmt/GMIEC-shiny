@@ -88,9 +88,6 @@ rules_for_tf_fd<-function(dfPatientForAnalysis,se_patient_selection,ge_d,cnv_d,m
     }
     
 
-    ### Discreterization of ghe gene expression values according to https://www.ncbi.nlm.nih.gov/pmc/articles/PMC151169/
-    ### works for that median-centered at the levels of genes and z-score
-    
   if(check_exp == TRUE|check_exp2 == TRUE){
     
       if(check_exp == TRUE){
@@ -105,22 +102,23 @@ rules_for_tf_fd<-function(dfPatientForAnalysis,se_patient_selection,ge_d,cnv_d,m
         
       }
       
-    zscore<-quantile((mean(dfPatientForAnalysis[,dataset_colnames])-dfPatientForAnalysis[,dataset_colnames])/sd(dfPatientForAnalysis[,dataset_colnames]))
+    
+    zscore<-dfPatientForAnalysis[,"GE_current_patient"]
     
     genes_overexpressed<-rep(0,length(dfPatientForAnalysis[,3]))
-    genes_overexpressed[which(dfPatientForAnalysis[,dataset_colnames]>=zscore[5])]<-1
+    genes_overexpressed[which(dfPatientForAnalysis[,"GE_current_patient"]>= ge_d)]<-1
     
     genes_downexpressed<-rep(0,length(dfPatientForAnalysis[,3]))
-    genes_downexpressed[which(dfPatientForAnalysis[,dataset_colnames]<=zscore[1])]<-1
+    genes_downexpressed[which(dfPatientForAnalysis[,"GE_current_patient"]<= -ge_d)]<-1
     
     genes_lowexpressed<-rep(0,length(dfPatientForAnalysis[,3]))
-    genes_lowexpressed[which(dfPatientForAnalysis[,dataset_colnames]>zscore[1] & dfPatientForAnalysis[,dataset_colnames]<=zscore[2])]<-1
+    genes_lowexpressed[which(dfPatientForAnalysis[,"GE_current_patient"]> -ge_d & dfPatientForAnalysis[,"GE_current_patient"]<= -ge_d/2)]<-1
     
     genes_expressed<-rep(0,length(dfPatientForAnalysis[,3]))
-    genes_expressed[which(dfPatientForAnalysis[,dataset_colnames]>=zscore[4] & dfPatientForAnalysis[,dataset_colnames]<zscore[5])]<-1
+    genes_expressed[which(dfPatientForAnalysis[,"GE_current_patient"]>= ge_d/2 & dfPatientForAnalysis[,"GE_current_patient"]< ge_d)]<-1
     
     genes_otherexp<-rep(0,length(dfPatientForAnalysis[,3]))
-    genes_otherexp[which(dfPatientForAnalysis[,dataset_colnames]>zscore[2] & dfPatientForAnalysis[,dataset_colnames]<zscore[4])]<-1
+    genes_otherexp[which(dfPatientForAnalysis[,"GE_current_patient"]>-ge_d/2 & dfPatientForAnalysis[,"GE_current_patient"]<ge_d/2)]<-1
     
     }
     

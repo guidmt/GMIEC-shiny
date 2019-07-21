@@ -202,7 +202,7 @@ function(input,output,session) {
       input_MUTATION_selected=input_MUTATION_selected,
       tabDrugs=drugs_for_analysis2,
       input_clinical=input_clinical2,
-      parameter_discr=c("1.5;1;0.5"),
+      parameter_discr=c("2;1;0.7"),
       clusters=input_clusters(),
       genes_annotated_TF_fv=FALSE
       
@@ -273,7 +273,7 @@ function(input,output,session) {
           input_MUTATION_selected=input_MUTATION_selected,
           tabDrugs=drugs_for_analysis2,
           input_clinical=input_clinical2,
-          parameter_discr=c("1.5;1;0.5"),
+          parameter_discr=c("2;1;0.7"),
           input_GE_tf=input_GE_tf,
           input_CNV_tf=input_CNV_tf,
           input_MUTATION_tf=input_MUTATION_tf,
@@ -338,7 +338,7 @@ function(input,output,session) {
       input_MUTATION_selected=input_MUTATION_selected,
       tabDrugs=drugs_for_analysis2,
       input_clinical=input_clinical2,
-      parameter_discr=c("1.5;1;0.5"),
+      parameter_discr=c("2;1;0.7"),
         clusters=input_clusters(),
       genes_annotated_TF_fv=FALSE
       
@@ -396,7 +396,7 @@ function(input,output,session) {
       input_MUTATION_selected=input_MUTATION_selected,
       tabDrugs=drugs_for_analysis2,
       input_clinical=input_clinical2,
-      parameter_discr=c("1.5;1;0.5"),
+      parameter_discr=c("2;1;0.7"),
         clusters=input_clusters(),
       genes_annotated_TF_fv=FALSE
       
@@ -800,7 +800,7 @@ function(input,output,session) {
         check_mut2=cb_mutation2_ok(),
         tabDrugs=fd_drugs_for_analysis2,
         input_clinical=fd_input_clinical2,
-        parameter_discr=c("1.5;1;0.5"),
+        parameter_discr=c("2;1;0.7"),
         clusters=input_clusters_fd(),
         genes_annotated_TF_fv=FALSE
         
@@ -871,7 +871,7 @@ function(input,output,session) {
         check_mut2=cb_mutation2_ok(),
         tabDrugs=fd_drugs_for_analysis2,
         input_clinical=fd_input_clinical2,
-        parameter_discr=c("1.5;1;0.5"),
+        parameter_discr=c("2;1;0.7"),
         input_GE_tf=input_GE_tf,
         input_CNV_tf=input_CNV_tf,
         input_MUTATION_tf=input_MUTATION_tf,
@@ -938,7 +938,7 @@ function(input,output,session) {
         check_mut2=cb_mutation2_ok(),    
         tabDrugs=fd_drugs_for_analysis2,
         input_clinical=fd_input_clinical2,
-        parameter_discr=c("1.5;1;0.5"),
+        parameter_discr=c("2;1;0.7"),
         clusters=input_clusters_fd(),
         genes_annotated_TF_fv=FALSE
         
@@ -998,7 +998,7 @@ function(input,output,session) {
         check_mut2=cb_mutation2_ok(),
         tabDrugs=fd_drugs_for_analysis2,
         input_clinical=fd_input_clinical2,
-        parameter_discr=c("1.5;1;0.5"),
+        parameter_discr=c("2;1;0.7"),
         clusters=input_clusters_fd(),
         genes_annotated_TF_fv=FALSE
         

@@ -129,7 +129,6 @@ ui <- dashboardPage(
               box(title="GMIEC - FD, Parameters Analysis",status="success",solidHeader=TRUE,collapsible =TRUE,
                   numericInput("fd_clusters","Number Clusters k-mode",value=2)
               ),
-              box(title="GMIEC - FD, Output Parameters",status="success",solidHeader=TRUE,collapsible =TRUE),
               actionButton('fd_run_gmiec', 'Run analysis',style = "color: white; 
                            background-color: #0066CC; 
                            position: relative; 
