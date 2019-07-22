@@ -46,16 +46,7 @@ rules_for_tf<-function(dfPatientForAnalysis,se_patient_selection,ge_d,cnv_d,meth
     
     genes_downexpressed<-rep(0,length(dfPatientForAnalysis[,3]))
     genes_downexpressed[which(dfPatientForAnalysis[,"GE_current_patient"]<= -ge_d)]<-1
-    
-    genes_lowexpressed<-rep(0,length(dfPatientForAnalysis[,3]))
-    genes_lowexpressed[which(dfPatientForAnalysis[,"GE_current_patient"]> -ge_d & dfPatientForAnalysis[,"GE_current_patient"]<= -ge_d/2)]<-1
-    
-    genes_expressed<-rep(0,length(dfPatientForAnalysis[,3]))
-    genes_expressed[which(dfPatientForAnalysis[,"GE_current_patient"]>= ge_d/2 & dfPatientForAnalysis[,"GE_current_patient"]< ge_d)]<-1
-    
-    genes_otherexp<-rep(0,length(dfPatientForAnalysis[,3]))
-    genes_otherexp[which(dfPatientForAnalysis[,"GE_current_patient"]>-ge_d/2 & dfPatientForAnalysis[,"GE_current_patient"]<ge_d/2)]<-1
-    
+
     ##
     ## Step 1.2: categorize the copy-number alteration
     ##
@@ -234,9 +225,7 @@ rules_for_tf<-function(dfPatientForAnalysis,se_patient_selection,ge_d,cnv_d,meth
                                     FC_GE_TF=FC_GE_TF_categorization,
                                     genes_overexpressed=genes_overexpressed,
                                     genes_downexpressed=genes_downexpressed,
-                                    genes_lowexpressed=genes_lowexpressed,
-                                    genes_expressed=genes_expressed,
-                                    genes_otherexp=genes_otherexp,
+                       
                                     
                                     CNV_TF=rep(cnv_TF_current_patient,nrow(dfPatientForAnalysis)),
                                     CNV_EC_gain=if(cnv_TF_current_patient>=1 & cnv_TF_current_patient<2){rep(1,nrow(dfPatientForAnalysis))}else{rep(0,nrow(dfPatientForAnalysis))},
@@ -264,7 +253,7 @@ rules_for_tf<-function(dfPatientForAnalysis,se_patient_selection,ge_d,cnv_d,meth
     
     #columns that describe relation between genes and TF considering other data
     col_relTF<-c("genesID","FC_GE_TF",
-                 "genes_overexpressed","genes_downexpressed","genes_lowexpressed","genes_expressed","genes_otherexp",
+                 "genes_overexpressed","genes_downexpressed",
                  "CNV_EC_gain","CNV_EC_amplified","CNV_EC_loss","CNV_EC_depletion",
                  "CNV_gain","CNV_amplification","CNV_loss","CNV_depletion",
                  "CNV_TF_categorization_TF",

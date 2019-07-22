@@ -220,10 +220,7 @@ rules_notfor_tf<-function(dfPatientForAnalysis=dfPatientForAnalysis,se_patient_s
                                   FC_GE_TF=FC_GE_TF_categorization,
                                   genes_overexpressed=genes_overexpressed,
                                   genes_downexpressed=genes_downexpressed,
-                                  genes_lowexpressed=genes_lowexpressed,
-                                  genes_expressed=genes_expressed,
-                                  genes_otherexp=genes_otherexp,
-                                  
+
                                   CNV_TF=rep(cnv_TF_current_patient,nrow(dfPatientForAnalysis)),
                                   CNV_EC_gain=if(cnv_TF_current_patient>=1 & cnv_TF_current_patient<2){rep(1,nrow(dfPatientForAnalysis))}else{rep(0,nrow(dfPatientForAnalysis))},
                                   CNV_EC_amplified=if(cnv_TF_current_patient>=2){rep(1,nrow(dfPatientForAnalysis))}else{rep(0,nrow(dfPatientForAnalysis))},
@@ -250,7 +247,7 @@ rules_notfor_tf<-function(dfPatientForAnalysis=dfPatientForAnalysis,se_patient_s
   
   #columns that describe relation between genes and TF considering other data
   col_relTF<-c("genesID","FC_GE_TF",
-               "genes_overexpressed","genes_downexpressed","genes_lowexpressed","genes_expressed","genes_otherexp",
+               "genes_overexpressed","genes_downexpressed",
                "CNV_EC_gain","CNV_EC_amplified","CNV_EC_loss","CNV_EC_depletion",
                "CNV_gain","CNV_amplification","CNV_loss","CNV_depletion",
                "CNV_TF_categorization_TF",
