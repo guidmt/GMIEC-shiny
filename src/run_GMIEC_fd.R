@@ -2,19 +2,7 @@ run_GMIEC_fd<-function(input_dataset1,input_dataset2,check_exp,check_exp2,check_
   
   withProgress(message="Start analysis!",min=0,max=1,{
     
-    if(check_exp==TRUE){col_dataset1="GE_current_patient"}
-    if(check_exp2==TRUE){col_dataset2="GE_current_patient"}
-    
-    if(check_cnv==TRUE){col_dataset1="CNV_current_patient"}
-    if(check_cnv2==TRUE){col_dataset2="CNV_current_patient"}
-  
-    if(check_meth==TRUE){col_dataset1="METH_current_patient"}
-    if(check_meth2==TRUE){col_dataset2="METH_current_patient"}
-    
-    if(check_mut==TRUE){col_dataset1="MUT_current_patient"}
-    if(check_mut2==TRUE){col_dataset2="MUT_current_patient"}
-    
-    
+
     Sys.sleep(0.25)
     #check columns of the genes
     colnames(input_dataset1)[1]<-"genesID"
@@ -129,11 +117,9 @@ run_GMIEC_fd<-function(input_dataset1,input_dataset2,check_exp,check_exp2,check_
       
       #create a new data.frame with hugo symbol and entrez and the values of experiments
       dfPatientForAnalysis<-cbind(merge_experiment_patient_df[,1],merge_experiment_patient_df[index_mepd],DF_notpresent=rep(0,nrow(merge_experiment_patient_df)))
-      
-      colnames(dfPatientForAnalysis)<-c("genesID",c(col_dataset1,col_dataset2))
-      
       #Change the last column, the experiment without data is always in the last column, see previously line of code
-      colnames(dfPatientForAnalysis)[ncol(dfPatientForAnalysis)]<-DF_notpresent
+
+      colnames(dfPatientForAnalysis)<-c("genesID",c("input_dataset1_current_patient","input_dataset2_current_patient"),DF_notpresent)
       
       ###
       ### just for test! dfPatientForAnalysis can be used for other analysis not Aprior.
