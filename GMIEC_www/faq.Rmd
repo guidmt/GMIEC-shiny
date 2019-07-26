@@ -1,8 +1,0 @@
----
-  title: "FAQ of GMIEC"
----
-  
-###**FAQ**
-  
-####**Step1: Details annotation**
-At present are not available questions ;)

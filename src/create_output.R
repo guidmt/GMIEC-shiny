@@ -43,7 +43,7 @@ for(bpm in 1:length(res_analysis_each_patient)){
   print(bpm)
   data_current_patient<-res_analysis_each_patient[[bpm]]
   patient_id<- names(res_analysis_each_patient)[[bpm]]
-  names(patient_id)<-"patient_id"
+  names(patient_id)<-"sample_id"
   
   genes_patients<-data_current_patient[,1] 
   total_genes_patients<-length(data_current_patient[,2])
@@ -117,9 +117,9 @@ for(bpm in 1:length(res_analysis_each_patient)){
 
 print(dim(MATRIX_RESULTS_ALL))
 
-MATRIX_RESULTS_ALL$patient_id<-gsub(MATRIX_RESULTS_ALL$patient_id,pattern=".analysisGMIEC",replacement="")
+MATRIX_RESULTS_ALL$sample_id<-gsub(MATRIX_RESULTS_ALL$sample_id,pattern=".analysisGMIEC",replacement="")
 
-MATRIX_RESULTS_ALL_CLINICAL<-merge(MATRIX_RESULTS_ALL,input_clinical,by.x="patient_id",by.y="SAMPLE_ID")
+MATRIX_RESULTS_ALL_CLINICAL<-merge(MATRIX_RESULTS_ALL,input_clinical,by.x="sample_id",by.y="sample_id")
 
 return(MATRIX_RESULTS_ALL_CLINICAL)
 

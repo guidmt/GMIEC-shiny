@@ -18,7 +18,7 @@ GMIEC_MLK<-function(input_GE_selected,input_CNV_selected,input_METH_selected,inp
   
   #find all common patients
   unique_samples<-Reduce(intersect, list(colGE[-1],colCNV[-1],colMETH[-1],colMUT))
-  
+
   FINAL_DF<-data.frame()
   
   for(se_patient_selection in unique_samples){
@@ -40,7 +40,7 @@ GMIEC_MLK<-function(input_GE_selected,input_CNV_selected,input_METH_selected,inp
       print("i do not have a patient with mutations")
       
       print(length(all_genes_for_analysis))
-      save.image("C:/Users/guida/Desktop/test.RData")
+
       dfparse<-matrix(nrow=length(all_genes_for_analysis),ncol=3)
       
       dfparse[,1]<-0 #false gene
@@ -234,6 +234,13 @@ GMIEC_MLK<-function(input_GE_selected,input_CNV_selected,input_METH_selected,inp
     # compute S-SUP
     S_SUP=tab_SCORES[,"mut"]+(100*tab_SCORES[,"meth_exp"])+(100*tab_SCORES[,"cnv_del"])+(100*tab_SCORES[,"genes_down"])
     
+    
+    S_SUP_DF<-t(data.frame(S_ONC))
+    colnames(S_SUP_DF)<-paste("s_sup",1:k_user,sep="_")
+    
+    S_ONC_DF<-t(data.frame(S_SUP))
+    colnames(S_ONC_DF)<-paste("s_onc",1:k_user,sep="_")
+    
     S = log(S_ONC/S_SUP,2)
     S[grep(S,pattern="Inf")]<-0
     
@@ -293,6 +300,8 @@ GMIEC_MLK<-function(input_GE_selected,input_CNV_selected,input_METH_selected,inp
                         meth_mean,
                         meth_score,
                         mut_score,
+                        S_SUP_DF,
+                        S_ONC_DF,
                         GLOBAL_GENETIC_SCORE,
                         SCORES_DRUGS_DF,
                         COMBINED_SCORES,
