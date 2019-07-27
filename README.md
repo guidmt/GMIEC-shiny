@@ -1,4 +1,4 @@
-GMIEC-shiny
+GMIEC
 
 GMIEC is a shiny application to integrate multi-omics data. GMIEC is a new user-friendly and flexible application that allows to integrate gene-expression, copy-number variation, methylation, Chromatin Immuno-Precipitation followed by sequencing (ChIP-seq) data, and mutations at the level of single patient. More interestingly, GMIEC facilitates the identification of groups of genes, that presents genomic alterations (e.g. copy number alterations).This can be a support help the researchers, to identify the de-regulated genes in a given disease, but also to identify discover novel pharmacological target molecules.
 
