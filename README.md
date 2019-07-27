@@ -10,3 +10,5 @@ dependencies R packages: shiny, stats,shinydashboard, rmarkdown, klaR, plyr, ChI
 To install all these packages, use the installation file provided on https://github.com/guidmt/GMIEC-shiny 
 
 See the wikipage with the manual with the details to run GMIEC.
+
+The features of GMIEC make it a tool that could be useful in the context of the data integration, data mining and data-exploration at the level of single patient. GMIEC is a tool that is provided only to perform analysis, exploratory analysis in basic and bioinformatic research with a scientific usage. GMIEC was not develop as tool to use in the clinical practice and authors decline each responsibility on its usage.
