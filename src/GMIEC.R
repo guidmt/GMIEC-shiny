@@ -153,25 +153,11 @@ run_GMIEC<-function(check_ge_for_patients,input_CNV_selected,input_METH_selected
       cnv_d<-parameter_discr_unlist[2]
       meth_d<-parameter_discr_unlist[3]
       
-      if(genes_annotated_TF_fv==TRUE){
         
-        print("Step5: Find rules for patient")
-        
-        results_for_tf2<-rules_for_tf(dfPatientForAnalysis=dfPatientForAnalysis,se_patient_selection=se_patient_selection,ge_d=ge_d,cnv_d=cnv_d,meth_d=meth_d,input_GE_tf=input_GE_tf,input_CNV_tf=input_CNV_tf,input_METH_tf=input_METH_tf,input_MUTATION_tf=input_MUTATION_tf,MUT_current_patient=MUT_current_patient)
-        
-        dfPatientForAnalysis_GAC<-results_for_tf2[[1]]
-        col_relTF<-results_for_tf2[[2]]
-        
-      } else {
-        
-        results_for_tf2<-rules_notfor_tf(dfPatientForAnalysis=dfPatientForAnalysis,se_patient_selection=se_patient_selection,ge_d=ge_d,cnv_d=cnv_d,meth_d=meth_d,MUT_current_patient=MUT_current_patient)
-        dfPatientForAnalysis_GAC<-results_for_tf2[[1]] #this a data.frame with the values of omics experiments and binary rules
-        col_relTF<-results_for_tf2[[2]] 
-        #col_relTF
-        #[1] "genesID"                   "FC_GE_TF"                  "Genes_overexpressed"      
-        #[4] "Genes_underexpressed"      "CNV_EC_gain"               "CNV_EC_depletion"         
-        #[7] "CNV_gain"      
-      }
+      results_for_tf2<-rules_notfor_tf(dfPatientForAnalysis=dfPatientForAnalysis,se_patient_selection=se_patient_selection,ge_d=ge_d,cnv_d=cnv_d,meth_d=meth_d,MUT_current_patient=MUT_current_patient)
+      dfPatientForAnalysis_GAC<-results_for_tf2[[1]] #this a data.frame with the values of omics experiments and binary rules
+      col_relTF<-results_for_tf2[[2]] 
+      
       
       dfPatientForAnalysis_GAC_rel_TF<-dfPatientForAnalysis_GAC[,col_relTF]
       rownames(dfPatientForAnalysis_GAC_rel_TF)<-dfPatientForAnalysis_GAC_rel_TF[,1]
