@@ -21,7 +21,7 @@ number_genes_for_module_size<-paste("#genes_module",total_modules,sep="")
 genes_in_each_module<-paste("genes_in_",paste("module",total_modules,sep=""),sep="")
 number_drugs_for_module_size<-paste("#drugs_module",total_modules,sep="")
 drugs_in_each_module<-paste("drugs_in_",paste("module",total_modules,sep=""),sep="")
-scores_module_unique<-paste("score_alteration_module(deltaa)",total_modules,sep="")
+scores_module_unique<-paste("score_alteration_genes",total_modules,sep="")
 scores_module_drugs_unique<-paste("score_alteration_drugs_rdg",total_modules,sep="")
 scores_module_sad_unique<-paste("score_sad",total_modules,sep="")
 

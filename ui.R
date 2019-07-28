@@ -9,6 +9,7 @@ library(klaR)
 library(formattable)
 library(kableExtra)
 library(randomForest)
+library(ggplot2)
 
 ui <- dashboardPage(
   dashboardHeader(title = "gmiec-app"),
@@ -17,9 +18,6 @@ ui <- dashboardPage(
       menuItem("Home", tabName = "home", icon = icon("home")),
       menuItem("GMIEC-MD", tabName = "run_gmiec", icon = icon("play-circle")),
       menuItem("GMIEC-VIS", tabName = "vis_gmiec2", icon = icon("wpexplorer")),
-      menuItem("Manual", tabName = "manual", icon = icon("book")),
-      menuItem("FAQ", tabName = "faq", icon = icon("question")),
-      menuItem("Contact", tabName = "contact", icon = icon("at")),
       menuItem("Terms of use", tabName = "terms_of_use", icon = icon("user-tie"))
     )
   ),
@@ -96,8 +94,11 @@ ui <- dashboardPage(
       
       
       tabItem(tabName = "vis_gmiec2",
+              tabsetPanel(
+              tabPanel("Summary heatmaps GMIEC", 
               fluidRow(
-              fileInput("vis_gmiec2", "Upload results GMIEC2",buttonLabel=icon("folder"))),
+              box(title="Upload results GMIEC",status="success",width=3,solidHeader=TRUE,collapsible =FALSE,  
+              fileInput("vis_gmiec2", "Upload results GMIEC",buttonLabel=icon("folder")),
               actionButton('run_vis', 'Create report!',style = "color: white; 
                      background-color: #0066CC; 
                                position: relative; 
@@ -107,24 +108,27 @@ ui <- dashboardPage(
                                text-align:center;
                                text-indent: -2px;
                                border-radius: 6px;
-                               border-width: 2px"),
-      downloadButton('download_vis', 'Download',style = "color: white; 
-                     background-color: #ec0000; 
-                               position: relative; 
-                               left:10%;
-                               height: 35px;
-                               width: 200px;
-                               text-align:center;
-                               text-indent: -2px;
-                               border-radius: 6px;
-                               border-width: 2px")),
-      tabItem(tabName = "manual",
-              includeHTML("./GMIEC_www/manual.html")),
-      tabItem(tabName = "faq",
-              includeHTML("./GMIEC_www/faq.html"))
-      ,
-      tabItem(tabName = "contact",
-              includeHTML("./GMIEC_www/contact.html")),
+                               border-width: 2px")
+              ),
+              box(title="Heatmap scores drugs",status="warning",solidHeader=TRUE,collapsible =FALSE,
+                  plotlyOutput("plot_heatmap_scores_drugs")),
+              box(title="Heatmap scores genes",status="warning",solidHeader=TRUE,collapsible =FALSE,
+                  plotlyOutput("plot_heatmap_scores_genes")),
+              box(title="Heatmap scores combined",status="warning",solidHeader=TRUE,collapsible =FALSE,
+                  plotlyOutput("plot_heatmap_scores_sad"))
+              )#end fluid row
+              ), # end tab panel
+      tabPanel("Select a patient from the list",
+               fluidRow(
+               box(title="Select a patient from the list",status="success",width=3,solidHeader=TRUE,collapsible =FALSE,
+               uiOutput('list_patients')),
+               box(title="Table summary scores for patients",status="warning",solidHeader=TRUE,collapsible =FALSE,
+               htmlOutput("plot_single_summary_single_patient")
+               )
+               ))
+      
+      )#end tabset panel
+      ),#end tabItem
       tabItem(tabName = "terms_of_use",
               includeHTML("./GMIEC_www/terms_of_use.html"))
 

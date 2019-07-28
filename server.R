@@ -7,6 +7,7 @@ source("./src/internal_annotation.R", local = FALSE)
 source("./src/rules_fornot_tf.R", local = FALSE)
 source("./src/GMIEC.R", local = FALSE)
 source("./src/gmiec_ML.R",local=FALSE)
+source("./src/plot_shiny_functions.R",local=FALSE)
 
 function(input,output,session) { 
   
@@ -465,8 +466,48 @@ if(all_genes_test() == TRUE){
         
       }
         
-      
-    ################################
-    }
+
+}
+
+
 )
+
+##############GMIEC-VIS
+observeEvent(input$run_vis,{
+  
+  input_for_report2<-reactive({
+    infile_for_report<- input$vis_gmiec2
+    read.csv(file=infile_for_report$datapath) #read empty values with 0 
+  }) 
+  
+  print(dim(input_for_report2()))
+  
+  output$list_patients<-renderUI({
+      choices=input_for_report2()[,1]
+      selectInput('list_patients', 'Select patient',choices, selectize=FALSE)
+  })
+  
+  print("Create heatmaps!")
+  
+  output$plot_heatmap_scores_drugs<-renderPlotly({
+    hts<-plot_heatmap_report_gmiec(input_for_report2(),"drugs")
+    hts
+    }
+    )
+  output$plot_heatmap_scores_genes<-renderPlotly({
+    hts2<-plot_heatmap_report_gmiec(input_for_report2(),"genes")
+    hts2
+    }
+    )
+  output$plot_heatmap_scores_sad<-renderPlotly({
+    hts3<-plot_heatmap_report_gmiec(input_for_report2(),"sad")
+    hts3
+    }
+    )
+  
+  output$plot_single_summary_single_patient<-renderText(plotTable(input_for_report2(),input$list_patients))
+  
+})
+
+# end code server.R
 }
