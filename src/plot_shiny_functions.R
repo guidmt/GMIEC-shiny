@@ -8,11 +8,11 @@
 plot_heatmap_report_gmiec<-function(input_for_gmiec,type){
 
       #check if it the ouput of GMIEC MD or GMIEC-FD
-      if(length(grep(colnames(input_for_gmiec),pattern="s_score"))!=0){
-        genes="s_score"
-        colToselect<-paste("s_score",collapse="_")
-      } else{
-        colToselect<-paste(c("score_alteration",type),collapse="_")
+      if(type=="genes" & length(grep(colnames(input_for_gmiec),pattern="s_score"))!=0){
+        type="s_score"
+        colToselect<-type
+      }else{
+        colToselect<-paste(c("score_sad",type),collapse="_")
       }
       
       idx<-grep(colnames(input_for_gmiec),pattern=colToselect)

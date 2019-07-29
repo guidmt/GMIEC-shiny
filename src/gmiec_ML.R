@@ -277,7 +277,7 @@ GMIEC_MLK<-function(input_GE_selected,input_CNV_selected,input_METH_selected,inp
     
     
     SCORES_DRUGS_DF<-t(data.frame(SCORES_DRUGS))
-    colnames(SCORES_DRUGS_DF)<-paste("score_alteration_drugs_rdg",1:k_user,sep="_")
+    colnames(SCORES_DRUGS_DF)<-paste("score_drugs_rdg",1:k_user,sep="_")
     #################
     
     
