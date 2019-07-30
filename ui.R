@@ -118,13 +118,18 @@ ui <- dashboardPage(
                   plotlyOutput("plot_heatmap_scores_sad"))
               )#end fluid row
               ), # end tab panel
-      tabPanel("Select a patient from the list",
+      tabPanel("Table summary scores, genes, drugs for patient",
                fluidRow(
-               box(title="Select a patient from the list",status="success",width=3,solidHeader=TRUE,collapsible =FALSE,
+               box(title="Select a patient from the list",status="success",width=3,solidHeader=TRUE,collapsible =TRUE,
                uiOutput('list_patients')),
+               box(title="Select a module of the selected patient",status="success",width=3,solidHeader=TRUE,collapsible =TRUE,
+               uiOutput('number_modules')),
                box(title="Table summary scores for patients",status="warning",solidHeader=TRUE,collapsible =FALSE,
-               htmlOutput("plot_single_summary_single_patient")
-               )
+               htmlOutput("table_summary_scores")),
+               box(title="Table summary genes module patient",status="warning",solidHeader=TRUE,collapsible =FALSE,
+               htmlOutput("table_summary_genes_module")),
+               box(title="Table summary drug module patient",status="warning",solidHeader=TRUE,collapsible =FALSE,
+               htmlOutput("table_summary_drugs_module"))
                ))
       
       )#end tabset panel

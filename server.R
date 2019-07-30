@@ -505,7 +505,16 @@ observeEvent(input$run_vis,{
     }
     )
   
-  output$plot_single_summary_single_patient<-renderText(plotTable(input_for_report2(),input$list_patients))
+  output$number_modules<-renderUI({
+    choices=paste(1:length(grep(colnames(input_for_gmiec),pattern="rdg")),sep="")
+    selectInput('number_modules', 'Select module',choices, selectize=FALSE)
+    
+  }
+  )
+  
+  output$table_summary_scores<-renderText(plotTable(input_for_report2(),input$list_patients))
+  output$table_summary_genes_module<-renderText(plot_summary_genes_drugs(input_for_report2(),input$list_patients,type="genes",module=input$number_modules))
+  output$table_summary_drugs_module<-renderText(plot_summary_genes_drugs(input_for_report2(),input$list_patients,type="drugs",module=input$number_modules))
   
 })
 
