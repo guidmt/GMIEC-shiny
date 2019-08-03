@@ -10,6 +10,8 @@ library(formattable)
 library(kableExtra)
 library(randomForest)
 library(ggplot2)
+library(ComplexHeatmap)
+library(RColorBrewer)
 
 ui <- dashboardPage(
   dashboardHeader(title = "gmiec-app"),
@@ -18,6 +20,7 @@ ui <- dashboardPage(
       menuItem("Home", tabName = "home", icon = icon("home")),
       menuItem("GMIEC-MD", tabName = "run_gmiec", icon = icon("play-circle")),
       menuItem("GMIEC-VIS", tabName = "vis_gmiec2", icon = icon("wpexplorer")),
+      menuItem("GMIEC-results",tabName="gmiec_results",icon=icon("flag")),
       menuItem("Terms of use", tabName = "terms_of_use", icon = icon("user-tie"))
     )
   ),
@@ -134,6 +137,78 @@ ui <- dashboardPage(
       
       )#end tabset panel
       ),#end tabItem
+      tabItem(tabName = "gmiec_results",
+              tabsetPanel(
+                tabPanel("Parse GMIEC results", 
+                         fluidRow(
+                           box(title="Upload results GMIEC",status="success",width=3,solidHeader=TRUE,collapsible =FALSE,  
+                               fileInput("vis_gmiec3", "Upload results GMIEC",buttonLabel=icon("folder")),
+                               selectInput("type_input_gmiec",
+                                           "Select which algorithm was used to create the GMIEC-output",
+                                           c("Random forest + k-means","Logic rules + k-means")
+                                           ),
+                               selectInput("simply_res_gmiec", "Choose the type of output:",c("Module active",
+                                                                        "Module inactive",
+                                                                        "Module active with drugs",
+                                                                        "Module inactive with drugs")),
+                               actionButton('create_simple_report', 'Create report!',style = "color: white; 
+                     background-color: #0066CC; 
+                               position: relative; 
+                               left: 3%;
+                               height: 35px;
+                               width: 200px;
+                               text-align:center;
+                               text-indent: -2px;
+                               border-radius: 6px;
+                               border-width: 2px"),
+                               downloadButton('download_simple_report', 'Download',style = "color: white; 
+                     background-color: #ec0000; 
+                               position: relative; 
+                               left:10%;
+                               height: 35px;
+                               width: 200px;
+                               text-align:center;
+                               text-indent: -2px;
+                               border-radius: 6px;
+                               border-width: 2px")
+                           )
+                         )
+                ),
+                tabPanel("Heatmap module for patient",
+                         
+                         box(title="GMIEC - Input dataset",status="primary",solidHeader=TRUE,collapsible =TRUE,
+                             fileInput("results_gmiec_from_parse", "Upload results GMIEC",buttonLabel=icon("folder-open")),
+                             fileInput("ge_dataset_res", "Upload gene-expression data",buttonLabel=icon("folder-open")),
+                             fileInput("cnv_dataset_res", "Upload copy-number variation data",buttonLabel=icon("folder-open")),
+                             fileInput("meth_dataset_res", "Upload methylation data",buttonLabel=icon("folder-open")),
+                             fileInput("mut_dataset_res", "Upload mutation data",buttonLabel=icon("folder-open")),
+                             fileInput("genes_drugs", "Upload the genes-drugs file",buttonLabel=icon("folder-open")),
+                             checkboxInput("two_datasets2","Analysis only two datasets (Select)",FALSE),
+                             checkboxInput("cb_ge2", label = "gene-expression", value = FALSE),
+                             checkboxInput("cb_cnv2", label = "copy-number", value = FALSE),
+                             checkboxInput("cb_meth2", label = "methylation", value = FALSE),
+                             checkboxInput("cb_mutation2", label = "mutation", value = FALSE),
+                             actionButton('run_plot_res_gmiec', 'Create report!',style = "color: white; 
+                     background-color: #0066CC; 
+                               position: relative; 
+                               left: 3%;
+                               height: 35px;
+                               width: 200px;
+                               text-align:center;
+                               text-indent: -2px;
+                               border-radius: 6px;
+                               border-width: 2px")
+                         ),
+                         box(title="Select patient",status="warning",solidHeader=TRUE,collapsible =FALSE,
+                             uiOutput('list_patients2')),
+                         box(title="Heatmap module patient",status="warning",solidHeader=TRUE,collapsible =FALSE,
+                             plotOutput("plot_module_patient"))
+                         
+                         )
+              )
+              ),
+      
+      
       tabItem(tabName = "terms_of_use",
               includeHTML("./GMIEC_www/terms_of_use.html"))
 

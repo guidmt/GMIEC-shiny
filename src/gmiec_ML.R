@@ -262,8 +262,9 @@ GMIEC_MLK<-function(input_GE_selected,input_CNV_selected,input_METH_selected,inp
     
     #create the ouput
     number_genes=t(data.frame(apply(GGFK,2,FUN=function(x){unlist(lapply(strsplit(x,split=","),length))})))
+    colnames(number_genes)<-paste("number_genes_in_module",1:k_user,sep="_")
     number_drugs=t(data.frame(apply(DGFK,2,FUN=function(x){unlist(lapply(strsplit(x,split="#"),length))})))
-    
+    colnames(number_drugs)<-paste("number_drugs_in_module",1:k_user,sep="_")
     #count number of genes with drugs
     SCORES_DRUGS<-NULL
     
@@ -289,9 +290,9 @@ GMIEC_MLK<-function(input_GE_selected,input_CNV_selected,input_METH_selected,inp
     #################
     TEMP_DF<-data.frame(sample_id=se_patient_selection,
                         GGFK,
-                        number_genes=number_genes,
+                        number_genes,
                         DGFK,
-                        number_drugs=number_drugs,
+                        number_drugs,
                         ge_mean,
                         ge_score_up,
                         cnv_score_amp,
@@ -305,7 +306,7 @@ GMIEC_MLK<-function(input_GE_selected,input_CNV_selected,input_METH_selected,inp
                         GLOBAL_GENETIC_SCORE,
                         SCORES_DRUGS_DF,
                         COMBINED_SCORES,
-                        TRUE_MODULE_INDEX
+                        TRUE_MODULE_INDEX,stringsAsFactors = F
     )
     
     FINAL_DF<-rbind(FINAL_DF,TEMP_DF)

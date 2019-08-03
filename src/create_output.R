@@ -17,9 +17,9 @@ total_genes_patients<-"total_genes_patients"
 number_modules<-"number_modules"
 total_modules<-unique(GPM_TOT)
 
-number_genes_for_module_size<-paste("#genes_module",total_modules,sep="")
+number_genes_for_module_size<-paste("number_genes_in_module",total_modules,sep="")
 genes_in_each_module<-paste("genes_in_",paste("module",total_modules,sep=""),sep="")
-number_drugs_for_module_size<-paste("#drugs_module",total_modules,sep="")
+number_drugs_for_module_size<-paste("number_drugs_in_module",total_modules,sep="")
 drugs_in_each_module<-paste("drugs_in_",paste("module",total_modules,sep=""),sep="")
 scores_module_unique<-paste("score_genes",total_modules,sep="")
 scores_module_drugs_unique<-paste("score_drugs_rdg",total_modules,sep="")
