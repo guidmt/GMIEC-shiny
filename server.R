@@ -572,6 +572,7 @@ if(!is.null(export_simple_results_gmiec())){
 
 ##############GMIEC plot single patient
 observeEvent(input$run_plot_res_gmiec,{
+  showNotification("Run the analysis, wait the uploading of the data",type="message")
   
   ### read gene expression data
   input_GE_selected<-reactive({
@@ -771,6 +772,8 @@ observeEvent(input$run_plot_res_gmiec,{
   print(dim(input_DRUGS()))
   
   output$plot_module_patient<-renderPlot({
+    showNotification("Wait the results of the analysis",type="message")
+    
     plot_heatmap_module(res_gmiec=input_parse_gmiec(),
                         input_GE=input_GE_selected_plot,
                         input_CNV=input_CNV_selected_plot,
@@ -778,6 +781,34 @@ observeEvent(input$run_plot_res_gmiec,{
                         input_MUT=input_MUTATION_selected_plot,
                         input_DRUGS=input_DRUGS(),
                         subject=input$list_patients2)
+    }
+  )
+  
+  output$table_summary_drugs_module2<-renderText(plot_summary_genes_drugs(input_parse_gmiec(),input$list_patients2,type="drugs",module=input$number_modules))
+
+  output$download_html_report<-downloadHandler(
+    
+    filename = function() {
+      paste('GMIEC_report', Sys.Date(), '.html', sep='')
+    }
+    ,
+    content = function(file) {
+      
+      dir_src<-paste(paste(getwd(),"/src",sep=""),"template_report.Rmd",sep="/")
+      
+      showNotification("Wait...creation report!",type="message")
+      showNotification("This process is slow!",type="message")
+      
+      rmarkdown::render(dir_src, params = list(
+        res_gmiec = input_parse_gmiec(),
+        input_GE=input_GE_selected_plot,
+        input_CNV=input_CNV_selected_plot,
+        input_METH=input_METH_selected_plot,
+        input_MUT=input_MUTATION_selected_plot,
+        input_DRUGS=input_DRUGS()))
+      
+      showNotification("Your report is ready!",type="message")
+      
     }
   )
   

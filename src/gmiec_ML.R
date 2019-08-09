@@ -17,8 +17,9 @@ GMIEC_MLK<-function(input_GE_selected,input_CNV_selected,input_METH_selected,inp
   colnames(drugs_for_analysis2)[1:2]<-c("genes","drugs")   
   
   #find all common patients
-  unique_samples<-Reduce(intersect, list(colGE[-1],colCNV[-1],colMETH[-1],colMUT))
-
+  #unique_samples<-Reduce(intersect, list(colGE[-1],colCNV[-1],colMETH[-1],colMUT))
+  
+  unique_samples<-unique(c(colGE,colCNV,colMETH,colMUT))
   FINAL_DF<-data.frame()
   
   for(se_patient_selection in unique_samples){

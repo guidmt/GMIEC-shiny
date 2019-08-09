@@ -1,0 +1,36 @@
+---
+title: "VIS-GMIEC output"
+author: "GMIEC"
+params:
+  input_CNV: 'NULL'
+  input_DRUGS: 'NULL'
+  input_GE: 'NULL'
+  input_METH: 'NULL'
+  input_MUT: 'NULL'
+  res_gmiec: 'NULL'
+output:
+html_document:
+    toc: true
+    theme: united
+---
+
+
+```{r GlobalOptions, include= FALSE}
+options(knitr.duplicate.label = 'allow') ##this will fix the chunk duplicate error
+```
+### Welcome! This is the report of your analysis.
+
+## Summary of the analysis for the current patient:
+```{r message=F,include=TRUE, echo=FALSE, results='asis', warning=FALSE}
+subject<-as.character(params$res_gmiec[,1])
+
+for(i in subject){
+
+cat('\n')  
+plot_heatmap_module(res_gmiec=params$res_gmiec,input_GE=params$input_GE,input_CNV=params$input_CNV,input_METH=params$input_METH,input_MUT=params$input_MUT,input_DRUGS=params$input_DRUGS,i)  
+plot_summary_genes_drugs(params$res_gmiec,i,type="drugs",module=NULL)
+cat('\n')  
+plot_summary_genes_drugs(params$res_gmiec,i,type="genes",module=NULL)
+cat('\n')  
+}
+```

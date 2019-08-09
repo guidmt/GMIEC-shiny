@@ -94,8 +94,8 @@ create_output_gmiec_parse<-function(input_for_gmiec,type_input,type_of_output){
            
             df<-data.frame(patientID=current_patient,
                        score=score_n_module_current_patient,
-                       genes=genes_n_module_current_patient,
-                       drugs=drugs_n_module_current_patient,
+                       genes_in_module=genes_n_module_current_patient,
+                       drugs_in_module=drugs_n_module_current_patient,
                        index_module=selected_modules,stringsAsFactors=F) 
             
             FINAL_OUTPUT<-rbind(FINAL_OUTPUT,df)
