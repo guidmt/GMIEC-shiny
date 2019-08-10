@@ -58,7 +58,7 @@ ui <- dashboardPage(
                       
                   ),
                   box(title="GMIEC - Parameters Analysis",status="success",solidHeader=TRUE,collapsible =TRUE,
-                      numericInput("clusters","Number Clusters k-mode/k-means",value=4),
+                      numericInput("clusters","Number Clusters k-mode/k-means",value=10),
                       checkboxInput("GMIEC_RULES","Analysis with logic rules + k-mode",FALSE),
                       checkboxInput("RF_ANALYSIS","Analysis with randomForest + k-means",TRUE),
                       checkboxInput("two_datasets","Analysis only two datasets (Select)",FALSE),

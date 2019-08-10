@@ -76,7 +76,7 @@ gmiec_results<-observeEvent(input$run_gmiec,{
     
     ## read clinical data
     input_clinical<-reactive({
-    if(is.null(input$clinical_dataset))  {return(NULL)}
+    if(is.null(input$clinical_dataset))  {showNotification("The clinical file it is mandatory.",type="error")}
       infile6<-input$clinical_dataset
       read.table(file=infile6$datapath,sep="\t",stringsAsFactors=F,quote=NULL,header=T,fill=T,check.names = F)
     })
@@ -102,6 +102,7 @@ gmiec_results<-observeEvent(input$run_gmiec,{
     #if you want use a bed file then are required an annotation file,max-gap, bed file
     if(genes_annotated_fv()==TRUE){
       annotation_dataset<-reactive({
+        if(is.null(input$annotation_dataset))  {showNotification("You decided to annotate a bed file. Upload an annotation file.",type="error")}
         infile9<-input$annotation_dataset
         read.table(file=infile9$datapath,sep="\t",stringsAsFactors=F,header=T,fill=T,check.names = F)
       })
@@ -120,6 +121,7 @@ gmiec_results<-observeEvent(input$run_gmiec,{
     if(genes_annotated_fv()==TRUE){
       
       bed_dataset<-reactive({
+        if(is.null(input$bed_file))  {showNotification("You decided to annotate a bed file. Upload a bed file.",type="error")}
         infile_bed<-input$bed_file
         read.table(file=infile_bed$datapath,sep="\t",stringsAsFactors=F,header=T,fill=T,check.names = F)
       })   
@@ -129,9 +131,9 @@ gmiec_results<-observeEvent(input$run_gmiec,{
     ###
     ### Input Drugs
     ###
-    
     drugs_for_analysis<-reactive({
-      infile1<-input$drugs_dataset
+      if(is.null(input$genes_drugs))  {showNotification("The drug gene file it is mandatory.",type="error")}
+      infile1<-input$genes_drugs
       read.table(file=infile1$datapath,sep="\t",stringsAsFactors=F,header=T,fill=T,check.names = F)
     })
     
@@ -146,6 +148,7 @@ gmiec_results<-observeEvent(input$run_gmiec,{
     if(input_list_of_genes_test()==TRUE){
       
       list_genes_for_analysis<-reactive({
+      if(is.null(input$list_of_genes2)){showNotification("You selected to run analysis with a list of genes. Upload a list of genes.",type="error")}
         infile_LG<-input$list_of_genes2
         read.table(file=infile_LG$datapath,sep="\t",stringsAsFactors=F,header=T,fill=T,check.names = F)
         
@@ -168,10 +171,12 @@ gmiec_results<-observeEvent(input$run_gmiec,{
       input_METH_tf<-input_METH()[input_METH()[,1]==input$name_tf,]
     }
     
-    all_genes_test<-renderText({ input$all_genes})
+    all_genes_test<-renderText({input$all_genes})
     
     #if the use want use the entire list of genes
     if(all_genes_test()==TRUE) {
+      
+    if(is.null(all_genes_test()==TRUE)){showNotification("You select to run the analysis with all genes. Set an appropriate number of clusters.",type="warning")}
       
       list_genes_dataset<-unique(c(input_GE()[,1],input_CNV()[,1],input_MUT()[,1],input_METH()[,1]))
       all_genes_for_analysis<-list_genes_dataset
@@ -285,8 +290,8 @@ if(all_genes_test() == TRUE){
       
 
       } else {
-
-                
+        if(cb_ge_ok() == FALSE & cb_cnv_ok() == FALSE & cb_meth_ok() == FALSE & cb_mutation_ok() == FALSE){showNotification("Select which omic data set you uploaded.",type="error")}
+                    
         if(cb_ge_ok() == TRUE){input_GE_string="GE"} else {input_GE_string=NULL}
         if(cb_cnv_ok() == TRUE){input_CNV_string="CNV"} else{input_CNV_string=NULL}
         if(cb_meth_ok() == TRUE){input_METH_string="METH"} else{input_METH_string=NULL}
@@ -389,6 +394,8 @@ if(all_genes_test() == TRUE){
       ################################ RUN GMIEC RFK
       print("run gmiec RFK!")
       
+      if(RFA() == TRUE & GMR()==TRUE){showNotification("Select only one method of analysis.",type="error")}
+        
       if((RFA() == TRUE & TD() == TRUE )|(RFA() == TRUE & TD() == FALSE)){
       
       output_gmiec<-reactive({GMIEC_MLK(
@@ -525,13 +532,12 @@ observeEvent(input$run_vis,{
 observeEvent(input$create_simple_report,{
   
   input_for_report_simple<-reactive({
+    if(is.null(input$vis_gmiec3)){showNotification("Upload a file to parse the output of GMIEC.",type="error")}
     infile_for_report<- input$vis_gmiec3
     read.csv(file=infile_for_report$datapath) #read empty values with 0 
-    
   }) 
   
   print(dim(input_for_report_simple()))
-  
   
   showNotification("The output will be created!",type="message")
   
@@ -617,7 +623,7 @@ observeEvent(input$run_plot_res_gmiec,{
   
   ## read  input drugs
   input_DRUGS<-reactive({
-    if(is.null(input$genes_drugs))  {return(NULL)}
+    if(is.null(input$genes_drugs))  {showNotification("The drug gene file it is mandatory.",type="error")}
     infile6<-input$genes_drugs
     read.table(file=infile6$datapath,sep="\t",stringsAsFactors=F,quote=NULL,header=T,fill=T,check.names = F)
   })
@@ -633,9 +639,18 @@ observeEvent(input$run_plot_res_gmiec,{
   TD2<-renderText({input$two_datasets2})
   
   input_parse_gmiec<-reactive({
+  if(is.null(input$results_gmiec_from_parse))  {showNotification("Upload the results of GMIEC.",type="error")}
     infile_for_report<- input$results_gmiec_from_parse
     read.csv(file=infile_for_report$datapath) #read empty values with 0 
   }) 
+  
+  if(dim(input_parse_gmiec())[2]>4){showNotification("The upload is malformed. Number of columns different from the GMIEC standard.",type="error")}
+  if(dim(input_parse_gmiec())[2]>4){showNotification("The upload is malformed. Number of columns different from the GMIEC standard.",type="error")}
+  
+  if(length(grep(colnames(input_parse_gmiec()),pattern="patientID"))){showNotification("The uploaded file is malformed. patientID column absent, or the name of the colum is wrong",type="error")}
+  if(length(grep(colnames(input_parse_gmiec()),pattern="score"))){showNotification("The uploaded file is malformed. score column absent, or the name of the column is wrong",type="error")}
+  if(length(grep(colnames(input_parse_gmiec()),pattern="genes_in_module"))){showNotification("The uploaded file is malformed. genes_in_module column absent, or the name of the column is wrong",type="error")}
+  if(length(grep(colnames(input_parse_gmiec()),pattern="drugs_in_module"))){showNotification("The uploaded file is malformed. drugs_in_module column absent, or the name of the column is wrong",type="error")}
   
   print(dim(input_parse_gmiec()))
   
