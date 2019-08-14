@@ -83,6 +83,18 @@ gmiec_results<-observeEvent(input$run_gmiec,{
     
     print(paste("Load clinical data",dim(input_clinical())))
     
+    ###
+    ### Input Drugs
+    ###
+    drugs_for_analysis<-reactive({
+      if(is.null(input$drugs_dataset))  {showNotification("The drug gene file it is mandatory.",type="error")}
+      infile1<-input$drugs_dataset
+      read.table(file=infile1$datapath,sep="\t",stringsAsFactors=F,header=T,fill=T,check.names = F)
+    })
+    
+    print(paste("Upload drugs file",dim(drugs_for_analysis())))
+    
+    
   
     ## define number of clusters for k-modes and k-means
     input_clusters<-reactive({
@@ -127,17 +139,6 @@ gmiec_results<-observeEvent(input$run_gmiec,{
       })   
       print(paste("Upload bed file",dim(bed_dataset())))
     }  
-    
-    ###
-    ### Input Drugs
-    ###
-    drugs_for_analysis<-reactive({
-      if(is.null(input$genes_drugs))  {showNotification("The drug gene file it is mandatory.",type="error")}
-      infile1<-input$genes_drugs
-      read.table(file=infile1$datapath,sep="\t",stringsAsFactors=F,header=T,fill=T,check.names = F)
-    })
-    
-    print(paste("Upload drugs file",dim(drugs_for_analysis())))
     
     ###
     ### Input Type of analysis
