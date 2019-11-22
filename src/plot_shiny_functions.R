@@ -64,7 +64,7 @@ plotTable<-function(input_for_gmiec,current_patient){
     
   } else {
     idx_number_sam<-grep(colnames(input_for_gmiec_select),pattern="score_genes")
-    idx_number_sadrugs<-grep(colnameS(input_for_gmiec_select),pattern="score_drugs_rdg")
+    idx_number_sadrugs<-grep(colnames(input_for_gmiec_select),pattern="score_drugs_rdg")
   }
   
   
