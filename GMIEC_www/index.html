@@ -7,6 +7,7 @@
 <meta charset="utf-8" />
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
 
@@ -83,7 +84,6 @@ code {
 }
 img {
   max-width:100%;
-  height: auto;
 }
 .tabbed-pane {
   padding-top: 12px;
@@ -244,18 +244,6 @@ $(document).ready(function () {
 }
 </style>
 
-<script>
-$(document).ready(function () {
-  window.buildTabsets("TOC");
-});
-
-$(document).ready(function () {
-  $('.tabset-dropdown > .nav-tabs > li').click(function () {
-    $(this).parent().toggleClass('nav-tabs-open')
-  });
-});
-</script>
-
 <!-- code folding -->
 
 
@@ -316,8 +304,8 @@ $(document).ready(function () {
 <li>Analysis using all genes between the datasets.</li>
 </ul>
 </div>
-<div id="functionalities-of-gmiec-md" class="section level4">
-<h4><strong>Functionalities of GMIEC-MD</strong></h4>
+<div id="functionalities-of-gmiec-an" class="section level4">
+<h4><strong>Functionalities of GMIEC-AN</strong></h4>
 <ul>
 <li>Identification of groups of genes with/without genomic alterations associated with drugs using <strong>predefined</strong> number of datasets.</li>
 <li>Analysis using only the annotated genes.</li>
@@ -347,7 +335,7 @@ $(document).ready(function () {
 <h4><strong>Support:</strong></h4>
 <ul>
 <li><a href="https://github.com/guidmt/GMIEC-shiny" class="uri">https://github.com/guidmt/GMIEC-shiny</a></li>
-<li>guidantonio.mt AT gmai.com</li>
+<li>guidantonio.mt AT gmail.com</li>
 </ul>
 </div>
 <div id="terms-of-use" class="section level4">
@@ -374,6 +362,23 @@ $(document).ready(function () {
 
 
 </script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
 
 <!-- dynamically load mathjax for compatibility with self-contained -->
 <script>
