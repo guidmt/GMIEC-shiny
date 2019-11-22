@@ -13,11 +13,19 @@ plot_heatmap_report_gmiec<-function(input_for_gmiec,type){
       } 
   
      if(type=="genes" & length(grep(colnames(input_for_gmiec),pattern="s_score"))==0) {
-        colToselect<-paste(c("score","genes"),collapse="_")
+        colToselect<-'score_alteration_module'
       }
-        
-      if(type=="drugs"|type=="sad"){
-      colToselect<-paste(c("score",type),collapse="_")
+       
+      if(type=="drugs" & length(grep(colnames(input_for_gmiec),pattern="s_score"))!=0){
+        colToselect<-paste(c("score",type),collapse="_")
+      }
+  
+      if(type=="drugs" & length(grep(colnames(input_for_gmiec),pattern="s_score"))==0){
+        colToselect<-'score_drugs_rdg'
+      }
+  
+      if(type=="sad"){
+        colToselect<-'sad'
       }
   
       idx<-grep(colnames(input_for_gmiec),pattern=colToselect)
@@ -63,7 +71,7 @@ plotTable<-function(input_for_gmiec,current_patient){
     idx_number_sadrugs<-grep(colnames(input_for_gmiec_select),pattern="score_drugs_rdg")
     
   } else {
-    idx_number_sam<-grep(colnames(input_for_gmiec_select),pattern="score_genes")
+    idx_number_sam<-grep(colnames(input_for_gmiec_select),pattern="score_alteration_module")
     idx_number_sadrugs<-grep(colnames(input_for_gmiec_select),pattern="score_drugs_rdg")
   }
   
