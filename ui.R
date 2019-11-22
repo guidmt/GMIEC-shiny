@@ -197,16 +197,6 @@ ui <- dashboardPage(
                                text-align:center;
                                text-indent: -2px;
                                border-radius: 6px;
-                               border-width: 2px"),
-                             downloadButton('download_html_report', 'Download report pdf!',style = "color: white; 
-                     background-color: #ec0000; 
-                               position: relative; 
-                               left: 3%;
-                               height: 35px;
-                               width: 200px;
-                               text-align:center;
-                               text-indent: -2px;
-                               border-radius: 6px;
                                border-width: 2px")
                          ),
                          
