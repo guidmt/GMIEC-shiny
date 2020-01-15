@@ -100,93 +100,6 @@ summary {
 </style>
 
 
-<style type="text/css">
-/* padding for bootstrap navbar */
-body {
-  padding-top: 51px;
-  padding-bottom: 40px;
-}
-/* offset scroll position for anchor links (for fixed navbar)  */
-.section h1 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h2 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h3 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h4 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h5 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h6 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.dropdown-submenu {
-  position: relative;
-}
-.dropdown-submenu>.dropdown-menu {
-  top: 0;
-  left: 100%;
-  margin-top: -6px;
-  margin-left: -1px;
-  border-radius: 0 6px 6px 6px;
-}
-.dropdown-submenu:hover>.dropdown-menu {
-  display: block;
-}
-.dropdown-submenu>a:after {
-  display: block;
-  content: " ";
-  float: right;
-  width: 0;
-  height: 0;
-  border-color: transparent;
-  border-style: solid;
-  border-width: 5px 0 5px 5px;
-  border-left-color: #cccccc;
-  margin-top: 5px;
-  margin-right: -10px;
-}
-.dropdown-submenu:hover>a:after {
-  border-left-color: #ffffff;
-}
-.dropdown-submenu.pull-left {
-  float: none;
-}
-.dropdown-submenu.pull-left>.dropdown-menu {
-  left: -100%;
-  margin-left: 10px;
-  border-radius: 6px 0 6px 6px;
-}
-</style>
-
-<script>
-// manage active state of menu based on current page
-$(document).ready(function () {
-  // active menu anchor
-  href = window.location.pathname
-  href = href.substr(href.lastIndexOf('/') + 1)
-  if (href === "")
-    href = "index.html";
-  var menuAnchor = $('a[href="' + href + '"]');
-
-  // mark it active
-  menuAnchor.parent().addClass('active');
-
-  // if it's got a parent navbar menu mark it active as well
-  menuAnchor.closest('li.dropdown').addClass('active');
-});
-</script>
 
 <!-- tabsets -->
 
@@ -259,32 +172,6 @@ $(document).ready(function () {
 
 
 
-<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
-  <div class="container">
-    <div class="navbar-header">
-      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </button>
-      <a class="navbar-brand" href="index.html">GMIEC-website</a>
-    </div>
-    <div id="navbar" class="navbar-collapse collapse">
-      <ul class="nav navbar-nav">
-        
-      </ul>
-      <ul class="nav navbar-nav navbar-right">
-        <li>
-  <a href="index.html">Home</a>
-</li>
-<li>
-  <a href="terms_of_use.html">Terms of use</a>
-</li>
-      </ul>
-    </div><!--/.nav-collapse -->
-  </div><!--/.container -->
-</div><!--/.navbar -->
-
 <div class="fluid-row" id="header">
 
 
@@ -294,36 +181,36 @@ $(document).ready(function () {
 </div>
 
 
-<p>Welcome in <strong>GMIEC</strong>!! <strong>GMIEC</strong> is a framework, GMIEC, that integrates omics data (gene-expression, copy number variation, mutation, methylation) with data containing genomic coordinates of cis and/or trans epigenetic regulators (e.g. ChIP-seq). Then, at the level of the single patient, GMIEC identify groups of genes (modules) that share common genomic features. Then, using an external database, the genes in each module are associated with their own target drugs. Therefore, GMIEC allows the identification, at the level of the single patient, groups of genes that are regulated by the same epigenetic regulators (e.g. TFs), sharing common genomic features and associated with different number of drugs.</p>
+<p>Welcome in <strong>GMIEC</strong>!! <strong>GMIEC</strong> is a framework that integrates omics data such as gene-expression, copy number variation, mutation, methylation and clinical data if available. At the level of the single patient, GMIEC identify group of genes (modules) that share common genomic features. Then, using an external database, the genes in each module are associated with their own target drugs. Therefore, GMIEC allows the identification, at the level of the single patient, of group of genes that are regulated by the same genetic/epigenetic regulator/s (e.g. TFs), sharing common genomic features and associated with different number of drugs.</p>
 <div id="functionalities-of-gmiec" class="section level4">
 <h4><strong>Functionalities of GMIEC:</strong></h4>
 <ul>
-<li>Identification of groups of genes with/without genomic alterations associated with drugs using <strong>gene-expression</strong>, <strong>copy-number alteration</strong>, <strong>methylation</strong>, <strong>mutation</strong>, <strong>clinical data</strong>.</li>
-<li>Analysis using only the annotated genes.</li>
-<li>Analysis using a custom list of genes.</li>
+<li>Identification of groups of genes with/without genomic alterations associated with drugs using <strong>gene-expression</strong>, <strong>copy-number alteration</strong>, <strong>methylation</strong>, <strong>mutation</strong>, <strong>clinical data</strong>;</li>
+<li>Analysis using only the annotated genes;</li>
+<li>Analysis using a custom list of genes;</li>
 <li>Analysis using all genes between the datasets.</li>
 </ul>
 </div>
 <div id="functionalities-of-gmiec-an" class="section level4">
 <h4><strong>Functionalities of GMIEC-AN</strong></h4>
 <ul>
-<li>Identification of groups of genes with/without genomic alterations associated with drugs using <strong>predefined</strong> number of datasets.</li>
-<li>Analysis using only the annotated genes.</li>
-<li>Analysis using a custom list of genes.</li>
+<li>Identification of group of genes with or without genomic alterations associated with drugs using <strong>predefined</strong> number of datasets;</li>
+<li>Analysis using only the annotated genes;</li>
+<li>Analysis using a custom list of genes;</li>
 <li>Analysis using all genes between the datasets.</li>
 </ul>
 </div>
 <div id="functionalities-of-vis-gmiec" class="section level4">
 <h4><strong>Functionalities of VIS-GMIEC:</strong></h4>
 <ul>
-<li>Exploration of the data at the level of groups of or single patient</li>
-<li>Summary of the scores, genes and drugs fo the modules for each single patient</li>
+<li>Exploration of data at the level of single patient;</li>
+<li>Summary of the scores, genes and drugs for the module genes at level of each patient.</li>
 </ul>
 </div>
 <div id="functionalities-of-gmiec-results" class="section level4">
 <h4><strong>Functionalities of GMIEC-RESULTS:</strong></h4>
 <ul>
-<li>Parse the output of GMIEC and select only the modules given different criterias.</li>
+<li>Parse the output of GMIEC and select only the modules given different criterias;</li>
 <li>Visualize the results at the level of single patient.</li>
 </ul>
 </div>

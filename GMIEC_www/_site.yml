@@ -1,9 +1,4 @@
 name: "GMIEC"
 output_dir: "."
-navbar:
-  title: "GMIEC-website"
-  right:
-    - text: "Home"
-      href: index.html
-    - text: "Terms of use"
-      href: terms_of_use.html
+
+  

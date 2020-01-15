@@ -2,27 +2,27 @@
 title: "GMIEC"
 ---
   
-Welcome in **GMIEC**!! **GMIEC** is a framework, GMIEC, that integrates omics data (gene-expression, copy number variation, mutation, methylation) with data containing genomic coordinates of cis and/or trans epigenetic regulators (e.g. ChIP-seq). Then, at the level of the single patient, GMIEC identify groups of genes (modules) that share common genomic features. Then, using an external database, the genes in each module are associated with their own target drugs. Therefore, GMIEC allows the identification, at the level of the single patient, groups of genes that are regulated by the same epigenetic regulators (e.g. TFs), sharing common genomic features and associated with different number of drugs.
+Welcome in **GMIEC**!! **GMIEC** is a framework that integrates omics data  such as gene-expression, copy number variation, mutation, methylation and clinical data if available. At the level of the single patient, GMIEC identify group of genes (modules) that share common genomic features. Then, using an external database, the genes in each module are associated with their own target drugs. Therefore, GMIEC allows the identification, at the level of the single patient, of group of genes that are regulated by the same genetic/epigenetic regulator/s (e.g. TFs), sharing common genomic features and associated with different number of drugs.
 
 #### **Functionalities of GMIEC:**
 
-- Identification of groups of genes with/without genomic alterations associated with drugs using **gene-expression**, **copy-number alteration**, **methylation**, **mutation**, **clinical data**.
-- Analysis using only the annotated genes.
-- Analysis using a custom list of genes.
+- Identification of groups of genes with/without genomic alterations associated with drugs using **gene-expression**, **copy-number alteration**, **methylation**, **mutation**, **clinical data**;
+- Analysis using only the annotated genes;
+- Analysis using a custom list of genes;
 - Analysis using all genes between the datasets.
 
 #### **Functionalities of GMIEC-AN**
-- Identification of groups of genes with/without genomic alterations associated with drugs using **predefined** number of datasets.
-- Analysis using only the annotated genes.
-- Analysis using a custom list of genes.
+- Identification of group of genes with or without genomic alterations associated with drugs using **predefined** number of datasets;
+- Analysis using only the annotated genes;
+- Analysis using a custom list of genes;
 - Analysis using all genes between the datasets.
 
 #### **Functionalities of VIS-GMIEC:**
-- Exploration of the data at the level of groups of or single patient
-- Summary of the scores, genes and drugs fo the modules for each single patient
+- Exploration of data at the level of single patient;
+- Summary of the scores, genes and drugs for the module genes at level of each patient.
 
 #### **Functionalities of GMIEC-RESULTS:**
-- Parse the output of GMIEC and select only the modules given different criterias.
+- Parse the output of GMIEC and select only the modules given different criterias;
 - Visualize the results at the level of single patient.
 
 #### **Manual of GMIEC:** 
