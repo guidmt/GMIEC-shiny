@@ -5,6 +5,6 @@ The official documentation it is available here:
 
 https://github.com/guidmt/GMIEC-shiny/wiki
 
-A manual it is available here:
+A manual it is available here, click on 'Download' to get the file:
 
 https://github.com/guidmt/GMIEC-shiny/blob/master/GMIEC_user_manual.docx
