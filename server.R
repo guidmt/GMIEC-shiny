@@ -48,7 +48,7 @@ gmiec_results<-observeEvent(input$run_gmiec,{
 
     ### read copy number variation data
       input_CNV<-reactive({
-      showNotification("Loading copy number data data",type="message")
+      showNotification("Loading copy number data",type="message")
       
       if(is.null(input$cnv_dataset)) {return(NULL)}
       infile3<-input$cnv_dataset
