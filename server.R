@@ -71,6 +71,7 @@ gmiec_results<-observeEvent(input$run_gmiec,{
     
     ## read methylation data
     input_METH<-reactive({
+      
       showNotification("Load methylation data",type="message")
       
       if(is.null(input$meth_dataset))  {return(NULL)}
@@ -96,7 +97,6 @@ gmiec_results<-observeEvent(input$run_gmiec,{
     ### Input Drugs
     ###
     drugs_for_analysis<-reactive({
-      if(is.null(input$drugs_dataset))  {showNotification("The drug gene file it is mandatory.",type="error")}
       infile1<-input$drugs_dataset
       read.table(file=infile1$datapath,sep="\t",stringsAsFactors=F,header=T,fill=T,check.names = F)
     })
@@ -169,18 +169,6 @@ gmiec_results<-observeEvent(input$run_gmiec,{
     }
     
     
-    genes_annotated_TF2_test<-renderText({ input$genes_annotated_TF})
-    
-    #if the use want evalute the impact of TF
-    if(genes_annotated_TF2_test()==TRUE & RFA()!= TRUE) {
-      
-      # extract the gene expression data for the current TF
-      input_GE_tf<-input_GE()[input_GE()[,1]== input$name_tf,]
-      input_CNV_tf<-input_CNV()[input_CNV()[,1]==input$name_tf,]
-      input_MUTATION_tf<-input_MUT()[input_MUT()[,1]==input$name_tf,]
-      input_METH_tf<-input_METH()[input_METH()[,1]==input$name_tf,]
-    }
-    
     all_genes_test<-renderText({input$all_genes})
     
     #if the use want use the entire list of genes
@@ -200,9 +188,22 @@ gmiec_results<-observeEvent(input$run_gmiec,{
 ########## END UPLOAD FILE
 ##########
 
+########## Perform some controls
+    
+if(!is.null(input_GE()) & !is.null(input_CNV()) & !is.null(input_METH()) & !is.null(input_MUT())){
+      
+      showNotification("Control matrices: ok!",type="message",duration=NULL)
+      
+    } else {
+      
+      showNotification("One of your matrix is empty",type="error")
+      showNotification("If you want analyze less than 4 data-sets click on Analysis only two datasets",type="error")
+      
+}   
+    
+    
 
 ######### CREATE THE GENE LISTS
-    
 # use a list from annotation
 if(genes_annotated_fv()==TRUE){
   
@@ -299,13 +300,18 @@ if(all_genes_test() == TRUE){
 ##
  
       if(TD() != TRUE){
-        
-      input_GE2<-input_GE()
-      input_CNV2<-input_CNV()
-      input_METH2<-input_METH()
-      input_MUTATION2<-input_MUT()
       
+      ##  check
+      if(dim(input_GE_selected)[1]!=0 & dim(input_CNV_selected)[1]!=0 & dim(input_METH_selected)[1]!=0 & dim(input_MUTATION_selected)[1]!=0){
+        
+      showNotification("Control matrices: ok!",type="message")
+        
+      } else {
+      
+      showNotification("One of your matrix is empty",type="error",duration=NULL)
 
+      }
+      
       } else {
         
         showNotification("Pre-processing of the data",type="message")
@@ -418,8 +424,9 @@ if(all_genes_test() == TRUE){
         
       if((RFA() == TRUE & TD() == TRUE )|(RFA() == TRUE & TD() == FALSE)){
       
-      showNotification("Analysis started, wait the end of the analysis!",type="message",duration=NULL)
+      showNotification("Analysis started, wait!",type="message",duration=NULL)
         
+      
       output_gmiec<-reactive({GMIEC_MLK(
         
         input_GE_selected=input_GE_selected,
@@ -432,7 +439,6 @@ if(all_genes_test() == TRUE){
         all_genes_for_analysis=list_genes_for_analysis()
         
       )})
-      
       
       if(!is.null(output_gmiec())){
         
@@ -682,6 +688,7 @@ observeEvent(input$run_plot_res_gmiec,{
     selectInput('list_patients2', 'Select patient',choices, selectize=FALSE)
   })
   
+
   if(TD2() == TRUE){
   
     
