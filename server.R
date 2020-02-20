@@ -35,6 +35,7 @@ gmiec_results<-observeEvent(input$run_gmiec,{
     
     ### read gene expression data
       input_GE<-reactive({
+      showNotification("Loading gene-expression data",type="message")
         
       if(is.null(input$ge_dataset)) {return(NULL)}
       infile2<- input$ge_dataset
@@ -42,46 +43,54 @@ gmiec_results<-observeEvent(input$run_gmiec,{
       
       })
      
-    print(paste("Load gene-expression data",length(input_GE())))
+    print(paste("Loading gene-expression data",length(input_GE())))
     
 
     ### read copy number variation data
       input_CNV<-reactive({
+      showNotification("Loading copy number data data",type="message")
+      
       if(is.null(input$cnv_dataset)) {return(NULL)}
       infile3<-input$cnv_dataset
       read.table(file=infile3$datapath,sep="\t",stringsAsFactors=F,header=T,quote=NULL,fill=T,check.names = F)
       })
     
-    print(paste("Load cnv data",length(input_CNV())))
+    print(paste("Loading cnv data",length(input_CNV())))
     
     ### read mutation data
   
       input_MUT<-reactive({
+      showNotification("Load variants data",type="message")
+        
       if(is.null(input$mut_dataset))  {return(NULL)}
       infile4<-input$mut_dataset
       read.table(file=infile4$datapath,sep="\t",stringsAsFactors=F,quote=NULL,header=T,fill=T,check.names = F)
       })    
     
-    print(paste("Load mut data",length(input_MUT())))
+    print(paste("Loading mut data",length(input_MUT())))
     
     ## read methylation data
     input_METH<-reactive({
+      showNotification("Load methylation data",type="message")
+      
       if(is.null(input$meth_dataset))  {return(NULL)}
       infile5<-input$meth_dataset
       read.table(file=infile5$datapath,sep="\t",stringsAsFactors=F,quote=NULL,header=T,fill=T,check.names = F)
     })
 
-    print(paste("Load meth data",length(input_METH())))
+    print(paste("Loading meth data",length(input_METH())))
     
     
     ## read clinical data
     input_clinical<-reactive({
+    showNotification("Loading clinical data",type="message")
+      
     if(is.null(input$clinical_dataset))  {showNotification("The clinical file it is mandatory.",type="error")}
       infile6<-input$clinical_dataset
       read.table(file=infile6$datapath,sep="\t",stringsAsFactors=F,quote=NULL,header=T,fill=T,check.names = F)
     })
     
-    print(paste("Load clinical data",dim(input_clinical())))
+    print(paste("Loading clinical data",dim(input_clinical())))
     
     ###
     ### Input Drugs
@@ -196,6 +205,9 @@ gmiec_results<-observeEvent(input$run_gmiec,{
     
 # use a list from annotation
 if(genes_annotated_fv()==TRUE){
+  
+  showNotification("Pre-processing: selection of the genes from the data",type="message")
+  
   print("run annotation")
   
   print(dim(bed_dataset()))
@@ -233,6 +245,8 @@ if(genes_annotated_fv()==TRUE){
 # use a list of genes
 if(input_list_of_genes_test()==TRUE){
   
+  showNotification("Pre-processing: selection of the genes from the data",type="message")
+  
   subsetAnnoDF_unique<-list_genes_for_analysis()[,1]
   
   input_GE2<-input_GE()
@@ -258,6 +272,8 @@ if(input_list_of_genes_test()==TRUE){
 # use all genes
 if(all_genes_test() == TRUE){
     
+    showNotification("Pre-processing: selection of the genes from the data",type="message",type='warning')
+  
     input_GE2<-input_GE()
     input_CNV2<-input_CNV()
     input_METH2<-input_METH()
@@ -291,6 +307,9 @@ if(all_genes_test() == TRUE){
       
 
       } else {
+        
+        showNotification("Pre-processing of the data",type="message")
+        
         if(cb_ge_ok() == FALSE & cb_cnv_ok() == FALSE & cb_meth_ok() == FALSE & cb_mutation_ok() == FALSE){showNotification("Select which omic data set you uploaded.",type="error")}
                     
         if(cb_ge_ok() == TRUE){input_GE_string="GE"} else {input_GE_string=NULL}
@@ -399,6 +418,8 @@ if(all_genes_test() == TRUE){
         
       if((RFA() == TRUE & TD() == TRUE )|(RFA() == TRUE & TD() == FALSE)){
       
+      showNotification("Analysis started, wait the end of the analysis!",type="message",duration=NULL)
+        
       output_gmiec<-reactive({GMIEC_MLK(
         
         input_GE_selected=input_GE_selected,
@@ -412,9 +433,10 @@ if(all_genes_test() == TRUE){
         
       )})
       
+      
       if(!is.null(output_gmiec())){
         
-        showNotification("You can download the results of analysis!",type="message")
+        showNotification("You can download the results of analysis!",type="warning")
         print("here your output")
         print(dim(output_gmiec()))  
       
