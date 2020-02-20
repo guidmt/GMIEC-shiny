@@ -86,7 +86,7 @@ gmiec_results<-observeEvent(input$run_gmiec,{
     input_clinical<-reactive({
     showNotification("Loading clinical data",type="message")
       
-    if(is.null(input$clinical_dataset))  {showNotification("The clinical file it is mandatory.",type="error")}
+    if(is.null(input$clinical_dataset))  {showNotification("The clinical file  is mandatory.",type="error")}
       infile6<-input$clinical_dataset
       read.table(file=infile6$datapath,sep="\t",stringsAsFactors=F,quote=NULL,header=T,fill=T,check.names = F)
     })
@@ -97,6 +97,9 @@ gmiec_results<-observeEvent(input$run_gmiec,{
     ### Input Drugs
     ###
     drugs_for_analysis<-reactive({
+    showNotification("Loading drugs data",type="message")
+    if(is.null(input$drugs_dataset))  {showNotification("The drugs data file is mandatory.",type="error")}
+      
       infile1<-input$drugs_dataset
       read.table(file=infile1$datapath,sep="\t",stringsAsFactors=F,header=T,fill=T,check.names = F)
     })
@@ -199,10 +202,10 @@ if(!is.null(input_GE()) & !is.null(input_CNV()) & !is.null(input_METH()) & !is.n
       showNotification("One of your matrix is empty",type="error")
       showNotification("If you want analyze less than 4 data-sets click on Analysis only two datasets",type="error")
       
-}   
-    
+    }   
     
 
+    
 ######### CREATE THE GENE LISTS
 # use a list from annotation
 if(genes_annotated_fv()==TRUE){
