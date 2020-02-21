@@ -60,7 +60,7 @@ gmiec_results<-observeEvent(input$run_gmiec,{
     ### read mutation data
   
       input_MUT<-reactive({
-      showNotification("Load variants data",type="message")
+      showNotification("Loading variants data",type="message")
         
       if(is.null(input$mut_dataset))  {return(NULL)}
       infile4<-input$mut_dataset
@@ -72,7 +72,7 @@ gmiec_results<-observeEvent(input$run_gmiec,{
     ## read methylation data
     input_METH<-reactive({
       
-      showNotification("Load methylation data",type="message")
+      showNotification("Loading methylation data",type="message")
       
       if(is.null(input$meth_dataset))  {return(NULL)}
       infile5<-input$meth_dataset
@@ -621,7 +621,7 @@ observeEvent(input$run_plot_res_gmiec,{
     
   })
   
-  print(paste("Load gene-expression data",length(input_GE_selected())))
+  print(paste("Loading gene-expression data",length(input_GE_selected())))
   
   
   ### read copy number variation data
