@@ -1,4 +1,4 @@
-create_output<-function(res_analysis_each_patient,input_clinical,...){
+create_output<-function(res_analysis_each_patient,input_clinical,annotate_clin,...){
   
 ###extract number of modules in total
 
@@ -35,7 +35,7 @@ ALL_colnames<-c(patient_id,total_genes_patients,number_modules
 )
 
 MATRIX_RESULTS_ALL<-data.frame(matrix(,ncol=length(ALL_colnames)))
-colnames(MATRIX_RESULTS_ALL)<-ALL_colnames
+colnames(MATRIX_RESULTS_ALL)<-names(ALL_colnames)
 
 print("check bpm")
 
@@ -110,8 +110,7 @@ for(bpm in 1:length(res_analysis_each_patient)){
   
   dfrow<-data.frame(row_for_each_patient_t,stringsAsFactors=F)
   colnames(dfrow)<-as.character(names(row_for_each_patient))
-  # MATRIX_RESULTS_ALL[[bpm]]
-  
+
   MATRIX_RESULTS_ALL<-rbind.fill(MATRIX_RESULTS_ALL,dfrow)
 }
 
@@ -119,7 +118,15 @@ print(dim(MATRIX_RESULTS_ALL))
 
 MATRIX_RESULTS_ALL$sample_id<-gsub(MATRIX_RESULTS_ALL$sample_id,pattern=".analysisGMIEC",replacement="")
 
-MATRIX_RESULTS_ALL_CLINICAL<-merge(MATRIX_RESULTS_ALL,input_clinical,by.x="sample_id",by.y="sample_id")
+if(annotate_clin==TRUE){
+  
+MATRIX_RESULTS_ALL_CLINICAL<-merge(MATRIX_RESULTS_ALL,input_clinical,by.x="sample_id",by.y="sample_id")[-1,]
+
+}else{
+
+MATRIX_RESULTS_ALL_CLINICAL<-MATRIX_RESULTS_ALL[-1,]
+    
+}
 
 return(MATRIX_RESULTS_ALL_CLINICAL)
 

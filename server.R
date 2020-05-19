@@ -498,6 +498,24 @@ if(all_genes_test() == TRUE){
     ################################ RUN GMIEC LOGIC APPROACH
       if((GMR() == TRUE & TD() == TRUE )|(GMR()==TRUE & TD() == FALSE)){
         
+        if(isTRUE(is.character(input_clinical()))){
+          
+          annotate_clin = FALSE 
+          
+          print("check status annotation clinical data 3")
+          
+          print(annotate_clin)
+          
+        }else{
+          
+          annotate_clin = TRUE 
+          
+          print("check status annotation clinical data 4")
+          
+          print(annotate_clin)
+          
+        }
+        
         print("run gmiec LRK!")
         
         output_gmiec<-reactive({run_GMIEC(
@@ -510,7 +528,8 @@ if(all_genes_test() == TRUE){
           input_clinical=input_clinical2,
           parameter_discr=c("2;1;0.7"),
           clusters=input_clusters(),
-          genes_annotated_TF_fv=FALSE
+          genes_annotated_TF_fv=FALSE,
+          annotate_clin=annotate_clin
           
         )})
         

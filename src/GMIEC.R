@@ -1,4 +1,4 @@
-run_GMIEC<-function(check_ge_for_patients,input_CNV_selected,input_METH_selected,input_MUTATION_selected,tabDrugs,input_clinical,parameter_discr,genes_annotated_TF_fv,input_GE_tf=NA,input_CNV_tf=NA,input_MUTATION_tf=NA,input_METH_tf=NA,clusters){
+run_GMIEC<-function(check_ge_for_patients,input_CNV_selected,input_METH_selected,input_MUTATION_selected,tabDrugs,input_clinical,parameter_discr,genes_annotated_TF_fv,input_GE_tf=NA,input_CNV_tf=NA,input_MUTATION_tf=NA,input_METH_tf=NA,clusters,annotate_clin){
   
   withProgress(message="Start analysis!",min=0,max=1,{
     
@@ -16,8 +16,12 @@ run_GMIEC<-function(check_ge_for_patients,input_CNV_selected,input_METH_selected
     colnames(input_MUTATION_selected)[1]<-"genesID"
     colnames(tabDrugs)[1:2]<-c("genes","drug_primary_name")
     #change id clinical data
+    
+    if(annotate_clin==TRUE){
+      
     colnames(input_clinical)[1]<-"sample_id"
     
+    }
     
     pts_exp_ge<-colnames(check_ge_for_patients[-1]) #the first column is the gene-name
     pts_exp_cnv<-colnames(input_CNV_selected[-1])
@@ -307,7 +311,7 @@ run_GMIEC<-function(check_ge_for_patients,input_CNV_selected,input_METH_selected
     print("Step5: Save output")
     incProgress(0.15, detail = "Step6: Create the output")
     
-    MATRIX_RESULTS_ALL_CLINICAL<-create_output(res_analysis_each_patient=RES_ENGINE,input_clinical=input_clinical)
+    MATRIX_RESULTS_ALL_CLINICAL<-create_output(res_analysis_each_patient=RES_ENGINE,input_clinical=input_clinical,annotate_clin)
     #write.table(t(MATRIX_RESULTS_ALL_CLINICAL[-1,]),file="Analysis_GMIEC_main_results.txt",sep="\t",row.names=T,col.names=F,quote=F) # the first row is always empty
     print(dim(MATRIX_RESULTS_ALL_CLINICAL))
     #save.image(file="C:/Users/guida/Desktop/GMIEC.RData")
