@@ -336,7 +336,7 @@ GMIEC_MLK<-function(input_GE_selected,input_CNV_selected,input_METH_selected,inp
   if(automatic_clusters==FALSE){
     
   FINAL_DF2<-rbind.fill(FINAL_DF)
-  colnames(input_clinical)[1]<-"sample_id"
+  colnames(FINAL_DF2)[1]<-"sample_id"
   
   }else{
     
@@ -376,6 +376,8 @@ GMIEC_MLK<-function(input_GE_selected,input_CNV_selected,input_METH_selected,inp
   
 if(annotate_clin==TRUE){
   
+colnames(input_clinical)<-"sample_id"
+
 FINAL_DF_WITH_CLINIC<-merge(FINAL_DF2,input_clinical,by="sample_id",all.x=T)
 
 } else {

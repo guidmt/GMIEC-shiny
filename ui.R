@@ -62,6 +62,7 @@ ui <- dashboardPage(
                       checkboxInput("GMIEC_RULES","Analysis with logic rules + k-mode",FALSE),
                       checkboxInput("RF_ANALYSIS","Analysis with randomForest + k-means",TRUE),
                       checkboxInput("two_datasets","Analysis only two datasets (Select)",FALSE),
+                      checkboxInput("auto_clus","Automatic detection of n.clusters",FALSE),
                       checkboxInput("cb_ge", label = "gene-expression", value = FALSE),
                       checkboxInput("cb_cnv", label = "copy-number", value = FALSE),
                       checkboxInput("cb_meth", label = "methylation", value = FALSE),

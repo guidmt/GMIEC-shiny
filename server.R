@@ -18,6 +18,13 @@ gmiec_results<-observeEvent(input$run_gmiec,{
     GMR<-renderText({input$GMIEC_RULES})
     RFA<-renderText({input$RF_ANALYSIS})
     TD<-renderText({input$two_datasets})
+    automatic_clusters<-renderText({input$auto_clus})
+    
+    if(automatic_clusters()==TRUE){
+      
+      showNotification("The number of clusters will be determined automatically",type="message")
+      
+    }
     
     cb_ge_ok <- renderText({ input$cb_ge })
     cb_cnv_ok <- renderText({ input$cb_cnv })
@@ -86,10 +93,12 @@ gmiec_results<-observeEvent(input$run_gmiec,{
     input_clinical<-reactive({
     showNotification("Loading clinical data",type="message")
       
-    if(is.null(input$clinical_dataset))  {showNotification("The clinical file  is mandatory.",type="error")}
+    if(is.null(input$clinical_dataset)) {
+      showNotification("The clinical data is empty. Add one if you want this information in your results.",type="message")}
+      else{
       infile6<-input$clinical_dataset
       read.table(file=infile6$datapath,sep="\t",stringsAsFactors=F,quote=NULL,header=T,fill=T,check.names = F)
-    })
+    }})
     
     print(paste("Loading clinical data",dim(input_clinical())))
     
@@ -428,8 +437,29 @@ if(all_genes_test() == TRUE){
       if((RFA() == TRUE & TD() == TRUE )|(RFA() == TRUE & TD() == FALSE)){
       
       showNotification("Analysis started, wait!",type="message",duration=NULL)
-        
       
+      print("check status annotation clinical data 1")
+        
+      print(class(input_clinical()))
+        
+      if(isTRUE(is.character(input_clinical()))){
+        
+        annotate_clin = FALSE 
+        
+        print("check status annotation clinical data 2")
+
+        print(annotate_clin)
+        
+      }else{
+        
+        annotate_clin = TRUE 
+        
+        print("check status annotation clinical data 2")
+        
+        print(annotate_clin)
+        
+      }
+        
       output_gmiec<-reactive({GMIEC_MLK(
         
         input_GE_selected=input_GE_selected,
@@ -439,7 +469,9 @@ if(all_genes_test() == TRUE){
         drugs_for_analysis2=drugs_for_analysis2,
         input_clinical=input_clinical2,
         k_user=input_clusters(),
-        all_genes_for_analysis=list_genes_for_analysis()
+        all_genes_for_analysis=list_genes_for_analysis(),
+        automatic_clusters = automatic_clusters(),
+        annotate_clin = annotate_clin
         
       )})
       
