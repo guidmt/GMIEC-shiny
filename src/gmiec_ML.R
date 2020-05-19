@@ -1,4 +1,4 @@
-GMIEC_MLK<-function(input_GE_selected,input_CNV_selected,input_METH_selected,input_MUTATION_selected,drugs_for_analysis2,input_clinical,k_user,all_genes_for_analysis){
+GMIEC_MLK<-function(input_GE_selected,input_CNV_selected,input_METH_selected,input_MUTATION_selected,drugs_for_analysis2,input_clinical,k_user,all_genes_for_analysis,automatic_clusters,annotate_clin){
   
   colGE<-colnames(input_GE_selected)[2:ncol(input_GE_selected)]
   #compute the z-score between the patients
@@ -20,14 +20,17 @@ GMIEC_MLK<-function(input_GE_selected,input_CNV_selected,input_METH_selected,inp
   #unique_samples<-Reduce(intersect, list(colGE[-1],colCNV[-1],colMETH[-1],colMUT))
   
   unique_samples<-unique(c(colGE,colCNV,colMETH,colMUT))
-  FINAL_DF<-data.frame()
   
-  for(se_patient_selection in unique_samples){
+  FINAL_DF<-vector(mode="list",length(unique_samples))
+  
+  for(se_patient_selection in 1:length(unique_samples)){
     
-    if(length(grep(input_MUTATION_selected[,2],pattern=se_patient_selection))!=0){
+    se_patient_selection2<-unique_samples[se_patient_selection]
+    
+    if(length(grep(input_MUTATION_selected[,2],pattern=se_patient_selection2))!=0){
       
       #select the mutation of the current patients                   
-      MUT_current_patient_tp<-input_MUTATION_selected[which(input_MUTATION_selected[,2]==se_patient_selection),]
+      MUT_current_patient_tp<-input_MUTATION_selected[which(input_MUTATION_selected[,2]==se_patient_selection2),]
       #genes Tumor_Sample_Barcode
       #HIST1H2BA      TCGA.A2.A0D2.01
       #CENPF      TCGA.A2.A0ST.01
@@ -58,9 +61,9 @@ GMIEC_MLK<-function(input_GE_selected,input_CNV_selected,input_METH_selected,inp
     }
     
     
-    GE_pzt<-input_GE_selected[,c("genes",se_patient_selection)]
-    CNV_pzt<-input_CNV_selected[,c("genes",se_patient_selection)]
-    METH_pzt<-input_METH_selected[,c("genes",se_patient_selection)]
+    GE_pzt<-input_GE_selected[,c("genes",se_patient_selection2)]
+    CNV_pzt<-input_CNV_selected[,c("genes",se_patient_selection2)]
+    METH_pzt<-input_METH_selected[,c("genes",se_patient_selection2)]
     
     zscore_ge<-GE_pzt 
     
@@ -100,8 +103,23 @@ GMIEC_MLK<-function(input_GE_selected,input_CNV_selected,input_METH_selected,inp
     rf.pzt.clust <- randomForest(x = INPUT_FOR_RF[,-1], y = NULL, proximity = TRUE, oob.prox = TRUE)
     prox_rf<-rf.pzt.clust$proximity
     
+    if(automatic_clusters==TRUE){
+    
+    k_user<-NbClust(prox_rf,method="kmeans",distance = "euclidean",min.nc=2, max.nc=10,index = "silhouette")$Best.nc[1]
+    print(k_user) 
+    }
+    
     #k-means using the clusters defined by the user
+    if(automatic_clusters!=TRUE){
+      
     resKmeans<-kmeans(prox_rf,k_user)$cluster
+    
+    }else{
+      
+    resKmeans<-kmeans(prox_rf,k_user)$cluster
+    
+    }
+    
     RFKR<-data.frame(INPUT_FOR_RF,resKmeans,stringsAsFactors=F)
     colnames(drugs_for_analysis2)[1]<-"genes"
     
@@ -289,7 +307,7 @@ GMIEC_MLK<-function(input_GE_selected,input_CNV_selected,input_METH_selected,inp
     
     colnames(COMBINED_SCORES)<-paste("score_sad",1:k_user,sep="_")
     #################
-    TEMP_DF<-data.frame(sample_id=se_patient_selection,
+    TEMP_DF<-data.frame(sample_id=se_patient_selection2,
                         GGFK,
                         number_genes,
                         DGFK,
@@ -310,12 +328,61 @@ GMIEC_MLK<-function(input_GE_selected,input_CNV_selected,input_METH_selected,inp
                         TRUE_MODULE_INDEX,stringsAsFactors = F
     )
     
-    FINAL_DF<-rbind(FINAL_DF,TEMP_DF)
+    FINAL_DF[[se_patient_selection]]<-TEMP_DF
     
   }
+  
+  
+  if(automatic_clusters==FALSE){
+    
+  FINAL_DF2<-rbind.fill(FINAL_DF)
   colnames(input_clinical)[1]<-"sample_id"
   
-FINAL_DF_WITH_CLINIC<-merge(FINAL_DF,input_clinical,by="sample_id",all.x=T)
- 
+  }else{
+    
+    order_columns<-c("sample_id","genes_in_module","number_genes_in_module","drugs_in_module","number_drugs_in_module",
+    "ge_mean","ge_score_up","cnv_score_amp","cnv_score_dep","ge_score_down","meth_mean","meth_score_exp",
+    "mut_score","s_sup","s_onc","s_score","score_drugs_rdg","score_sad","TRUE_MODULE_INDEX")
+  
+    FINAL_TEMP<-rbind.fill(FINAL_DF)
+  
+    FINAL_TEMP2<-data.frame(1:nrow(FINAL_TEMP))
+    
+    print("Ordering of the columns")
+    
+    for(col_to_sort in order_columns){
+    
+      print(col_to_sort)
+      
+      if(col_to_sort=="genes_in_module" | col_to_sort=="drugs_in_module"){
+      print("inside")  
+      columns_to_select<-grep(grep(colnames(FINAL_TEMP),pattern=col_to_sort,value=T),pattern="number",invert=T,value=T)
+      
+      }else{
+      
+      columns_to_select<-grep(colnames(FINAL_TEMP),pattern=col_to_sort,value=T)
+        
+      }
+      
+      FINAL_TEMP2<-cbind(FINAL_TEMP2,FINAL_TEMP[,which(colnames(FINAL_TEMP)%in%columns_to_select)])
+      
+    }
+  
+    FINAL_DF2<-FINAL_TEMP2[,-1]
+    colnames(FINAL_DF2)[1]<-"sample_id"
+    colnames(FINAL_DF2)[ncol(FINAL_DF2)]<-"TRUE_MODULE_INDEX"
+    
+  }
+  
+if(annotate_clin==TRUE){
+  
+FINAL_DF_WITH_CLINIC<-merge(FINAL_DF2,input_clinical,by="sample_id",all.x=T)
+
+} else {
+  
+FINAL_DF_WITH_CLINIC <- FINAL_DF2
+  
+}
+  
 return(FINAL_DF_WITH_CLINIC) 
 }
