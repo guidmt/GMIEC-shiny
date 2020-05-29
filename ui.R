@@ -57,18 +57,22 @@ ui <- dashboardPage(
                       fileInput("list_of_genes2", "Upload the list of genes - only for 4",buttonLabel=icon("folder"))
                       
                   ),
+                  
                   box(title="GMIEC - Parameters Analysis",status="success",solidHeader=TRUE,collapsible =TRUE,
                       numericInput("clusters","Number Clusters k-mode/k-means",value=10),
                       checkboxInput("GMIEC_RULES","Analysis with logic rules + k-mode",FALSE),
                       checkboxInput("RF_ANALYSIS","Analysis with random forest + k-means",TRUE),
-                      checkboxInput("two_datasets","Analysis only two datasets (Select)",FALSE),
                       checkboxInput("auto_clus","Automatic detection of n.clusters (only RF+kmeans)",FALSE),
+                  
+                  h3("Analysis with two datasets"),    
+                  
+                  box(checkboxInput("two_datasets","Analysis only two datasets (Select)",FALSE),
                       checkboxInput("cb_ge", label = "gene-expression", value = FALSE),
                       checkboxInput("cb_cnv", label = "copy-number", value = FALSE),
                       checkboxInput("cb_meth", label = "methylation", value = FALSE),
-                      checkboxInput("cb_mutation", label = "mutation", value = FALSE)
+                      checkboxInput("cb_mutation", label = "mutation", value = FALSE))
                       
-                      ),
+                  ),
                   
                   actionButton('run_gmiec', 'Run analysis',style = "color: white; 
                      background-color: #0066CC; 

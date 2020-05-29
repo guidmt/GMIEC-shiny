@@ -36,7 +36,7 @@ create_output_gmiec_parse<-function(input_for_gmiec,type_input,type_of_output){
         }
 
             
-          }
+        }
   
   
           #########
