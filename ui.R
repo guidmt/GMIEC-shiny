@@ -64,9 +64,9 @@ ui <- dashboardPage(
                       checkboxInput("RF_ANALYSIS","Analysis with random forest + k-means",TRUE),
                       checkboxInput("auto_clus","Automatic detection of n.clusters (only RF+kmeans)",FALSE),
                   
-                  h3("Analysis with two datasets"),    
+                  h3("Analysis with minimum two datasets"),    
                   
-                  box(checkboxInput("two_datasets","Analysis only two datasets (Select)",FALSE),
+                  box(checkboxInput("two_datasets","Analysis a minimum of two datasets (Select)",FALSE),
                       checkboxInput("cb_ge", label = "gene-expression", value = FALSE),
                       checkboxInput("cb_cnv", label = "copy-number", value = FALSE),
                       checkboxInput("cb_meth", label = "methylation", value = FALSE),
