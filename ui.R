@@ -19,8 +19,8 @@ ui <- dashboardPage(
     sidebarMenu(
       menuItem("Home", tabName = "home", icon = icon("home")),
       menuItem("GMIEC-AN", tabName = "run_gmiec", icon = icon("play-circle")),
-      menuItem("GMIEC-VIS", tabName = "vis_gmiec2", icon = icon("wpexplorer")),
-      menuItem("GMIEC-results",tabName="gmiec_results",icon=icon("flag")),
+      menuItem("Visualization (GMIEC-VIS)", tabName = "vis_gmiec2", icon = icon("wpexplorer")),
+      menuItem("Results (GMIEC-RES)",tabName="gmiec_results",icon=icon("flag")),
       menuItem("Terms of use", tabName = "terms_of_use", icon = icon("user-tie"))
     )
   ),
@@ -138,8 +138,41 @@ ui <- dashboardPage(
                htmlOutput("table_summary_genes_module")),
                box(title="Table summary drug module patient",status="warning",solidHeader=TRUE,collapsible =FALSE,
                htmlOutput("table_summary_drugs_module"))
-               ))
-      
+               )),
+      tabPanel("Plot heatmap from Results (GMIEC-RES)",
+               
+               box(title="GMIEC - Input dataset",status="primary",solidHeader=TRUE,collapsible =TRUE,
+                   fileInput("results_gmiec_from_parse", "Upload results GMIEC",buttonLabel=icon("folder-open")),
+                   fileInput("ge_dataset_res", "Upload gene-expression data",buttonLabel=icon("folder-open")),
+                   fileInput("cnv_dataset_res", "Upload copy-number variation data",buttonLabel=icon("folder-open")),
+                   fileInput("meth_dataset_res", "Upload methylation data",buttonLabel=icon("folder-open")),
+                   fileInput("mut_dataset_res", "Upload mutation data",buttonLabel=icon("folder-open")),
+                   fileInput("genes_drugs", "Upload the genes-drugs file",buttonLabel=icon("folder-open")),
+                   checkboxInput("two_datasets2","Analysis only two datasets (Select)",FALSE),
+                   checkboxInput("cb_ge2", label = "gene-expression", value = FALSE),
+                   checkboxInput("cb_cnv2", label = "copy-number", value = FALSE),
+                   checkboxInput("cb_meth2", label = "methylation", value = FALSE),
+                   checkboxInput("cb_mutation2", label = "mutation", value = FALSE),
+                   actionButton('run_plot_res_gmiec', 'Create report!',style = "color: white; 
+                     background-color: #0066CC; 
+                               position: relative; 
+                               left: 3%;
+                               height: 35px;
+                               width: 200px;
+                               text-align:center;
+                               text-indent: -2px;
+                               border-radius: 6px;
+                               border-width: 2px")
+               ),
+               
+               box(title="Select patient",status="warning",solidHeader=TRUE,collapsible =FALSE,
+                   uiOutput('list_patients2')),
+               box(title="Heatmap module patient",status="warning",solidHeader=TRUE,collapsible =FALSE,
+                   plotOutput("plot_module_patient")),
+               box(title="Drugs in current module",status="warning",solidHeader=TRUE,collapsible =FALSE,
+                   htmlOutput("table_summary_drugs_module2"))
+               
+      )
       )#end tabset panel
       ),#end tabItem
       tabItem(tabName = "gmiec_results",
@@ -178,41 +211,7 @@ ui <- dashboardPage(
                                border-width: 2px")
                            )
                          )
-                ),
-                tabPanel("Heatmap module for patient",
-                         
-                         box(title="GMIEC - Input dataset",status="primary",solidHeader=TRUE,collapsible =TRUE,
-                             fileInput("results_gmiec_from_parse", "Upload results GMIEC",buttonLabel=icon("folder-open")),
-                             fileInput("ge_dataset_res", "Upload gene-expression data",buttonLabel=icon("folder-open")),
-                             fileInput("cnv_dataset_res", "Upload copy-number variation data",buttonLabel=icon("folder-open")),
-                             fileInput("meth_dataset_res", "Upload methylation data",buttonLabel=icon("folder-open")),
-                             fileInput("mut_dataset_res", "Upload mutation data",buttonLabel=icon("folder-open")),
-                             fileInput("genes_drugs", "Upload the genes-drugs file",buttonLabel=icon("folder-open")),
-                             checkboxInput("two_datasets2","Analysis only two datasets (Select)",FALSE),
-                             checkboxInput("cb_ge2", label = "gene-expression", value = FALSE),
-                             checkboxInput("cb_cnv2", label = "copy-number", value = FALSE),
-                             checkboxInput("cb_meth2", label = "methylation", value = FALSE),
-                             checkboxInput("cb_mutation2", label = "mutation", value = FALSE),
-                             actionButton('run_plot_res_gmiec', 'Create report!',style = "color: white; 
-                     background-color: #0066CC; 
-                               position: relative; 
-                               left: 3%;
-                               height: 35px;
-                               width: 200px;
-                               text-align:center;
-                               text-indent: -2px;
-                               border-radius: 6px;
-                               border-width: 2px")
-                         ),
-                         
-                         box(title="Select patient",status="warning",solidHeader=TRUE,collapsible =FALSE,
-                             uiOutput('list_patients2')),
-                         box(title="Heatmap module patient",status="warning",solidHeader=TRUE,collapsible =FALSE,
-                             plotOutput("plot_module_patient")),
-                         box(title="Drugs in current module",status="warning",solidHeader=TRUE,collapsible =FALSE,
-                             htmlOutput("table_summary_drugs_module2"))
-                         
-                         )
+                )
               )
               ),
       
