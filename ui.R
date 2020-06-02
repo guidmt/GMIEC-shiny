@@ -19,8 +19,8 @@ ui <- dashboardPage(
     sidebarMenu(
       menuItem("Home", tabName = "home", icon = icon("home")),
       menuItem("GMIEC-AN", tabName = "run_gmiec", icon = icon("play-circle")),
-      menuItem("Visualization (GMIEC-VIS)", tabName = "vis_gmiec2", icon = icon("wpexplorer")),
       menuItem("Results (GMIEC-RES)",tabName="gmiec_results",icon=icon("flag")),
+      menuItem("Visualization (GMIEC-VIS)", tabName = "vis_gmiec2", icon = icon("wpexplorer")),
       menuItem("Terms of use", tabName = "terms_of_use", icon = icon("user-tie"))
     )
   ),
