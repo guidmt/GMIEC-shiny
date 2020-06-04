@@ -2,6 +2,15 @@ plot_heatmap_module<-function(res_gmiec,input_GE,input_CNV,input_METH,input_MUT,
   
   subject2<-as.character(subject)
   
+  #get ranges gene-expression
+  
+  #get ranges copy-number
+  range_cnv<-quantile(as.matrix(input_CNV[,-1]),na.rm=T)
+  
+  #get ranges methylation
+  range_meth<-quantile(as.matrix(input_METH[,-1]),na.rm=T)
+  
+  
   res_gmiec_select<-res_gmiec[res_gmiec[,1]%in%subject2,]
   print(dim(res_gmiec_select))
   genes<-unlist(strsplit(as.character(res_gmiec_select[,'genes_in_module']),split=","))
@@ -42,16 +51,25 @@ plot_heatmap_module<-function(res_gmiec,input_GE,input_CNV,input_METH,input_MUT,
   
   print("heatmap cnv")
   
-  if(unique(input_CNV_sel)!=0){
-  ht2=Heatmap(input_CNV_sel,cluster_rows = FALSE,cluster_columns = FALSE,name="CNV",rect_gp = gpar(col = 'black'),rev(brewer.pal(6,"RdBu")),width=0.3)
+  if(length(unique(input_CNV_sel))!=0){
+  print("TRUE")
+  col_fun=colorRamp2(c(range_cnv[1],range_cnv[3],range_cnv[5]),c(rev(brewer.pal(10,"RdBu"))[1],rev(brewer.pal(10,"RdBu"))[5],rev(brewer.pal(10,"RdBu"))[10]))
+    
+  ht2=Heatmap(input_CNV_sel,cluster_rows = FALSE,cluster_columns = FALSE,name="CNV",rect_gp = gpar(col = 'black'),col_fun,width=0.3)
+  
   } else{
+    
   ht2=Heatmap(input_CNV_sel,cluster_rows = FALSE,cluster_columns = FALSE,name="CNV",width=0.3,col="gainsboro")
+  
   }
   
   print("heatmap meth")
   
-  if(unique(input_METH_sel)!=0){
-  ht3=Heatmap(input_METH_sel,cluster_rows = FALSE,cluster_columns = FALSE,name="METH",rect_gp = gpar(col = 'black'),rev(brewer.pal(6,"PuOr")),width=0.3)
+  if(length(unique(input_METH_sel))!=0){
+    
+  col_fun=colorRamp2(c(range_meth[1],range_meth[3],range_meth[5]),c(rev(brewer.pal(10,"PuOr"))[1],rev(brewer.pal(10,"PuOr"))[5],rev(brewer.pal(10,"PuOr"))[10]))
+    
+  ht3=Heatmap(input_METH_sel,cluster_rows = FALSE,cluster_columns = FALSE,name="METH",rect_gp = gpar(col = 'black'),col_fun,width=0.3)
   }else{
   ht3=Heatmap(input_METH_sel,cluster_rows = FALSE,cluster_columns = FALSE,name="METH",rect_gp = gpar(col = 'black'),width=0.3,col="gainsboro")
   }
@@ -70,4 +88,5 @@ plot_heatmap_module<-function(res_gmiec,input_GE,input_CNV,input_METH,input_MUT,
   
   ht1+ht2+ht3+ht4+ht5
   
-  }
+}
+
