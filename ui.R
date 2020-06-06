@@ -12,6 +12,7 @@ library(randomForest)
 library(ggplot2)
 library(ComplexHeatmap)
 library(RColorBrewer)
+library(circlize)
 
 ui <- dashboardPage(
   dashboardHeader(title = "gmiec-app"),

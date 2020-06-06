@@ -7,7 +7,8 @@ install.packages(c("shiny",
                    "kableExtra",
                    "randomForest",
                    "heatmaply",
-                   "NbClust"
+                   "NbClust",
+                   "circlize"
                    ),depencies=T)
 
 if (!requireNamespace("BiocManager", quietly = TRUE))

@@ -80,7 +80,7 @@ plot_heatmap_module<-function(res_gmiec,input_GE,input_CNV,input_METH,input_MUT,
 
   print("heatmap drugs")
   
-  if(length(unique(VECTOR_DRUGS))!=0){
+  if(length(unique(VECTOR_DRUGS))!=0 & length(unique(VECTOR_DRUGS))>1){
   ht5=Heatmap(VECTOR_DRUGS,cluster_rows = FALSE,cluster_columns = FALSE,name="DRUGS",rect_gp = gpar(col = 'black'),rev(brewer.pal(6,"YlOrRd")),width=0.3)
   }else{
   ht5=Heatmap(VECTOR_DRUGS,cluster_rows = FALSE,cluster_columns = FALSE,name="DRUGS",rect_gp = gpar(col = 'black'),width=0.3,col="gainsboro")
