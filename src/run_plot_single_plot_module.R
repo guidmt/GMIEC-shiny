@@ -2,8 +2,6 @@ plot_heatmap_module<-function(res_gmiec,input_GE,input_CNV,input_METH,input_MUT,
   
   subject2<-as.character(subject)
   
-  #get ranges gene-expression
-  
   #get ranges copy-number
   range_cnv<-quantile(as.matrix(input_CNV[,-1]),na.rm=T)
   
